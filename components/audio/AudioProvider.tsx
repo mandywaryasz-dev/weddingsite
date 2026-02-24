@@ -28,12 +28,14 @@ type AudioProviderProps = PropsWithChildren<{
 export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3" }: AudioProviderProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const frameRef = useRef<number | null>(null);
+  const mountedRef = useRef(true);
   const [isMuted, setIsMutedState] = useState(true);
   const [volume, setVolume] = useState(DEFAULT_AMBIENT_VOLUME);
   const [isReady, setIsReady] = useState(false);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
 
   useEffect(() => {
+    mountedRef.current = true;
     const audio = new Audio(ambientSrc);
     audio.loop = true;
     audio.preload = "metadata";
@@ -51,6 +53,11 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
     audio.addEventListener("canplay", markReady);
 
     return () => {
+      mountedRef.current = false;
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
       audio.removeEventListener("canplay", markReady);
       audio.pause();
       audioRef.current = null;
@@ -92,13 +99,17 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
         const progress = Math.min(1, elapsed / safeDuration);
         const nextVolume = from + (to - from) * progress;
         audio.volume = clampVolume(nextVolume);
-        setVolume(audio.volume);
+        if (mountedRef.current) {
+          setVolume(audio.volume);
+        }
 
         if (progress < 1) {
           frameRef.current = requestAnimationFrame(step);
         } else {
           audio.volume = to;
-          setVolume(to);
+          if (mountedRef.current) {
+            setVolume(to);
+          }
           frameRef.current = null;
           resolve();
         }
@@ -106,7 +117,9 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
 
       if (frameCount === 1) {
         audio.volume = to;
-        setVolume(to);
+        if (mountedRef.current) {
+          setVolume(to);
+        }
         resolve();
         return;
       }

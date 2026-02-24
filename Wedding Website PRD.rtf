@@ -1,0 +1,203 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww30080\viewh22800\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 You are an expert Next.js (App Router) engineer. Implement Phase 1 (MVP) for \'93Amanda & Dushyant Wedding Website\'94 focusing on /save-the-date. \
+\
+GOALS\
+- Build a cinematic, scroll-driven Save-the-Date experience using a \'93Scene Engine\'94 (not marketing sections).\
+- Implement reusable animation triggers via IntersectionObserver hook.\
+- Implement a correct page-level ambient audio system with sticky toggle and session persistence.\
+- Implement an accessible modal system for 3 modals (Venue, Our Photos, Music Preview) without route changes.\
+- Implement Add to Calendar CTA with Google Calendar link + .ics fallback in Eastern timezone.\
+- Enforce mobile-first performance discipline (avoid heavy libs, lazy load media, next/image, next/font, small bundles).\
+- Ensure the Site is responsive, and optimized for model as most users will view on mobile \
+- Domain name: MEETUSINASHEVILLE.COM\
+\
+TECH CONSTRAINTS\
+- Next.js App Router + TypeScript + Tailwind (custom theme) + Framer Motion\
+- GSAP optional ONLY if needed (do not add by default)\
+- Avoid scroll-jacking, timeline locking, heavy animation frameworks\
+- GPU transforms only (opacity/translateY <= 30px/scale 1
+\f1 \uc0\u8594 
+\f0 1.03), 600\'96900ms easing\
+- No monolithic page component: each scene isolated & reusable\
+\
+ROUTE ARCHITECTURE (must match)\
+app/\
+  layout.tsx\
+  page.tsx                  (Phase 2 placeholder)\
+  save-the-date/page.tsx    (Phase 1 MVP)\
+components/\
+  scenes/\
+  modals/\
+  ui/\
+  audio/\
+lib/\
+  calendar.ts\
+  hooks/\
+styles/\
+public/\
+\
+PHASE STRUCTURE\
+PHASE 1 \'97 SAVE THE DATE (MVP)\
+\
+Primary goal:\
+Emotional immersion + Save the Date conversion\
+\
+Core requirements:\
+Scroll-based cinematic storytelling\
+Scene-based architecture (NOT traditional sections)\
+Video loops + animated illustrations\
+Page-level ambient audio system\
+Three interactive modals\
+Add to Calendar CTA\
+Mobile-first performance (90+ Lighthouse)\
+\
+PHASE 2 \'97 MAIN WEDDING PAGE\
+\
+Traditional informational structure:\
+Travel + lodging\
+Event schedule\
+RSVP (Supabase backend likely)\
+Expanded photo gallery\
+Traditional nav\
+\
+Must reuse:\
+Theme tokens\
+Typography\
+Layout system\
+Modal infrastructure\
+\
+\
+
+\fs36 PHASE 1 REQUIREMENTS (Save-the-Date)
+\fs24 \
+1) Scene Engine\
+- Create a generic <Scene /> component with layer slots:\
+  <Scene>\
+    <BackgroundLayer />\
+    <AtmosphereLayer />\
+    <ContentLayer />\
+    <OrnamentLayer />\
+  </Scene>\
+- Each Scene must be min-h-screen and accept props for:\
+  id, className, background (video|image), overlay options, children layers\
+- Provide simple base layer components:\
+  BackgroundLayer: handles video/image full-bleed, optional overlay, optional subtle parallax (lightweight).\
+  AtmosphereLayer: grain overlay + color wash + optional subtle animated gradient (CSS preferred).\
+  ContentLayer: centered column with vertical rhythm.\
+  OrnamentLayer: lightweight SVG slot.\
+\
+2) Scroll Trigger System\
+- Implement hooks/useScrollReveal.ts:\
+  - Uses IntersectionObserver\
+  - Returns \{ ref, isVisible \} or accepts external ref\
+  - Config: threshold default triggers around 0.2, and exit ~0.8 behavior for \'93in view\'94 if needed\
+- Create components/ui/ScrollReveal.tsx wrapper:\
+  - Uses Framer Motion to animate children when isVisible true\
+  - Animation: opacity + translateY (<=30px) + subtle scale (1
+\f1 \uc0\u8594 
+\f0 1.03)\
+  - Duration 0.6\'960.9s; consistent easing; no layout shift\
+\
+3) Page-level Audio System\
+- Implement components/audio/AudioProvider.tsx using React context:\
+  - Single ambient <audio> element\
+  - Starts muted, does NOT autoplay with sound\
+  - Must begin playback only after first user interaction (e.g., pointerdown/keydown) while still muted; then fade in when unmuted\
+  - State: isMuted boolean, volume, isReady, hasUserInteracted\
+  - Controls: play(), pause(), setMuted(), fadeTo(targetVolume, ms), duckAmbient(lowVolume), restoreAmbient()\
+  - Persist isMuted in sessionStorage (key: "mj-dash-audio-muted")\
+  - Smooth fades (>=300ms), no abrupt stops\
+- Implement sticky toggle components/audio/AudioToggle.tsx:\
+  - Top-right fixed button\
+  - Accessible labels\
+  - Shows muted/unmuted states\
+\
+4) Modal System (3 modals)\
+- Implement accessible modal base components/modals/Modal.tsx:\
+  - Portals to document.body\
+  - ESC closes\
+  - Click backdrop closes\
+  - Focus trap + return focus to trigger\
+  - aria roles and labels\
+  - Smooth transition: opacity + scale\
+  - Lock body scroll when open\
+- Create three modal contents:\
+  a) VenueModal: title, location, short description, simple gallery (grid), lazy-loaded images\
+  b) PhotosModal: grid + basic lightbox on click, lazy-loaded, next/image\
+  c) MusicModal: plays snippet audio independent of ambient; when open: duck ambient to 0.1; on close: restore to 0.3; ensure no conflicting playback\
+- Provide placeholder media paths in /public with clear TODOs\
+\
+5) Add to Calendar\
+- Create lib/calendar.ts:\
+  - buildGoogleCalendarUrl(\{ title, startISO, endISO, location, details \})\
+  - generateICS(\{ title, start, end, location, description, timezone \})\
+- Use America/New_York timezone for the event\
+- Event: Oct 2, 2026 in Asheville, NC (choose a reasonable default time window for placeholders, e.g. 4pm\'9611pm local; make it easy to change)\
+- Implement components/ui/AddToCalendarButton.tsx:\
+  - Primary CTA with \'93climax moment\'94 styling\
+  - Provides Google link + .ics download fallback (create Blob + download)\
+\
+6) Save-the-Date Scene Structure (placeholder but rearrangeable)\
+- Implement six scenes in components/scenes/:\
+  HeroScene\
+  StoryScene\
+  CulturalScene\
+  RevealScene\
+  ExploreScene\
+  PartyScene\
+- Each scene uses <Scene> + layers + ScrollReveal for content\
+- Provide placeholder copy and minimal ornament SVG stubs\
+- Ensure scenes accept background media props so order can be rearranged without rewriting animations\
+- /save-the-date/page.tsx should compose scenes in an array and map them, making reorder trivial\
+\
+7) Design System\
+- Tailwind theme extension:\
+  - forest green, ivory, muted maroon, gold accent, text #E0E0E0\
+- Typography using next/font:\
+  - Cinzel headings\
+  - Cormorant body/subhead\
+  - Tiro Devanagari Hindi for Hindi text\
+- Centralize tokens in tailwind config; avoid scattering hex values\
+\
+8) Performance Discipline\
+- next/image everywhere for images\
+- Videos: <video> with playsInline, muted, loop; lazy load below fold\
+- Avoid shipping large libraries\
+- Avoid layout shift: reserve space, use fixed containers\
+- Do not add GSAP unless absolutely necessary\
+\
+DELIVERABLES\
+- Create/update the file structure above with clean, typed TSX.\
+- Implement the core reusable systems: Scene engine, scroll reveal hook, audio provider + toggle, modal base + 3 modals, calendar utils + CTA button.\
+- Implement /save-the-date page using placeholder scenes and ensure it runs.\
+- Keep / (main page) as a simple placeholder for Phase 2 with shared layout/theme.\
+\
+ACCEPTANCE CHECKLIST\
+- /save-the-date renders 6 scenes, each full viewport, with restrained reveal animations on scroll.\
+- Audio toggle persists in sessionStorage; ambient audio does not autoplay with sound; fades smoothly.\
+- Opening Music modal ducks ambient volume and plays snippet; closing restores ambient volume; no double audio.\
+- Modals are accessible (ESC, focus trap, aria roles) and animated.\
+- Add to Calendar provides Google Calendar link + .ics download; timezone is America/New_York; event date is Oct 2, 2026.\
+- No monolithic components; scenes isolated; hooks reusable; clean architecture.\
+\
+IMPLEMENTATION ORDER (do in this order)\
+1) Tailwind theme + fonts in layout\
+2) Scene engine components\
+3) useScrollReveal + ScrollReveal wrapper\
+4) AudioProvider + AudioToggle\
+5) Modal base + 3 modal contents\
+6) calendar.ts + AddToCalendarButton\
+7) Build 6 scenes + compose /save-the-date/page.tsx\
+8) Final pass: ensure types, accessibility, no obvious perf pitfalls\
+\
+When you\'92re done, output:\
+- A brief summary of what you built\
+- The key files created/edited\
+- Any TODO placeholders for media assets in /public\
+- An overview READ ME file for the project }

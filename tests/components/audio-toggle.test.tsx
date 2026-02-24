@@ -1,3 +1,4 @@
+import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { AudioProvider } from "@/components/audio/AudioProvider";
 import { AudioToggle } from "@/components/audio/AudioToggle";
