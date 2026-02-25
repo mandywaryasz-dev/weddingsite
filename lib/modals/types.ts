@@ -1,1 +1,1 @@
-export type ModalId = "venue" | "photos" | "music";
+export type ModalId = "venue" | "story" | "party";

@@ -7,9 +7,9 @@ type BackgroundLayerProps = {
 };
 
 const overlayMap = {
-  light: "bg-black/20",
-  medium: "bg-black/35",
-  heavy: "bg-black/50"
+  light: "var(--scene-overlay-light)",
+  medium: "var(--scene-overlay-medium)",
+  heavy: "var(--scene-overlay-heavy)"
 };
 
 export function BackgroundLayer({ background, overlayIntensity = "medium" }: BackgroundLayerProps) {
@@ -39,7 +39,11 @@ export function BackgroundLayer({ background, overlayIntensity = "medium" }: Bac
           className="object-cover"
         />
       )}
-      <div className={`absolute inset-0 ${overlayMap[overlayIntensity]}`} aria-hidden />
+      <div
+        className="absolute inset-0"
+        style={{ backgroundColor: `rgb(0 0 0 / ${overlayMap[overlayIntensity]})` }}
+        aria-hidden
+      />
     </div>
   );
 }

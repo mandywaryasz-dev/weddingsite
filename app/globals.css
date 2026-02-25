@@ -3,8 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --background: #0d1814;
+  --background: #111715;
   --foreground: #f5efe4;
+  --scene-overlay-light: 0.2;
+  --scene-overlay-medium: 0.34;
+  --scene-overlay-heavy: 0.5;
+  --glass-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.07));
+  --glass-border: rgba(255, 255, 255, 0.26);
+  --glass-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
 }
 
 html,
@@ -15,7 +21,7 @@ body {
 
 body {
   color: var(--foreground);
-  background: radial-gradient(circle at top, #1f3a2e 0%, #0d1814 56%);
+  background-color: var(--background);
   font-family: var(--font-cormorant), serif;
 }
 
@@ -28,4 +34,51 @@ a:focus-visible {
 .scene-grain {
   background-image: radial-gradient(rgba(255, 255, 255, 0.05) 0.8px, transparent 0.8px);
   background-size: 2px 2px;
+}
+
+.glass-pill {
+  position: relative;
+  border-radius: 9999px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px) saturate(120%);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-pill:hover {
+  border-color: rgba(255, 255, 255, 0.36);
+  filter: brightness(1.07);
+}
+
+.glass-modal {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  background: linear-gradient(180deg, rgba(27, 35, 33, 0.8), rgba(21, 27, 26, 0.7));
+  backdrop-filter: blur(20px) saturate(130%);
+}
+
+.button-breathe {
+  animation: breathe 2.8s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

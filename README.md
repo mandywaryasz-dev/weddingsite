@@ -1,6 +1,6 @@
-# Amanda & Dushyant Wedding Website (Phase 1 MVP)
+# Amanda & Dushyant Wedding Website (Save-the-Date V2)
 
-Cinematic, scene-driven Save-the-Date built with Next.js App Router, TypeScript, Tailwind, Framer Motion, and Radix Dialog.
+Mobile-first cinematic Save-the-Date built with Next.js App Router, TypeScript, Tailwind, Framer Motion, and Radix Dialog.
 
 ## Route Structure
 
@@ -9,11 +9,12 @@ Cinematic, scene-driven Save-the-Date built with Next.js App Router, TypeScript,
 
 ## Architecture Overview
 
+- `lib/content/saveTheDate.ts` Typed single source of truth for scene copy, modal content, and media maps
 - `components/scenes/` Scene engine + six reusable scene implementations
-- `lib/scenes/manifest.ts` Typed scene manifest controlling scene order/content/background media
-- `components/ui/ScrollReveal.tsx` Reusable reveal wrapper powered by IntersectionObserver hook
+- `lib/scenes/manifest.ts` Scene order and key mapping (`contentKey`, `backgroundKey`)
+- `components/ui/ScrollReveal.tsx` Reveal + stagger system powered by IntersectionObserver + Framer Motion
 - `components/audio/` Ambient audio provider + sticky toggle with session persistence
-- `components/modals/` Radix-based accessible modal system with Venue/Photos/Music modals
+- `components/modals/` Accessible liquid-glass modal system with Venue / Our Story / The Party
 - `lib/calendar.ts` Google Calendar URL + `.ics` generation for `America/New_York`
 
 ## Design System
@@ -49,10 +50,7 @@ npm run test:e2e
 Add real assets under `/public`:
 
 - `public/media/hero-loop.mp4`
-- `public/media/reveal-loop.mp4`
 - `public/audio/ambient-loop.mp3`
 - `public/audio/music-preview.mp3`
 
-Current placeholder image set:
-
-- `public/images/*.svg` used as posters and gallery stubs
+Current placeholder-friendly image set is already wired in `public/images` and can be replaced by editing `lib/content/saveTheDate.ts`.

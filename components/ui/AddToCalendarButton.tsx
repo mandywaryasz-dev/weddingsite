@@ -11,7 +11,11 @@ const eventData = {
   timezone: "America/New_York"
 } as const;
 
-export function AddToCalendarButton() {
+type AddToCalendarButtonProps = {
+  label?: string;
+};
+
+export function AddToCalendarButton({ label = "Add to Calendar" }: AddToCalendarButtonProps) {
   const googleHref = buildGoogleCalendarUrl(eventData);
 
   const downloadICS = () => {
@@ -28,21 +32,21 @@ export function AddToCalendarButton() {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-col items-center gap-2">
       <a
         href={googleHref}
         target="_blank"
         rel="noreferrer"
-        className="rounded-full bg-gold px-6 py-3 font-heading text-xs uppercase tracking-[0.2em] text-forest transition hover:brightness-105"
+        className="glass-pill button-breathe px-6 py-3 font-heading text-xs uppercase tracking-[0.18em] text-ivory transition"
       >
-        Add to Google Calendar
+        {label}
       </a>
       <button
         type="button"
         onClick={downloadICS}
-        className="rounded-full border border-gold/70 px-6 py-3 font-heading text-xs uppercase tracking-[0.2em] text-gold transition hover:bg-gold hover:text-forest"
+        className="text-xs uppercase tracking-[0.15em] text-white/75 underline-offset-4 transition hover:text-white/90 hover:underline"
       >
-        Download .ics
+        Download .ics file
       </button>
     </div>
   );

@@ -3,8 +3,8 @@
 import { type ComponentType, useMemo, useState } from "react";
 import { AudioProvider } from "@/components/audio/AudioProvider";
 import { AudioToggle } from "@/components/audio/AudioToggle";
-import { MusicModal } from "@/components/modals/MusicModal";
-import { PhotosModal } from "@/components/modals/PhotosModal";
+import { PartyModal } from "@/components/modals/PartyModal";
+import { StoryModal } from "@/components/modals/StoryModal";
 import { VenueModal } from "@/components/modals/VenueModal";
 import { CulturalScene } from "@/components/scenes/CulturalScene";
 import { ExploreScene } from "@/components/scenes/ExploreScene";
@@ -12,9 +12,11 @@ import { HeroScene } from "@/components/scenes/HeroScene";
 import { PartyScene } from "@/components/scenes/PartyScene";
 import { RevealScene } from "@/components/scenes/RevealScene";
 import { StoryScene } from "@/components/scenes/StoryScene";
-import { SceneComponentProps } from "@/components/scenes/sceneComponentTypes";
+import type { SceneComponentProps } from "@/components/scenes/sceneComponentTypes";
+import { saveTheDateContent } from "@/lib/content/saveTheDate";
+import type { ModalId } from "@/lib/modals/types";
 import { sceneManifest } from "@/lib/scenes/manifest";
-import { SceneComponentKey } from "@/lib/scenes/types";
+import type { SceneComponentKey } from "@/lib/scenes/types";
 
 const sceneComponentMap: Record<SceneComponentKey, ComponentType<SceneComponentProps>> = {
   HeroScene,
@@ -26,15 +28,21 @@ const sceneComponentMap: Record<SceneComponentKey, ComponentType<SceneComponentP
 };
 
 export function SaveTheDateExperience() {
-  const [venueOpen, setVenueOpen] = useState(false);
-  const [photosOpen, setPhotosOpen] = useState(false);
-  const [musicOpen, setMusicOpen] = useState(false);
+  const [activeModal, setActiveModal] = useState<ModalId | null>(null);
+
+  const scenes = useMemo(
+    () =>
+      sceneManifest.map((scene) => ({
+        ...scene,
+        content: saveTheDateContent.scenes[scene.contentKey],
+        background: saveTheDateContent.backgrounds[scene.backgroundKey]
+      })),
+    []
+  );
 
   const actions = useMemo(
     () => ({
-      openVenue: () => setVenueOpen(true),
-      openPhotos: () => setPhotosOpen(true),
-      openMusic: () => setMusicOpen(true)
+      openModal: (modalId: ModalId) => setActiveModal(modalId)
     }),
     []
   );
@@ -44,14 +52,14 @@ export function SaveTheDateExperience() {
       <main className="relative isolate">
         <AudioToggle />
 
-        {sceneManifest.map((scene) => {
+        {scenes.map((scene) => {
           const Component = sceneComponentMap[scene.component];
           return <Component key={scene.id} scene={scene} actions={actions} />;
         })}
 
-        <VenueModal open={venueOpen} onOpenChange={setVenueOpen} />
-        <PhotosModal open={photosOpen} onOpenChange={setPhotosOpen} />
-        <MusicModal open={musicOpen} onOpenChange={setMusicOpen} />
+        <VenueModal open={activeModal === "venue"} onOpenChange={(open) => setActiveModal(open ? "venue" : null)} />
+        <StoryModal open={activeModal === "story"} onOpenChange={(open) => setActiveModal(open ? "story" : null)} />
+        <PartyModal open={activeModal === "party"} onOpenChange={(open) => setActiveModal(open ? "party" : null)} />
       </main>
     </AudioProvider>
   );

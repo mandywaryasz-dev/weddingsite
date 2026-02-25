@@ -2,34 +2,45 @@
 
 import Image from "next/image";
 import { Modal } from "@/components/modals/Modal";
+import { saveTheDateContent } from "@/lib/content/saveTheDate";
 
 type VenueModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
-const venueImages = [
-  "/images/venue-1.svg",
-  "/images/venue-2.svg",
-  "/images/venue-3.svg",
-  "/images/venue-4.svg"
-];
-
 export function VenueModal({ open, onOpenChange }: VenueModalProps) {
+  const content = saveTheDateContent.modals.venue;
+
   return (
-    <Modal
-      open={open}
-      onOpenChange={onOpenChange}
-      title="Venue Preview"
-      description="A mountain-view celebration setting in Asheville, NC."
-    >
-      <p className="mb-4 text-lg text-textMuted">
-        We are finalizing the exact venue details. Expect warm lights, garden textures, and mountain air.
-      </p>
+    <Modal open={open} onOpenChange={onOpenChange} title={content.title} description={content.description}>
+      <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-2xl border border-white/20">
+        <Image
+          src={content.heroImageSrc}
+          alt={content.heroImageAlt}
+          fill
+          sizes="(max-width: 768px) 90vw, 680px"
+          className="object-cover"
+        />
+      </div>
+      <div className="mb-5 space-y-2">
+        {content.bodyLines.map((line) => (
+          <p key={line} className="text-base leading-relaxed text-textMuted sm:text-lg">
+            {line}
+          </p>
+        ))}
+      </div>
       <div className="grid grid-cols-2 gap-3">
-        {venueImages.map((src) => (
-          <div key={src} className="relative aspect-square overflow-hidden rounded-lg border border-gold/20">
-            <Image src={src} alt="Venue preview" fill loading="lazy" sizes="(max-width: 768px) 45vw, 220px" className="object-cover" />
+        {content.gallery.map((image) => (
+          <div key={image.src} className="relative aspect-square overflow-hidden rounded-xl border border-white/20">
+            <Image
+              src={image.src}
+              alt={image.alt}
+              fill
+              loading="lazy"
+              sizes="(max-width: 768px) 45vw, 220px"
+              className="object-cover"
+            />
           </div>
         ))}
       </div>

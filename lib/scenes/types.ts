@@ -1,4 +1,12 @@
-export type SceneId = "hero" | "story" | "cultural" | "reveal" | "explore" | "party";
+import type {
+  SaveTheDateBackgroundKey,
+  SaveTheDateSceneContent,
+  SaveTheDateSceneKey,
+  SceneBackgroundMedia
+} from "@/lib/content/types";
+import type { ModalId } from "@/lib/modals/types";
+
+export type SceneId = SaveTheDateSceneKey;
 
 export type SceneComponentKey =
   | "HeroScene"
@@ -8,36 +16,24 @@ export type SceneComponentKey =
   | "ExploreScene"
   | "PartyScene";
 
-export type BackgroundMedia = {
-  type: "image" | "video";
-  src: string;
-  poster?: string;
-  mobileSrc?: string;
-  desktopSrc?: string;
-  priority?: boolean;
-};
-
-export type SceneContent = {
-  eyebrow: string;
-  title: string;
-  body: string;
-  accent?: string;
-  hindiLine?: string;
-};
+export type BackgroundMedia = SceneBackgroundMedia;
 
 export type SceneDefinition = {
   id: SceneId;
   component: SceneComponentKey;
   className?: string;
-  background: BackgroundMedia;
+  contentKey: SaveTheDateSceneKey;
+  backgroundKey: SaveTheDateBackgroundKey;
   overlay?: {
     intensity?: "light" | "medium" | "heavy";
   };
-  content: SceneContent;
+};
+
+export type ResolvedSceneDefinition = SceneDefinition & {
+  content: SaveTheDateSceneContent;
+  background: BackgroundMedia;
 };
 
 export type SceneRenderActions = {
-  openVenue: () => void;
-  openPhotos: () => void;
-  openMusic: () => void;
+  openModal: (modalId: ModalId) => void;
 };

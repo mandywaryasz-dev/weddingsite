@@ -1,6 +1,6 @@
-import { SceneDefinition, SceneRenderActions } from "@/lib/scenes/types";
+import type { ResolvedSceneDefinition, SceneRenderActions } from "@/lib/scenes/types";
 
 export type SceneComponentProps = {
-  scene: SceneDefinition;
+  scene: ResolvedSceneDefinition;
   actions: SceneRenderActions;
 };

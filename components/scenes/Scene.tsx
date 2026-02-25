@@ -12,6 +12,8 @@ type SceneProps = {
   overlayIntensity?: "light" | "medium" | "heavy";
   animatedGradient?: boolean;
   ornament?: ReactNode;
+  contentAlign?: "top" | "center" | "bottom";
+  contentClassName?: string;
   children: ReactNode;
 };
 
@@ -22,6 +24,8 @@ export function Scene({
   overlayIntensity = "medium",
   animatedGradient = true,
   ornament,
+  contentAlign = "center",
+  contentClassName,
   children
 }: SceneProps) {
   return (
@@ -29,7 +33,9 @@ export function Scene({
       <BackgroundLayer background={background} overlayIntensity={overlayIntensity} />
       <AtmosphereLayer animatedGradient={animatedGradient} />
       <OrnamentLayer>{ornament}</OrnamentLayer>
-      <ContentLayer>{children}</ContentLayer>
+      <ContentLayer align={contentAlign} className={contentClassName}>
+        {children}
+      </ContentLayer>
     </section>
   );
 }

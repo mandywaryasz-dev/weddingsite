@@ -28,4 +28,14 @@ describe("Modal", () => {
     fireEvent.click(screen.getByRole("button", { name: "Close" }));
     expect(screen.queryByText("Modal body")).not.toBeInTheDocument();
   });
+
+  it("closes on Escape key", async () => {
+    render(<ModalHarness />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Open Modal" }));
+    expect(await screen.findByText("Modal body")).toBeInTheDocument();
+
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByText("Modal body")).not.toBeInTheDocument();
+  });
 });

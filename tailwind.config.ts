@@ -22,12 +22,12 @@ const config: Config = {
       },
       keyframes: {
         "modal-in": {
-          "0%": { opacity: "0", transform: "translate(-50%, -48%) scale(0.96)" },
+          "0%": { opacity: "0", transform: "translate(-50%, -47%) scale(0.94)" },
           "100%": { opacity: "1", transform: "translate(-50%, -50%) scale(1)" }
         },
         "modal-out": {
           "0%": { opacity: "1", transform: "translate(-50%, -50%) scale(1)" },
-          "100%": { opacity: "0", transform: "translate(-50%, -48%) scale(0.98)" }
+          "100%": { opacity: "0", transform: "translate(-50%, -47%) scale(0.97)" }
         },
         grain: {
           "0%": { transform: "translate(0, 0)" },
@@ -42,8 +42,8 @@ const config: Config = {
         }
       },
       animation: {
-        "modal-in": "modal-in 260ms ease-out",
-        "modal-out": "modal-out 180ms ease-in",
+        "modal-in": "modal-in 340ms cubic-bezier(0.22, 1, 0.36, 1)",
+        "modal-out": "modal-out 220ms cubic-bezier(0.4, 0, 1, 1)",
         grain: "grain 8s steps(6) infinite",
         glow: "glow 6s ease-in-out infinite"
       }

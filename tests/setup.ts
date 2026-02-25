@@ -44,3 +44,50 @@ globalThis.requestAnimationFrame = (cb: FrameRequestCallback): number => {
 globalThis.cancelAnimationFrame = (id: number): void => {
   window.clearTimeout(id);
 };
+
+class MockIntersectionObserver {
+  constructor(private callback: IntersectionObserverCallback) {}
+  observe(target: Element) {
+    this.callback(
+      [
+        {
+          isIntersecting: true,
+          intersectionRatio: 1,
+          target
+        } as IntersectionObserverEntry
+      ],
+      this as unknown as IntersectionObserver
+    );
+  }
+  unobserve() {
+    return undefined;
+  }
+  disconnect() {
+    return undefined;
+  }
+  takeRecords() {
+    return [];
+  }
+  root = null;
+  rootMargin = "0px";
+  thresholds = [0];
+}
+
+Object.defineProperty(window, "IntersectionObserver", {
+  writable: true,
+  value: MockIntersectionObserver
+});
+
+Object.defineProperty(window, "matchMedia", {
+  writable: true,
+  value: (query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: () => undefined,
+    removeListener: () => undefined,
+    addEventListener: () => undefined,
+    removeEventListener: () => undefined,
+    dispatchEvent: () => false
+  })
+});

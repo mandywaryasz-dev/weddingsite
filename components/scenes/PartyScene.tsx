@@ -1,23 +1,29 @@
 import { Scene } from "@/components/scenes/Scene";
+import { MonogramSeal } from "@/components/scenes/SceneOrnaments";
 import { SceneComponentProps } from "@/components/scenes/sceneComponentTypes";
-import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { ScrollRevealGroup, ScrollRevealItem } from "@/components/ui/ScrollReveal";
 
-export function PartyScene({ scene, actions }: SceneComponentProps) {
+export function PartyScene({ scene }: SceneComponentProps) {
   return (
-    <Scene id={scene.id} background={scene.background} overlayIntensity={scene.overlay?.intensity}>
-      <ScrollReveal className="max-w-2xl space-y-6">
-        <p className="font-heading text-xs uppercase tracking-[0.22em] text-gold">{scene.content.eyebrow}</p>
-        <h2 className="font-heading text-4xl text-ivory sm:text-5xl">{scene.content.title}</h2>
-        <p className="text-xl text-textMuted">{scene.content.body}</p>
-        <p className="text-lg text-gold">{scene.content.accent}</p>
-        <button
-          type="button"
-          onClick={actions.openMusic}
-          className="rounded-full bg-maroon px-6 py-3 font-heading text-xs uppercase tracking-[0.2em] text-ivory transition hover:bg-gold hover:text-forest"
-        >
-          Music Preview
-        </button>
-      </ScrollReveal>
+    <Scene
+      id={scene.id}
+      className={scene.className}
+      background={scene.background}
+      overlayIntensity={scene.overlay?.intensity}
+      contentAlign="center"
+      contentClassName="justify-center text-center"
+    >
+      <ScrollRevealGroup className="mx-auto max-w-[24rem] space-y-4" threshold={0.22}>
+        <ScrollRevealItem>
+          <p className="text-[2.05rem] leading-tight text-ivory sm:text-5xl">{scene.content.closingLine}</p>
+        </ScrollRevealItem>
+        <ScrollRevealItem>
+          <p className="text-lg text-textMuted sm:text-xl">{scene.content.subLine}</p>
+        </ScrollRevealItem>
+        <ScrollRevealItem className="pt-8">
+          <MonogramSeal />
+        </ScrollRevealItem>
+      </ScrollRevealGroup>
     </Scene>
   );
 }
