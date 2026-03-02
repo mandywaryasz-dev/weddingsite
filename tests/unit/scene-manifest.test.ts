@@ -7,9 +7,9 @@ describe("scene manifest hero background", () => {
     expect(hero).toBeDefined();
     expect(hero?.background.type).toBe("video");
     expect(hero?.background.src).toBe("/media/hero-loop.mp4");
-    expect(hero?.background.sourceType).toBe("video/quicktime");
-    expect(hero?.background.fallbackSrc).toBe("/images/video-1.mp4");
-    expect(hero?.background.fallbackSourceType).toBe("video/mp4");
+    expect(hero?.background.sourceType).toBe("video/mp4");
+    expect(hero?.background.fallbackSrc).toBe("/media/hero-loop.webm");
+    expect(hero?.background.fallbackSourceType).toBe("video/webm");
     expect(hero?.background.poster).toBe("/images/hero-poster.png");
   });
 });
