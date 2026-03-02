@@ -7,9 +7,9 @@ export const sceneManifest: SceneDefinition[] = [
     background: {
       type: "video",
       src: "/media/hero-loop.mp4",
-      sourceType: "video/quicktime",
-      fallbackSrc: "/images/video-1.mp4",
-      fallbackSourceType: "video/mp4",
+      sourceType: "video/mp4",
+      fallbackSrc: "/media/hero-loop.webm",
+      fallbackSourceType: "video/webm",
       poster: "/images/hero-poster.png",
       priority: true
     },
