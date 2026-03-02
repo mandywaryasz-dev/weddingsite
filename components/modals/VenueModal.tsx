@@ -9,10 +9,11 @@ type VenueModalProps = {
 };
 
 const venueImages = [
-  "/images/venue-1.svg",
-  "/images/venue-2.svg",
-  "/images/venue-3.svg",
-  "/images/venue-4.svg"
+  // No dedicated venue gallery files exist yet; these are the closest location-forward assets in /public/images.
+  "/images/venue-1.png",
+  "/images/bg-landscape.png",
+  "/images/explore-bg.png",
+  "/images/hero-poster.png"
 ];
 
 export function VenueModal({ open, onOpenChange }: VenueModalProps) {
@@ -20,16 +21,23 @@ export function VenueModal({ open, onOpenChange }: VenueModalProps) {
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title="Venue Preview"
-      description="A mountain-view celebration setting in Asheville, NC."
+      title="The Venue"
+      description="Asheville, North Carolina"
     >
-      <p className="mb-4 text-lg text-textMuted">
-        We are finalizing the exact venue details. Expect warm lights, garden textures, and mountain air.
+      <p className="mb-5 text-lg text-ivory/90">
+        Mountain views, garden textures, and an evening celebration in Asheville. Full logistics and maps are coming soon.
       </p>
-      <div className="grid grid-cols-2 gap-3">
-        {venueImages.map((src) => (
-          <div key={src} className="relative aspect-square overflow-hidden rounded-lg border border-gold/20">
-            <Image src={src} alt="Venue preview" fill loading="lazy" sizes="(max-width: 768px) 45vw, 220px" className="object-cover" />
+      <div className="grid grid-cols-2 gap-3 sm:gap-4">
+        {venueImages.map((src, index) => (
+          <div key={src} className="relative aspect-[4/3] overflow-hidden rounded-xl border border-ivory/25 bg-black/20">
+            <Image
+              src={src}
+              alt={`Asheville venue preview ${index + 1}`}
+              fill
+              loading="lazy"
+              sizes="(max-width: 768px) 46vw, 320px"
+              className="object-cover"
+            />
           </div>
         ))}
       </div>

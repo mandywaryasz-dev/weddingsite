@@ -9,10 +9,10 @@ export function AudioToggle() {
     <button
       type="button"
       onClick={() => setMuted(!isMuted)}
-      aria-label={isMuted ? "Unmute ambient audio" : "Mute ambient audio"}
-      className="fixed right-4 top-4 z-40 rounded-full border border-gold/80 bg-forest/80 px-4 py-2 text-xs font-heading uppercase tracking-[0.16em] text-ivory backdrop-blur-sm transition hover:bg-gold hover:text-forest"
+      aria-label={isMuted ? "Enable page audio" : "Disable page audio"}
+      className="fixed right-4 top-4 z-40 rounded-full border border-ivory/65 bg-black/35 px-4 py-1.5 font-heading text-[0.62rem] uppercase tracking-[0.18em] text-ivory shadow-[0_12px_25px_rgba(0,0,0,0.28)] backdrop-blur-md transition hover:bg-white/20 sm:right-6 sm:top-6"
     >
-      {isMuted ? "Sound Off" : "Sound On"}
+      Audio {isMuted ? "Off" : "On"}
     </button>
   );
 }

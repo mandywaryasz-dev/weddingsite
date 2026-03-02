@@ -1,16 +1,13 @@
-export type SceneId = "hero" | "story" | "cultural" | "reveal" | "explore" | "party";
+export type SceneId = "hero" | "cultural" | "reveal" | "party" | "explore";
 
-export type SceneComponentKey =
-  | "HeroScene"
-  | "StoryScene"
-  | "CulturalScene"
-  | "RevealScene"
-  | "ExploreScene"
-  | "PartyScene";
+export type SceneComponentKey = "HeroScene" | "CulturalScene" | "RevealScene" | "PartyScene" | "ExploreScene";
 
 export type BackgroundMedia = {
   type: "image" | "video";
   src: string;
+  sourceType?: string;
+  fallbackSrc?: string;
+  fallbackSourceType?: string;
   poster?: string;
   mobileSrc?: string;
   desktopSrc?: string;
@@ -18,11 +15,14 @@ export type BackgroundMedia = {
 };
 
 export type SceneContent = {
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
+  subtitle?: string;
   body: string;
+  secondaryBody?: string;
   accent?: string;
   hindiLine?: string;
+  ctaLabel?: string;
 };
 
 export type SceneDefinition = {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { Modal } from "@/components/modals/Modal";
 import { useAudio } from "@/components/audio/AudioProvider";
 
@@ -10,35 +10,38 @@ type MusicModalProps = {
 };
 
 export function MusicModal({ open, onOpenChange }: MusicModalProps) {
-  const snippetRef = useRef<HTMLAudioElement | null>(null);
   const { duckAmbient, restoreAmbient } = useAudio();
 
   useEffect(() => {
-    const snippet = snippetRef.current;
-    if (!snippet) return;
-
     if (open) {
-      void duckAmbient(0.1);
-      void snippet.play().catch(() => undefined);
+      // Keep ambient fully ducked while playlist preview is visible to avoid overlapping audio layers.
+      void duckAmbient(0);
     } else {
-      snippet.pause();
-      snippet.currentTime = 0;
       void restoreAmbient(0.3);
     }
 
     return () => {
-      snippet.pause();
-      snippet.currentTime = 0;
+      void restoreAmbient(0.3);
     };
   }, [duckAmbient, open, restoreAmbient]);
 
   return (
-    <Modal open={open} onOpenChange={onOpenChange} title="Music Preview" description="A short snippet from the soundtrack of our weekend.">
-      <p className="mb-4 text-base text-textMuted">
-        Ambient track is ducked while this preview plays so audio remains clear and balanced.
+    <Modal open={open} onOpenChange={onOpenChange} title="The Party" description="A preview of the soundtrack for our celebration.">
+      <p className="mb-4 text-base text-ivory/90">
+        The page ambience is paused while this playlist is open so only one audio source plays at a time.
       </p>
-      <audio ref={snippetRef} src="/audio/music-preview.mp3" controls className="w-full" preload="none" />
-      <p className="mt-3 text-xs text-textMuted">TODO: Replace with licensed preview clip in `/public/audio/music-preview.mp3`.</p>
+      <iframe
+        data-testid="embed-iframe"
+        title="Spotify wedding playlist"
+        style={{ borderRadius: 12 }}
+        src="https://open.spotify.com/embed/playlist/6jtFLRCZDlfvMPYiVS25Pr?utm_source=generator"
+        width="100%"
+        height="352"
+        frameBorder="0"
+        allowFullScreen
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy"
+      />
     </Modal>
   );
 }

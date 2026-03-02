@@ -11,18 +11,16 @@ import { ExploreScene } from "@/components/scenes/ExploreScene";
 import { HeroScene } from "@/components/scenes/HeroScene";
 import { PartyScene } from "@/components/scenes/PartyScene";
 import { RevealScene } from "@/components/scenes/RevealScene";
-import { StoryScene } from "@/components/scenes/StoryScene";
 import { SceneComponentProps } from "@/components/scenes/sceneComponentTypes";
 import { sceneManifest } from "@/lib/scenes/manifest";
 import { SceneComponentKey } from "@/lib/scenes/types";
 
 const sceneComponentMap: Record<SceneComponentKey, ComponentType<SceneComponentProps>> = {
   HeroScene,
-  StoryScene,
   CulturalScene,
   RevealScene,
-  ExploreScene,
-  PartyScene
+  PartyScene,
+  ExploreScene
 };
 
 export function SaveTheDateExperience() {

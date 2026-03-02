@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
-  <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#1F3A2E"/><stop offset="1" stop-color="#6E2F35"/></linearGradient></defs>
-  <rect width="1600" height="900" fill="url(#g)"/>
-  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#F5EFE4" font-size="56" font-family="serif">Hero Poster Placeholder</text>
-</svg>

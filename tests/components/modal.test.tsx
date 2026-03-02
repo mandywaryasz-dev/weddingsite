@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { useState } from "react";
 import { Modal } from "@/components/modals/Modal";
 
@@ -27,5 +27,27 @@ describe("Modal", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Close" }));
     expect(screen.queryByText("Modal body")).not.toBeInTheDocument();
+  });
+
+  it("closes on Escape", async () => {
+    render(<ModalHarness />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Open Modal" }));
+    expect(await screen.findByText("Modal body")).toBeInTheDocument();
+
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByText("Modal body")).not.toBeInTheDocument();
+  });
+
+  it("closes on overlay click", async () => {
+    render(<ModalHarness />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Open Modal" }));
+    expect(await screen.findByText("Modal body")).toBeInTheDocument();
+
+    const overlay = screen.getByTestId("modal-overlay");
+    fireEvent.pointerDown(overlay);
+    fireEvent.click(overlay);
+    await waitFor(() => expect(screen.queryByText("Modal body")).not.toBeInTheDocument());
   });
 });

@@ -1,8 +1,8 @@
 export const motionTokens = {
   reveal: {
-    duration: 0.75,
+    duration: 0.62,
     ease: [0.22, 1, 0.36, 1] as const,
-    y: 24,
-    scale: 1.03
+    y: 16,
+    scale: 1.01
   }
 };

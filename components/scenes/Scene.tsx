@@ -11,6 +11,10 @@ type SceneProps = {
   background: BackgroundMedia;
   overlayIntensity?: "light" | "medium" | "heavy";
   animatedGradient?: boolean;
+  contentAlign?: "start" | "center" | "end";
+  contentClassName?: string;
+  contentInnerClassName?: string;
+  disableParallaxOrnaments?: boolean;
   ornament?: ReactNode;
   children: ReactNode;
 };
@@ -21,6 +25,10 @@ export function Scene({
   background,
   overlayIntensity = "medium",
   animatedGradient = true,
+  contentAlign = "center",
+  contentClassName,
+  contentInnerClassName,
+  disableParallaxOrnaments = false,
   ornament,
   children
 }: SceneProps) {
@@ -28,8 +36,10 @@ export function Scene({
     <section id={id} className={`relative min-h-screen w-full overflow-hidden ${className ?? ""}`}>
       <BackgroundLayer background={background} overlayIntensity={overlayIntensity} />
       <AtmosphereLayer animatedGradient={animatedGradient} />
-      <OrnamentLayer>{ornament}</OrnamentLayer>
-      <ContentLayer>{children}</ContentLayer>
+      <OrnamentLayer parallax={!disableParallaxOrnaments}>{ornament}</OrnamentLayer>
+      <ContentLayer align={contentAlign} className={contentClassName} innerClassName={contentInnerClassName}>
+        {children}
+      </ContentLayer>
     </section>
   );
 }
