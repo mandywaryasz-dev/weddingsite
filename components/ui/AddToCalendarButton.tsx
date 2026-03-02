@@ -1,6 +1,7 @@
 "use client";
 
 import { buildGoogleCalendarUrl, generateICS } from "@/lib/calendar";
+import clsx from "clsx";
 
 const eventData = {
   title: "Amanda & Dushyant Wedding Weekend",
@@ -11,7 +12,12 @@ const eventData = {
   timezone: "America/New_York"
 } as const;
 
-export function AddToCalendarButton() {
+type AddToCalendarButtonProps = {
+  label?: string;
+  className?: string;
+};
+
+export function AddToCalendarButton({ label = "Add to Calendar", className }: AddToCalendarButtonProps) {
   const googleHref = buildGoogleCalendarUrl(eventData);
 
   const downloadICS = () => {
@@ -28,22 +34,22 @@ export function AddToCalendarButton() {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <a
-        href={googleHref}
-        target="_blank"
-        rel="noreferrer"
-        className="rounded-full bg-gold px-6 py-3 font-heading text-xs uppercase tracking-[0.2em] text-forest transition hover:brightness-105"
-      >
-        Add to Google Calendar
-      </a>
+    <div className={clsx("space-y-2", className)}>
       <button
         type="button"
         onClick={downloadICS}
-        className="rounded-full border border-gold/70 px-6 py-3 font-heading text-xs uppercase tracking-[0.2em] text-gold transition hover:bg-gold hover:text-forest"
+        className="rounded-full border border-ivory/55 bg-white/10 px-7 py-3 font-body text-xl text-ivory shadow-[0_12px_30px_rgba(0,0,0,0.28)] backdrop-blur transition hover:bg-white/20"
       >
-        Download .ics
+        {label}
       </button>
+      <div className="flex items-center justify-center gap-4 text-sm text-textMuted/95">
+        <a href={googleHref} target="_blank" rel="noreferrer" className="underline-offset-4 transition hover:text-ivory hover:underline">
+          Google
+        </a>
+        <button type="button" onClick={downloadICS} className="underline-offset-4 transition hover:text-ivory hover:underline">
+          Apple/Outlook (.ics)
+        </button>
+      </div>
     </div>
   );
 }

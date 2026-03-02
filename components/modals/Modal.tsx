@@ -23,31 +23,34 @@ export function Modal({
   children,
   className
 }: ModalProps) {
+  const modalDescription = description ?? "Dialog content.";
+
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       {trigger ? <Dialog.Trigger asChild>{trigger}</Dialog.Trigger> : null}
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] transition-opacity duration-200 data-[state=closed]:opacity-0 data-[state=open]:opacity-100" />
+        <Dialog.Overlay
+          data-testid="modal-overlay"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[3px] transition-opacity duration-300 data-[state=closed]:opacity-0 data-[state=open]:opacity-100"
+        />
         <Dialog.Content
-          aria-describedby={description ? "modal-description" : undefined}
+          data-testid="modal-content"
           className={clsx(
-            "fixed left-1/2 top-1/2 z-50 w-[min(92vw,720px)] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-gold/30 bg-forest/95 p-6 text-ivory shadow-2xl data-[state=open]:animate-modal-in data-[state=closed]:animate-modal-out",
+            "fixed left-1/2 top-1/2 z-50 w-[min(92vw,760px)] max-h-[86svh] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl border border-ivory/25 bg-[linear-gradient(165deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04))] p-6 text-ivory shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl data-[state=open]:animate-modal-in data-[state=closed]:animate-modal-out sm:p-7",
             className
           )}
         >
           <header className="mb-4 flex items-start justify-between gap-4">
             <div>
-              <Dialog.Title className="font-heading text-2xl text-ivory">{title}</Dialog.Title>
-              {description ? (
-                <Dialog.Description id="modal-description" className="mt-2 text-base text-textMuted">
-                  {description}
-                </Dialog.Description>
-              ) : null}
+              <Dialog.Title className="font-heading text-2xl tracking-[0.06em] text-ivory sm:text-3xl">{title}</Dialog.Title>
+              <Dialog.Description className={clsx("mt-2 text-base text-ivory/85", description ? "" : "sr-only")}>
+                {modalDescription}
+              </Dialog.Description>
             </div>
             <Dialog.Close asChild>
               <button
                 type="button"
-                className="rounded-full border border-gold/40 px-3 py-1 text-xs font-heading uppercase tracking-[0.14em] text-gold"
+                className="rounded-full border border-ivory/50 bg-black/25 px-3 py-1 text-[0.68rem] font-heading uppercase tracking-[0.18em] text-ivory transition hover:bg-white/20"
               >
                 Close
               </button>

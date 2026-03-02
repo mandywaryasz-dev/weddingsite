@@ -12,7 +12,7 @@ describe("AudioToggle", () => {
       </AudioProvider>
     );
 
-    const button = screen.getByRole("button", { name: /unmute ambient audio/i });
+    const button = screen.getByRole("button", { name: /enable page audio/i });
     fireEvent.click(button);
 
     expect(window.sessionStorage.getItem(AUDIO_MUTED_KEY)).toBe("false");

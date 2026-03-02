@@ -12,6 +12,10 @@ const overlayMap = {
   heavy: "bg-black/50"
 };
 
+function inferVideoType(src: string) {
+  return src.endsWith(".mov") ? "video/quicktime" : "video/mp4";
+}
+
 export function BackgroundLayer({ background, overlayIntensity = "medium" }: BackgroundLayerProps) {
   return (
     <div className="absolute inset-0 -z-20 overflow-hidden">
@@ -26,7 +30,13 @@ export function BackgroundLayer({ background, overlayIntensity = "medium" }: Bac
           poster={background.poster}
           aria-hidden
         >
-          <source src={background.src} type="video/mp4" />
+          <source src={background.src} type={background.sourceType ?? inferVideoType(background.src)} />
+          {background.fallbackSrc ? (
+            <source
+              src={background.fallbackSrc}
+              type={background.fallbackSourceType ?? inferVideoType(background.fallbackSrc)}
+            />
+          ) : null}
         </video>
       ) : (
         <Image
