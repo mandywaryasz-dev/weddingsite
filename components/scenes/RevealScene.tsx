@@ -11,7 +11,7 @@ export function RevealScene({ scene }: SceneComponentProps) {
         <div className="mb-10 flex items-center justify-center gap-5" aria-hidden>
           <span className="h-px w-20 bg-silver/70 sm:w-24" />
           <span className="w-8 opacity-95">
-            <Image src="/images/monogram.svg" alt="" width={90} height={90} unoptimized className="h-auto w-full" />
+            <Image src="/images/lotus.svg" alt="" width={90} height={90} unoptimized className="h-auto w-full" />
           </span>
           <span className="h-px w-20 bg-silver/70 sm:w-24" />
         </div>
@@ -25,7 +25,7 @@ export function RevealScene({ scene }: SceneComponentProps) {
         <div className="mt-10 flex items-center justify-center gap-5" aria-hidden>
           <span className="h-px w-20 bg-silver/70 sm:w-24" />
           <span className="w-8 opacity-95">
-            <Image src="/images/monogram.svg" alt="" width={90} height={90} unoptimized className="h-auto w-full" />
+            <Image src="/images/lotus.svg" alt="" width={90} height={90} unoptimized className="h-auto w-full" />
           </span>
           <span className="h-px w-20 bg-silver/70 sm:w-24" />
         </div>

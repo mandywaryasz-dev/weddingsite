@@ -26,7 +26,7 @@ export function HeroScene({ scene }: SceneComponentProps) {
         ) : null}
         <div className="mx-auto mt-10 h-16 w-px bg-silver/75" aria-hidden />
         <div className="mx-auto mt-10 w-14 opacity-95 sm:w-16">
-          <Image src="/images/monogram.svg" alt="" width={120} height={120} unoptimized className="h-auto w-full" />
+          <Image src="/images/lotus.svg" alt="" width={120} height={120} unoptimized className="h-auto w-full" />
         </div>
       </ScrollReveal>
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black/55 via-black/15 to-transparent" aria-hidden />
