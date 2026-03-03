@@ -11,6 +11,7 @@ const config: Config = {
       colors: {
         forest: "#1F3A2E",
         ivory: "#F5EFE4",
+        silver: "#DBDBDB",
         maroon: "#6E2F35",
         gold: "#C7A45D",
         textMuted: "#E0E0E0"

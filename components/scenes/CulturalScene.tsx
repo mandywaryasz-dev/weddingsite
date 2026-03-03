@@ -22,21 +22,27 @@ export function CulturalScene({ scene }: SceneComponentProps) {
         </>
       }
     >
-      <ScrollReveal className="text-center">
-        <div className="mx-auto mb-6 w-8 opacity-95">
-          <Image src="/images/monogram.svg" alt="" width={90} height={90} unoptimized className="h-auto w-full" />
-        </div>
-        <div className="mx-auto mb-6 h-14 w-px bg-ivory/75" aria-hidden />
-        <h2 className="font-body text-[1.9rem] leading-[1.45] text-ivory sm:text-[2.4rem]">
-          {scene.content.title}
-          {scene.content.subtitle ? <span className="block">{scene.content.subtitle}</span> : null}
-          <span className="block">{scene.content.body}</span>
-        </h2>
-        <p className="mt-7 text-xl leading-relaxed text-ivory/95 sm:text-[1.6rem]">{scene.content.accent}</p>
-        {scene.content.secondaryBody ? <p className="mt-1 text-xl leading-relaxed text-ivory/95 sm:text-[1.6rem]">{scene.content.secondaryBody}</p> : null}
-        {scene.content.hindiLine ? <p className="mt-4 font-devanagari text-lg text-ivory/90 sm:text-xl">{scene.content.hindiLine}</p> : null}
-        <div className="mx-auto mt-8 h-14 w-px bg-ivory/70" aria-hidden />
-      </ScrollReveal>
+      <div className="relative px-6">
+        <div className="absolute left-0 top-0 h-full w-px bg-silver/40" aria-hidden />
+        <div className="absolute right-0 top-0 h-full w-px bg-silver/40" aria-hidden />
+        <ScrollReveal className="text-center">
+          <div className="mx-auto mb-6 w-8 opacity-95">
+            <Image src="/images/monogram.svg" alt="" width={90} height={90} unoptimized className="h-auto w-full" />
+          </div>
+          <div className="mx-auto mb-6 h-14 w-px bg-silver/75" aria-hidden />
+          <h2 className="font-body text-[1.9rem] leading-[1.45] text-silver sm:text-[2.4rem]">
+            {scene.content.title}
+            {scene.content.subtitle ? <span className="block">{scene.content.subtitle}</span> : null}
+            <span className="block">{scene.content.body}</span>
+          </h2>
+          <p className="mt-7 text-xl leading-relaxed text-silver/95 sm:text-[1.6rem]">{scene.content.accent}</p>
+          {scene.content.secondaryBody ? <p className="mt-1 text-xl leading-relaxed text-silver/95 sm:text-[1.6rem]">{scene.content.secondaryBody}</p> : null}
+          {scene.content.hindiLine ? <p className="mt-4 font-devanagari text-lg text-silver/90 sm:text-xl">{scene.content.hindiLine}</p> : null}
+          <div className="mx-auto mt-8 w-10 opacity-80" aria-hidden>
+            <Image src="/images/culture-flower.svg" alt="" width={90} height={90} unoptimized className="h-auto w-full" />
+          </div>
+        </ScrollReveal>
+      </div>
     </Scene>
   );
 }

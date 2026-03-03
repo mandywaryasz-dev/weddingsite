@@ -22,13 +22,13 @@ export function PartyScene({ scene }: SceneComponentProps) {
       }
     >
       <ScrollReveal className="text-center">
-        <div className="mx-auto mb-8 h-14 w-px bg-ivory/70" aria-hidden />
-        <h2 className="font-body text-[2rem] leading-[1.5] text-ivory sm:text-[2.7rem]">
+        <div className="mx-auto mb-8 h-14 w-px bg-silver/70" aria-hidden />
+        <h2 className="font-body text-[2rem] leading-[1.5] text-silver sm:text-[2.7rem]">
           {scene.content.title}
           {scene.content.subtitle ? <span className="block">{scene.content.subtitle}</span> : null}
           <span className="block">{scene.content.body}</span>
         </h2>
-        <div className="mx-auto mt-8 w-14 rounded-2xl border border-ivory/50 p-2 sm:w-16" aria-hidden>
+        <div className="mx-auto mt-8 w-14 sm:w-16" aria-hidden>
           <Image src="/images/lotus.svg" alt="" width={120} height={120} unoptimized className="h-auto w-full opacity-90" />
         </div>
       </ScrollReveal>
