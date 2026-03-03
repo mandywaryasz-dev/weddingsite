@@ -34,9 +34,9 @@ export const sceneManifest: SceneDefinition[] = [
       title: "Two cultures.",
       subtitle: "Two paths.",
       body: "One promise.",
-      accent: "In every way that matters,",
+      accent: "I am yours. You are mine.",
       secondaryBody: "Let us walk together.",
-      hindiLine: "ये सफर अब दोनों का। साथ, अब सदा।"
+      hindiLine: "मैं तुम्हारा हूँ। तुम मेरी हो। आओ, साथ चलें।"
     }
   },
   {
@@ -49,7 +49,7 @@ export const sceneManifest: SceneDefinition[] = [
     overlay: { intensity: "medium" },
     content: {
       title: "Save the Date",
-      subtitle: "Amanda Wargo & Dushyant Verma",
+      subtitle: "Amanda Waryasz & Dushyant Verma",
       body: "Asheville, North Carolina",
       accent: "October 2, 2026",
       ctaLabel: "Add to Calendar"
