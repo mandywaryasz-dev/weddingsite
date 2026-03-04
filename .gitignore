@@ -24,3 +24,6 @@ pnpm-debug.log*
 # test
 /playwright-report
 /test-results
+
+# OpenNext
+.open-next
