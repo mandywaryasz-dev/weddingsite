@@ -21,7 +21,7 @@ export function CulturalScene({ scene }: SceneComponentProps) {
           <div className="mx-auto mb-6 w-8 opacity-95">
             <Image src="/images/lotus.svg" alt="" width={90} height={90} unoptimized className="h-auto w-full" />
           </div>
-          <h2 className="font-body text-[1.9rem] leading-[1.45] text-silver sm:text-[2.4rem]">
+          <h2 className="font-heading text-[1.9rem] leading-[1.45] text-silver sm:text-[2.4rem]">
             {scene.content.title}
             {scene.content.subtitle ? <span className="block">{scene.content.subtitle}</span> : null}
             <span className="block">{scene.content.body}</span>

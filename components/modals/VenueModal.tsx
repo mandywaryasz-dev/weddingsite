@@ -9,11 +9,10 @@ type VenueModalProps = {
 };
 
 const venueImages = [
-  // No dedicated venue gallery files exist yet; these are the closest location-forward assets in /public/images.
   "/images/venue-1.png",
-  "/images/bg-landscape.png",
-  "/images/explore-bg.png",
-  "/images/hero-poster.png"
+  "/images/venue-2.png",
+  "/images/venue-3.png",
+  "/images/venue-4.png",
 ];
 
 export function VenueModal({ open, onOpenChange }: VenueModalProps) {
@@ -22,20 +21,21 @@ export function VenueModal({ open, onOpenChange }: VenueModalProps) {
       open={open}
       onOpenChange={onOpenChange}
       title="The Venue"
-      description="Asheville, North Carolina"
+      description="Haiku – Asheville, NC"
     >
-      <p className="mb-5 text-lg text-ivory/90">
-        Mountain views, garden textures, and an evening celebration in Asheville. Full logistics and maps are coming soon.
+      <p className="mb-4 text-base text-ivory/90">
+        Expect garden textures, warm lights, and one very good reason to celebrate.
       </p>
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {venueImages.map((src, index) => (
-          <div key={src} className="relative aspect-[4/3] overflow-hidden rounded-xl border border-ivory/25 bg-black/20">
+          <div key={src} className="relative aspect-[4/3] overflow-hidden rounded-xl">
             <Image
               src={src}
               alt={`Asheville venue preview ${index + 1}`}
               fill
               loading="lazy"
               sizes="(max-width: 768px) 46vw, 320px"
+              quality={90}
               className="object-cover"
             />
           </div>

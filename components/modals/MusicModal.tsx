@@ -26,10 +26,7 @@ export function MusicModal({ open, onOpenChange }: MusicModalProps) {
   }, [duckAmbient, open, restoreAmbient]);
 
   return (
-    <Modal open={open} onOpenChange={onOpenChange} title="The Party" description="A preview of the soundtrack for our celebration.">
-      <p className="mb-4 text-base text-ivory/90">
-        The page ambience is paused while this playlist is open so only one audio source plays at a time.
-      </p>
+    <Modal open={open} onOpenChange={onOpenChange} title="The Party" description={<>Songs we love. Songs you'll dance to. <strong>No skips allowed.</strong></>}>
       <iframe
         data-testid="embed-iframe"
         title="Spotify wedding playlist"

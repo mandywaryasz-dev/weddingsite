@@ -152,6 +152,7 @@ export function BackgroundLayer({ background, overlayIntensity = "medium" }: Bac
             priority={Boolean(background.priority)}
             loading={background.priority ? "eager" : "lazy"}
             sizes="100vw"
+            quality={90}
             className="object-cover"
             aria-hidden
           />
@@ -186,6 +187,7 @@ export function BackgroundLayer({ background, overlayIntensity = "medium" }: Bac
           priority={Boolean(background.priority)}
           loading={background.priority ? "eager" : "lazy"}
           sizes="100vw"
+          quality={90}
           className="object-cover"
         />
       )}
