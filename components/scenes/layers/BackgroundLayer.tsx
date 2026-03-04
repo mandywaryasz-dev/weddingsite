@@ -10,9 +10,9 @@ type BackgroundLayerProps = {
 };
 
 const overlayMap = {
-  light: "bg-black/20",
-  medium: "bg-black/35",
-  heavy: "bg-black/50"
+  light:  "bg-gradient-to-t from-black/40 via-black/10 to-transparent",
+  medium: "bg-gradient-to-t from-black/55 via-black/15 to-transparent",
+  heavy:  "bg-gradient-to-t from-black/70 via-black/30 to-black/10",
 };
 
 function inferVideoType(src: string) {
@@ -152,6 +152,7 @@ export function BackgroundLayer({ background, overlayIntensity = "medium" }: Bac
             priority={Boolean(background.priority)}
             loading={background.priority ? "eager" : "lazy"}
             sizes="100vw"
+            quality={90}
             className="object-cover"
             aria-hidden
           />
@@ -186,6 +187,7 @@ export function BackgroundLayer({ background, overlayIntensity = "medium" }: Bac
           priority={Boolean(background.priority)}
           loading={background.priority ? "eager" : "lazy"}
           sizes="100vw"
+          quality={90}
           className="object-cover"
         />
       )}

@@ -11,7 +11,11 @@ export function ExploreScene({ scene, actions }: SceneComponentProps) {
       overlayIntensity={scene.overlay?.intensity}
       contentClassName="flex-col py-28 sm:py-40"
       contentInnerClassName="mx-auto max-w-[38rem]"
-      ornament={<div className="absolute inset-0 bg-[url('/images/bg-texture.png')] bg-cover bg-center opacity-[0.06] mix-blend-screen" />}
+      ornament={
+        <div className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-screen" aria-hidden>
+          <Image src="/images/bg-texture.png" alt="" fill sizes="100vw" quality={75} className="object-cover" />
+        </div>
+      }
     >
       <div className="flex flex-col gap-48 sm:gap-64">
 

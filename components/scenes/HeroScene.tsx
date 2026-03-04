@@ -29,8 +29,9 @@ export function HeroScene({ scene }: SceneComponentProps) {
           <Image src="/images/lotus.svg" alt="" width={120} height={120} unoptimized className="h-auto w-full" />
         </div>
       </ScrollReveal>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black/55 via-black/15 to-transparent" aria-hidden />
-      <div className="pointer-events-none absolute inset-0 bg-[url('/images/bg-texture.png')] bg-cover bg-center opacity-[0.06] mix-blend-screen" aria-hidden />
+      <div className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-screen" aria-hidden>
+        <Image src="/images/bg-texture.png" alt="" fill sizes="100vw" quality={75} className="object-cover" />
+      </div>
     </Scene>
   );
 }
