@@ -21,6 +21,36 @@ const config: Config = {
         body: ["var(--font-cormorant)", "serif"],
         devanagari: ["var(--font-tiro-devanagari)", "serif"]
       },
+      fontSize: {
+        display: ["var(--text-display)", { lineHeight: "var(--leading-display)" }],
+        headline: ["var(--text-headline)", { lineHeight: "var(--leading-headline)" }],
+        subhead: ["var(--text-subhead)", { lineHeight: "var(--leading-subhead)" }],
+        body: ["var(--text-body)", { lineHeight: "var(--leading-body)" }],
+        "body-sm": ["var(--text-body-sm)", { lineHeight: "var(--leading-body)" }],
+        label: ["var(--text-label)", { lineHeight: "var(--leading-label)" }],
+        button: ["var(--text-button)", { lineHeight: "var(--leading-label)" }],
+        micro: ["var(--text-micro)", { lineHeight: "var(--leading-label)" }]
+      },
+      letterSpacing: {
+        display: "var(--tracking-display)",
+        heading: "var(--tracking-heading)",
+        label: "var(--tracking-label)",
+        micro: "var(--tracking-micro)"
+      },
+      spacing: {
+        "scene-y": "var(--space-scene-y)",
+        "scene-x": "var(--space-scene-x)",
+        "stack-lg": "var(--space-stack-lg)",
+        "stack-md": "var(--space-stack-md)",
+        "stack-sm": "var(--space-stack-sm)",
+        "stack-xs": "var(--space-stack-xs)",
+        divider: "var(--space-divider)",
+        "explore-gap": "var(--space-explore-gap)"
+      },
+      maxWidth: {
+        measure: "var(--measure)",
+        "measure-lg": "var(--measure-lg)"
+      },
       keyframes: {
         "modal-in": {
           "0%": { opacity: "0", transform: "translate(-50%, -48%) scale(0.96)" },

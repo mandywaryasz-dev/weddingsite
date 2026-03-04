@@ -6,23 +6,23 @@ import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 export function RevealScene({ scene }: SceneComponentProps) {
   return (
-    <Scene id={scene.id} background={scene.background} overlayIntensity={scene.overlay?.intensity} contentInnerClassName="mx-auto max-w-[38rem]">
+    <Scene id={scene.id} background={scene.background} overlayIntensity={scene.overlay?.intensity} contentInnerClassName="mx-auto max-w-measure-lg">
       <ScrollReveal className="text-center">
-        <div className="mb-10 flex items-center justify-center gap-5" aria-hidden>
+        <div className="mb-divider flex items-center justify-center gap-5" aria-hidden>
           <span className="h-px w-20 bg-silver/70 sm:w-24" />
           <span className="w-8 opacity-95">
             <Image src="/images/lotus.svg" alt="" width={90} height={90} unoptimized className="h-auto w-full" />
           </span>
           <span className="h-px w-20 bg-silver/70 sm:w-24" />
         </div>
-        <h2 className="font-heading text-5xl tracking-[0.06em] text-silver sm:text-[4.2rem]">{scene.content.title}</h2>
-        {scene.content.subtitle ? <p className="mt-4 font-body text-xl text-silver/95 sm:text-3xl">{scene.content.subtitle}</p> : null}
+        <h2 className="font-heading text-display tracking-display text-silver/90">{scene.content.title}</h2>
+        {scene.content.subtitle ? <p className="mt-4 font-body text-body text-silver/90">{scene.content.subtitle}</p> : null}
         {scene.content.accent ? (
-          <p className="mt-2 font-body text-xl text-silver/95 sm:text-2xl">{scene.content.accent}</p>
+          <p className="mt-2 font-body text-body text-silver/90">{scene.content.accent}</p>
         ) : null}
-        <p className="mt-3 text-xl text-silver/95 sm:text-2xl">{scene.content.body}</p>
+        <p className="mt-3 text-body text-silver/90">{scene.content.body}</p>
         <AddToCalendarButton label={scene.content.ctaLabel} className="mt-8" />
-        <div className="mt-10 flex items-center justify-center gap-5" aria-hidden>
+        <div className="mt-divider flex items-center justify-center gap-5" aria-hidden>
           <span className="h-px w-20 bg-silver/70 sm:w-24" />
           <span className="w-8 opacity-95">
             <Image src="/images/lotus.svg" alt="" width={90} height={90} unoptimized className="h-auto w-full" />

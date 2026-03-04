@@ -25,7 +25,7 @@ export function AddToCalendarButton({ label = "Add to Calendar", className }: Ad
         href={googleHref}
         target="_blank"
         rel="noreferrer"
-        className="inline-block rounded-full border border-silver/25 bg-black/40 px-10 py-3.5 font-body text-xl text-silver shadow-[0_4px_24px_rgba(0,0,0,0.35)] backdrop-blur-md transition hover:bg-white/15"
+        className="inline-block rounded-full border border-silver/25 bg-black/40 px-[var(--btn-px)] py-[var(--btn-py)] min-h-[var(--btn-min-h)] font-body text-button text-silver/90 shadow-[0_4px_24px_rgba(0,0,0,0.35)] backdrop-blur-md transition hover:bg-white/15"
       >
         {label}
       </a>

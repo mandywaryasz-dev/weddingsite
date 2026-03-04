@@ -18,12 +18,12 @@ export function ContentLayer({ children, align = "center", className, innerClass
   return (
     <div
       className={clsx(
-        "relative z-10 mx-auto flex min-h-screen w-full max-w-[72rem] px-6 py-14 sm:px-10 sm:py-20",
+        "relative z-10 mx-auto flex min-h-screen w-full max-w-[72rem] px-scene-x py-scene-y",
         alignClassMap[align],
         className
       )}
     >
-      <div className={clsx("w-full space-y-6", innerClassName)}>{children}</div>
+      <div className={clsx("w-full flex flex-col gap-stack-lg", innerClassName)}>{children}</div>
     </div>
   );
 }
