@@ -42,11 +42,11 @@ export function Modal({
         >
           <header className="mb-4">
             <div className="flex items-start justify-between gap-4">
-              <Dialog.Title className="font-heading text-2xl tracking-[0.06em] text-ivory sm:text-3xl">{title}</Dialog.Title>
+              <Dialog.Title className="font-heading text-body tracking-display text-ivory">{title}</Dialog.Title>
               <Dialog.Close asChild>
                 <button
                   type="button"
-                  className="rounded-full border border-ivory/50 bg-black/25 px-3 py-1 text-[0.68rem] font-heading uppercase tracking-[0.18em] text-ivory transition hover:bg-white/20"
+                  className="rounded-full border border-ivory/50 bg-black/25 px-3 py-1 text-micro font-heading uppercase tracking-micro text-ivory transition hover:bg-white/20"
                 >
                   Close
                 </button>

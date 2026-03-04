@@ -5,6 +5,49 @@
 :root {
   --background: #0d1814;
   --foreground: #f5efe4;
+
+  /* ── Type Scale (fluid via clamp) ── */
+  --text-display: clamp(2.5rem, 1.8rem + 2.5vw, 3.5rem);
+  --text-headline: clamp(1.65rem, 1.3rem + 1.2vw, 2.2rem);
+  --text-subhead: clamp(1.45rem, 1.15rem + 1vw, 1.95rem);
+  --text-body: clamp(1.1rem, 0.95rem + 0.5vw, 1.35rem);
+  --text-body-sm: clamp(1rem, 0.9rem + 0.3vw, 1.15rem);
+  --text-label: clamp(0.625rem, 0.55rem + 0.2vw, 0.75rem);
+  --text-button: clamp(1.05rem, 0.95rem + 0.3vw, 1.15rem);
+  --text-micro: clamp(0.6rem, 0.56rem + 0.12vw, 0.65rem);
+
+  /* ── Line Height ── */
+  --leading-display: 1.1;
+  --leading-headline: 1.4;
+  --leading-subhead: 1.45;
+  --leading-body: 1.6;
+  --leading-label: 1.4;
+
+  /* ── Letter Spacing ── */
+  --tracking-display: 0.06em;
+  --tracking-heading: 0.08em;
+  --tracking-label: 0.22em;
+  --tracking-micro: 0.18em;
+
+  /* ── Spacing ── */
+  --space-scene-y: clamp(3.5rem, 2.5rem + 3vw, 5rem);
+  --space-scene-x: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
+  --space-stack-lg: 2.5rem;
+  --space-stack-md: 1.5rem;
+  --space-stack-sm: 0.75rem;
+  --space-stack-xs: 0.375rem;
+  --space-divider: clamp(2rem, 1.5rem + 1vw, 2.5rem);
+  --space-explore-gap: clamp(12rem, 8rem + 8vw, 16rem);
+
+  /* ── Buttons ── */
+  --btn-px: 2.5rem;
+  --btn-py: 0.875rem;
+  --btn-radius: 9999px;
+  --btn-min-h: 3rem;
+
+  /* ── Measure ── */
+  --measure: 34rem;
+  --measure-lg: 38rem;
 }
 
 html,
