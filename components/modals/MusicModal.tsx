@@ -26,7 +26,7 @@ export function MusicModal({ open, onOpenChange }: MusicModalProps) {
   }, [duckAmbient, open, restoreAmbient]);
 
   return (
-    <Modal open={open} onOpenChange={onOpenChange} title="The Party" description={<>Songs we love. Songs you'll dance to. <strong>No skips allowed.</strong></>}>
+    <Modal open={open} onOpenChange={onOpenChange} title="The Party" description={<>Songs we love. Songs you&apos;ll dance to. <strong>No skips allowed.</strong></>}>
       <iframe
         data-testid="embed-iframe"
         title="Spotify wedding playlist"

@@ -6,6 +6,7 @@ type ContentLayerProps = {
   align?: "start" | "center" | "end";
   className?: string;
   innerClassName?: string;
+  pinned?: boolean;
 };
 
 const alignClassMap = {
@@ -14,11 +15,13 @@ const alignClassMap = {
   end: "items-end"
 } as const;
 
-export function ContentLayer({ children, align = "center", className, innerClassName }: ContentLayerProps) {
+export function ContentLayer({ children, align = "center", className, innerClassName, pinned = false }: ContentLayerProps) {
+  const heightClass = pinned ? "h-full" : "min-h-screen";
   return (
     <div
       className={clsx(
-        "relative z-10 mx-auto flex min-h-screen w-full max-w-[72rem] px-scene-x py-scene-y",
+        `relative z-10 mx-auto flex ${heightClass} w-full max-w-[72rem] px-scene-x py-scene-y`,
+        pinned && "justify-center",
         alignClassMap[align],
         className
       )}

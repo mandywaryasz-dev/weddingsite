@@ -21,4 +21,12 @@ export const motionTokens = {
     duration: 1.0,
     ease: [0.22, 1, 0.36, 1] as const,
   },
+  scrollSequence: {
+    y: 16,
+    revealStart: 0.05,
+    revealEnd: 0.25,
+    transitionRatio: 0.6,
+    ease: [0.22, 1, 0.36, 1] as const,
+    defaultScrollPerItem: 25, // vh per item
+  },
 } as const;

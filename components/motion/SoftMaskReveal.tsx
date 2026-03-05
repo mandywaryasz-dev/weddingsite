@@ -28,27 +28,43 @@ export function SoftMaskReveal({
     direction === "bottom" ? "inset(0 0 100% 0)" : "inset(100% 0 0 0)";
   const clipShown = "inset(0 0 0 0)";
 
-  const hidden = prefersReducedMotion
-    ? { opacity: 0 }
-    : { opacity: 0, clipPath: clipHidden };
+  // Reduced motion: opacity-only snap, no clip
+  if (prefersReducedMotion) {
+    return (
+      <motion.div
+        ref={ref as React.RefObject<HTMLDivElement>}
+        className={className}
+        initial={{ opacity: 0 }}
+        animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: motionTokens.mask.duration, ease: [...motionTokens.mask.ease], delay: 0 }}
+      >
+        {children}
+      </motion.div>
+    );
+  }
 
-  const shown = prefersReducedMotion
-    ? { opacity: 1 }
-    : { opacity: 1, clipPath: clipShown };
+  // Full animation: outer div handles opacity + IO ref, inner div handles clipPath
+  const transition = {
+    duration: motionTokens.mask.duration,
+    ease: [...motionTokens.mask.ease] as [number, number, number, number],
+    delay,
+  };
 
   return (
     <motion.div
       ref={ref as React.RefObject<HTMLDivElement>}
       className={className}
-      initial={hidden}
-      animate={isVisible ? shown : hidden}
-      transition={{
-        duration: motionTokens.mask.duration,
-        ease: [...motionTokens.mask.ease],
-        delay: prefersReducedMotion ? 0 : delay,
-      }}
+      initial={{ opacity: 0 }}
+      animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+      transition={transition}
     >
-      {children}
+      <motion.div
+        initial={{ clipPath: clipHidden }}
+        animate={isVisible ? { clipPath: clipShown } : { clipPath: clipHidden }}
+        transition={transition}
+      >
+        {children}
+      </motion.div>
     </motion.div>
   );
 }
