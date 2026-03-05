@@ -5,6 +5,7 @@ import { MotionValue } from "framer-motion";
 
 export type ScrollSequenceContextValue = {
   progress: MotionValue<number>;
+  lockedProgress: MotionValue<number>;
   itemCount: number;
 };
 

@@ -22,10 +22,17 @@ export const motionTokens = {
     ease: [0.22, 1, 0.36, 1] as const,
   },
   scrollSequence: {
-    y: 16,
-    revealStart: 0.05,
-    revealEnd: 0.25,
-    transitionRatio: 0.6,
+    y: 10,
+    blurFrom: 2.4,
+    revealStart: 0.04,
+    revealEnd: 0.32,
+    transitionRatio: 0.72,
+    pointerEnableThreshold: 0.14,
+    spring: {
+      stiffness: 320,
+      damping: 34,
+      mass: 0.34,
+    },
     ease: [0.22, 1, 0.36, 1] as const,
     defaultScrollPerItem: 25, // vh per item
   },
