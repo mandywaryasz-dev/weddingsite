@@ -2,6 +2,7 @@
 
 import { type ComponentType, useMemo, useState } from "react";
 import { AudioProvider } from "@/components/audio/AudioProvider";
+import { AudioStartOverlay } from "@/components/audio/AudioStartOverlay";
 import { AudioToggle } from "@/components/audio/AudioToggle";
 import { MusicModal } from "@/components/modals/MusicModal";
 import { PhotosModal } from "@/components/modals/PhotosModal";
@@ -41,6 +42,7 @@ export function SaveTheDateExperience() {
     <AudioProvider>
       <main className="relative isolate">
         <AudioToggle />
+        <AudioStartOverlay />
 
         {sceneManifest.map((scene) => {
           const Component = sceneComponentMap[scene.component];

@@ -11,7 +11,6 @@ import {
   type PropsWithChildren
 } from "react";
 import {
-  AUDIO_MUTED_KEY,
   DEFAULT_AMBIENT_VOLUME,
   DUCKED_AMBIENT_VOLUME,
   MIN_FADE_MS
@@ -27,9 +26,10 @@ type AudioProviderProps = PropsWithChildren<{
 
 export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3" }: AudioProviderProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const isMutedRef = useRef(false);
   const frameRef = useRef<number | null>(null);
   const mountedRef = useRef(true);
-  const [isMuted, setIsMutedState] = useState(true);
+  const [isMuted, setIsMutedState] = useState(false);
   const [volume, setVolume] = useState(DEFAULT_AMBIENT_VOLUME);
   const [isReady, setIsReady] = useState(false);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
@@ -39,15 +39,9 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
     const audio = new Audio(ambientSrc);
     audio.loop = true;
     audio.preload = "metadata";
-    audio.muted = true;
+    audio.muted = false;
     audio.volume = DEFAULT_AMBIENT_VOLUME;
     audioRef.current = audio;
-
-    const stored = window.sessionStorage.getItem(AUDIO_MUTED_KEY);
-    if (stored === "false") {
-      setIsMutedState(false);
-      audio.muted = false;
-    }
 
     const markReady = () => setIsReady(true);
     audio.addEventListener("canplay", markReady);
@@ -131,7 +125,6 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
     (nextMuted: boolean) => {
       const audio = audioRef.current;
       setIsMutedState(nextMuted);
-      window.sessionStorage.setItem(AUDIO_MUTED_KEY, String(nextMuted));
       if (!audio) return;
       audio.muted = nextMuted;
       if (!nextMuted) {
@@ -157,21 +150,37 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
   );
 
   useEffect(() => {
-    const onInteraction = () => {
-      setHasUserInteracted(true);
-      void play();
+    isMutedRef.current = isMuted;
+  }, [isMuted]);
+
+  useEffect(() => {
+    function detachInteractionListeners() {
       window.removeEventListener("pointerdown", onInteraction);
       window.removeEventListener("keydown", onInteraction);
-    };
+      window.removeEventListener("wheel", onInteraction);
+    }
+
+    function onInteraction() {
+      setHasUserInteracted(true);
+      if (!isMutedRef.current) {
+        void play();
+      }
+      detachInteractionListeners();
+    }
 
     window.addEventListener("pointerdown", onInteraction);
     window.addEventListener("keydown", onInteraction);
+    window.addEventListener("wheel", onInteraction, { passive: true });
 
     return () => {
-      window.removeEventListener("pointerdown", onInteraction);
-      window.removeEventListener("keydown", onInteraction);
+      detachInteractionListeners();
     };
   }, [play]);
+
+  useEffect(() => {
+    if (!hasUserInteracted || isMuted || !isReady) return;
+    void play();
+  }, [hasUserInteracted, isMuted, isReady, play]);
 
   const value = useMemo<AudioContextValue>(
     () => ({
