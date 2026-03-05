@@ -76,7 +76,7 @@ export function ExploreScene({ scene, actions }: SceneComponentProps) {
               <p className="font-body text-body text-silver/90">{scene.content.body}</p>
             </ScrollSequenceItem>
             <ScrollSequenceItem index={6} className="mx-auto pt-10 w-20">
-              <Image src="/images/monogram.svg" alt="" width={228} height={276} unoptimized className="h-auto w-full opacity-90" />
+              <Image src="/images/monogram.png" alt="" width={228} height={276} unoptimized className="h-auto w-full opacity-90" />
             </ScrollSequenceItem>
           </div>
 
