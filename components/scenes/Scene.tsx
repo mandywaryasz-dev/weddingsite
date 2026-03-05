@@ -16,6 +16,7 @@ type SceneProps = {
   contentInnerClassName?: string;
   disableParallaxOrnaments?: boolean;
   ornament?: ReactNode;
+  pinned?: boolean;
   children: ReactNode;
 };
 
@@ -30,14 +31,16 @@ export function Scene({
   contentInnerClassName,
   disableParallaxOrnaments = false,
   ornament,
+  pinned = false,
   children
 }: SceneProps) {
+  const heightClass = pinned ? "h-full" : "min-h-screen";
   return (
-    <section id={id} className={`relative min-h-screen w-full overflow-hidden ${className ?? ""}`}>
+    <section id={id} className={`relative ${heightClass} w-full overflow-hidden ${className ?? ""}`}>
       <BackgroundLayer background={background} overlayIntensity={overlayIntensity} />
       <AtmosphereLayer animatedGradient={animatedGradient} />
       <OrnamentLayer parallax={!disableParallaxOrnaments}>{ornament}</OrnamentLayer>
-      <ContentLayer align={contentAlign} className={contentClassName} innerClassName={contentInnerClassName}>
+      <ContentLayer align={contentAlign} className={contentClassName} innerClassName={contentInnerClassName} pinned={pinned}>
         {children}
       </ContentLayer>
     </section>
