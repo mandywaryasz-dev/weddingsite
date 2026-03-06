@@ -48,52 +48,54 @@ export function Modal({
         <Dialog.Content
           data-testid="modal-content"
           className={clsx(
-            "fixed left-1/2 top-1/2 z-50 w-[min(94vw,860px)] max-h-[88svh] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[2rem] border border-ivory/25 bg-[linear-gradient(165deg,rgba(255,255,255,0.2),rgba(255,255,255,0.05))] p-6 text-ivory shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl data-[state=open]:animate-modal-in data-[state=closed]:animate-modal-out sm:p-8",
+            "fixed left-1/2 top-1/2 z-50 w-[min(94vw,860px)] max-h-[88svh] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[2rem] border border-ivory/25 bg-[linear-gradient(165deg,rgba(255,255,255,0.2),rgba(255,255,255,0.05))] text-ivory shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl data-[state=open]:animate-modal-in data-[state=closed]:animate-modal-out",
             contentClassName,
             className
           )}
         >
-          <header className="relative z-10 mb-8 border-b border-ivory/10 pb-7 pr-16 sm:mb-10 sm:pb-8 sm:pr-20">
-            <Dialog.Close asChild>
-              <button
-                type="button"
-                className="absolute right-0 top-0 rounded-full border border-ivory/18 bg-black/20 px-3 py-1.5 font-heading text-micro uppercase tracking-label text-ivory/72 transition hover:border-ivory/28 hover:bg-white/10 hover:text-ivory"
-              >
-                Close
-              </button>
-            </Dialog.Close>
+          <div className="modal-scroll max-h-[88svh] overflow-y-auto px-6 py-6 pr-3 sm:px-8 sm:py-8 sm:pr-4">
+            <header className="relative z-10 mb-8 border-b border-ivory/10 pb-7 pr-16 sm:mb-10 sm:pb-8 sm:pr-20">
+              <Dialog.Close asChild>
+                <button
+                  type="button"
+                  className="absolute right-0 top-0 rounded-full border border-ivory/18 bg-black/20 px-3 py-1.5 font-heading text-micro uppercase tracking-label text-ivory/72 transition hover:border-ivory/28 hover:bg-white/10 hover:text-ivory"
+                >
+                  Close
+                </button>
+              </Dialog.Close>
 
-            {eyebrow ? (
-              <p className="font-heading text-micro uppercase tracking-[0.24em] text-gold/88">
-                {eyebrow}
-              </p>
-            ) : null}
+              {eyebrow ? (
+                <p className="font-heading text-micro uppercase tracking-[0.24em] text-gold/88">
+                  {eyebrow}
+                </p>
+              ) : null}
 
-            <Dialog.Title className="mt-4 max-w-[28rem] font-body text-[clamp(2rem,1.55rem+1vw,2.75rem)] leading-[1.02] text-ivory">
-              {title}
-            </Dialog.Title>
+              <Dialog.Title className="mt-4 max-w-[28rem] font-body text-[clamp(2rem,1.55rem+1vw,2.75rem)] leading-[1.02] text-ivory">
+                {title}
+              </Dialog.Title>
 
-            {showDescriptionVisibly ? (
-              <Dialog.Description className="mt-4 max-w-[35rem] font-body text-body-sm leading-[1.55] text-ivory/78">
-                {description}
-              </Dialog.Description>
-            ) : (
-              <Dialog.Description className="sr-only">{modalDescription}</Dialog.Description>
-            )}
+              {showDescriptionVisibly ? (
+                <Dialog.Description className="mt-4 max-w-[35rem] font-body text-body-sm leading-[1.55] text-ivory/78">
+                  {description}
+                </Dialog.Description>
+              ) : (
+                <Dialog.Description className="sr-only">{modalDescription}</Dialog.Description>
+              )}
 
-            {lede !== undefined ? (
-              <div className="mt-4 max-w-[35rem] font-body text-body-sm leading-[1.55] text-ivory/78">{visibleLede}</div>
-            ) : null}
+              {lede !== undefined ? (
+                <div className="mt-4 max-w-[35rem] font-body text-body-sm leading-[1.55] text-ivory/78">{visibleLede}</div>
+              ) : null}
 
-            {headerAdornment ? (
-              <div data-testid="modal-header-adornment" className="mt-6">
-                {headerAdornment}
-              </div>
-            ) : null}
-          </header>
+              {headerAdornment ? (
+                <div data-testid="modal-header-adornment" className="mt-6">
+                  {headerAdornment}
+                </div>
+              ) : null}
+            </header>
 
-          <div data-testid="modal-body" className={clsx("relative z-10", bodyClassName)}>
-            {children}
+            <div data-testid="modal-body" className={clsx("relative z-10", bodyClassName)}>
+              {children}
+            </div>
           </div>
         </Dialog.Content>
       </Dialog.Portal>

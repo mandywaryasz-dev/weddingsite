@@ -82,8 +82,19 @@ export function ExploreScene({ scene, actions }: SceneComponentProps) {
                   aria-hidden
                   className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(245,239,228,0.2),rgba(245,239,228,0.06)_40%,transparent_72%)] blur-xl"
                 />
+                <div
+                  aria-hidden
+                  className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,0,0,0.24),rgba(0,0,0,0.12)_46%,transparent_74%)] blur-md"
+                />
                 <div className="relative w-24 sm:w-28">
-                  <Image src="/images/monogram.png" alt="" width={260} height={314} unoptimized className="h-auto w-full opacity-85 brightness-90" />
+                  <Image
+                    src="/images/monogram.png"
+                    alt=""
+                    width={260}
+                    height={314}
+                    unoptimized
+                    className="h-auto w-full opacity-[0.98] drop-shadow-[0_1px_1px_rgba(0,0,0,0.14)]"
+                  />
                 </div>
               </div>
             </ScrollSequenceItem>

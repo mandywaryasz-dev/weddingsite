@@ -4,7 +4,14 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Amanda & Dushyant | Meet Us In Asheville",
-  description: "Save the date experience for Amanda and Dushyant's wedding in Asheville."
+  description: "Save the date experience for Amanda and Dushyant's wedding in Asheville.",
+  icons: {
+    icon: {
+      url: "/images/favicon.png",
+      type: "image/png",
+      sizes: "32x32"
+    }
+  }
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
