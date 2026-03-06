@@ -45,7 +45,8 @@ const config: Config = {
         "stack-sm": "var(--space-stack-sm)",
         "stack-xs": "var(--space-stack-xs)",
         divider: "var(--space-divider)",
-        "explore-gap": "var(--space-explore-gap)"
+        "explore-gap": "var(--space-explore-gap)",
+        "scene-break": "var(--space-scene-break)"
       },
       maxWidth: {
         measure: "var(--measure)",

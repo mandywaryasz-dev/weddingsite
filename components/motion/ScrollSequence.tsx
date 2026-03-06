@@ -17,11 +17,12 @@ type ScrollSequenceProps = {
   children: ReactNode;
   itemCount: number;
   className?: string;
+  transparent?: boolean;
 };
 
 const staticProgress = motionValue(1);
 
-export function ScrollSequence({ children, itemCount, className }: ScrollSequenceProps) {
+export function ScrollSequence({ children, itemCount, className, transparent }: ScrollSequenceProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const [hasMounted, setHasMounted] = useState(false);
@@ -67,7 +68,7 @@ export function ScrollSequence({ children, itemCount, className }: ScrollSequenc
     >
       <div
         ref={containerRef}
-        className={clsx("bg-[var(--background)]", className)}
+        className={clsx(!transparent && "bg-[var(--background)]", className)}
         style={{ height: `calc(100vh + ${extraHeight}vh)` }}
       >
         <div className="sticky top-0 h-screen">{children}</div>
