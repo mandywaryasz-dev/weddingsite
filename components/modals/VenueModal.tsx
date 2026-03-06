@@ -20,26 +20,70 @@ export function VenueModal({ open, onOpenChange }: VenueModalProps) {
     <Modal
       open={open}
       onOpenChange={onOpenChange}
+      eyebrow="Where We Gather"
       title="The Venue"
-      description="Haiku – Asheville, NC"
+      contentClassName="w-[min(94vw,900px)]"
+      headerAdornment={
+        <div className="space-y-2 text-ivory/72">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 sm:gap-x-4">
+            <p className="font-heading text-detail uppercase tracking-[0.18em] text-gold/92">Haiku</p>
+            <p className="font-heading text-micro uppercase tracking-[0.22em] text-ivory/58">Asheville</p>
+          </div>
+          <p className="max-w-[32rem] font-body text-body-sm leading-[1.4] text-ivory/76">
+            Garden textures, warm lights, and one very good reason to celebrate.
+          </p>
+        </div>
+      }
     >
-      <p className="mb-4 text-base text-ivory/90">
-        Expect garden textures, warm lights, and one very good reason to celebrate.
-      </p>
-      <div className="grid grid-cols-2 gap-3 sm:gap-4">
-        {venueImages.map((src, index) => (
-          <div key={src} className="relative aspect-[4/3] overflow-hidden rounded-xl">
+      <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem] sm:col-span-2">
+          <Image
+            src={venueImages[0]}
+            alt="Haiku venue exterior framed by garden greenery"
+            fill
+            loading="lazy"
+            sizes="(max-width: 639px) 88vw, (max-width: 1023px) 74vw, 40rem"
+            quality={90}
+            className="object-cover"
+          />
+        </div>
+
+        <div className="relative aspect-[4/3] overflow-hidden rounded-[1.1rem]">
+          <Image
+            src={venueImages[1]}
+            alt="Water feature and pergola at Haiku in Asheville"
+            fill
+            loading="lazy"
+            sizes="(max-width: 639px) 43vw, 22rem"
+            quality={90}
+            className="object-cover"
+          />
+        </div>
+
+        <div className="grid gap-3 sm:gap-4">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-[1.1rem]">
             <Image
-              src={src}
-              alt={`Asheville venue preview ${index + 1}`}
+              src={venueImages[2]}
+              alt="Haiku garden ceremony setting"
               fill
               loading="lazy"
-              sizes="(max-width: 768px) 46vw, 320px"
+              sizes="(max-width: 639px) 43vw, 20rem"
               quality={90}
               className="object-cover"
             />
           </div>
-        ))}
+          <div className="relative aspect-[4/3] overflow-hidden rounded-[1.1rem] sm:mr-0 sm:ml-0">
+            <Image
+              src={venueImages[3]}
+              alt="Haiku reception space details"
+              fill
+              loading="lazy"
+              sizes="(max-width: 639px) 34vw, 15rem"
+              quality={90}
+              className="object-cover"
+            />
+          </div>
+        </div>
       </div>
     </Modal>
   );
