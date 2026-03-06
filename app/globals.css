@@ -13,6 +13,7 @@
   --text-body: clamp(1.1rem, 0.95rem + 0.5vw, 1.35rem);
   --text-body-sm: clamp(1rem, 0.9rem + 0.3vw, 1.15rem);
   --text-label: clamp(0.625rem, 0.55rem + 0.2vw, 0.75rem);
+  --text-detail: clamp(0.8rem, 0.72rem + 0.24vw, 0.9rem);
   --text-button: clamp(1.05rem, 0.95rem + 0.3vw, 1.15rem);
   --text-micro: clamp(0.6rem, 0.56rem + 0.12vw, 0.65rem);
 
