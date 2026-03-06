@@ -33,22 +33,22 @@ export function HeroScene({ scene }: SceneComponentProps) {
           </h1>
 
           <ScrollSequenceItem index={3}>
-            <p className="mt-7 font-heading text-label uppercase tracking-label text-silver/95">
+            <p className="mt-10 font-heading text-detail uppercase tracking-label text-silver/95">
               {scene.content.accent}
             </p>
           </ScrollSequenceItem>
 
           {scene.content.secondaryBody ? (
             <ScrollSequenceItem index={4}>
-              <p className="mt-1.5 font-heading text-label uppercase tracking-label text-silver/95">
+              <p className="mt-3 font-heading text-detail uppercase tracking-label text-silver/95">
                 {scene.content.secondaryBody}
               </p>
             </ScrollSequenceItem>
           ) : null}
 
-          <ScrollSequenceItem index={5} className="mx-auto mt-divider h-16 w-px bg-silver/75" />
+          <ScrollSequenceItem index={5} className="mx-auto mt-[calc(var(--space-divider)+0.5rem)] h-16 w-px bg-silver/75" />
 
-          <ScrollSequenceItem index={6} className="mx-auto mt-divider w-14 opacity-95 sm:w-16">
+          <ScrollSequenceItem index={6} className="mx-auto mt-[calc(var(--space-divider)+0.25rem)] w-14 opacity-95 sm:w-16">
             <Image src="/images/lotus.svg" alt="" width={120} height={120} unoptimized className="h-auto w-full" />
           </ScrollSequenceItem>
         </div>

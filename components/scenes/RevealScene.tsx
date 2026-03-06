@@ -18,9 +18,8 @@ export function RevealScene({ scene }: SceneComponentProps) {
         pinned
       >
         <div className="text-center">
-          {/* Top ornamental divider */}
           <ScrollSequenceItem index={0}>
-            <div className="mb-divider flex items-center justify-center gap-5" aria-hidden>
+            <div className="mb-[calc(var(--space-divider)+0.75rem)] flex items-center justify-center gap-5" aria-hidden>
               <div className="h-px w-20 bg-silver/70 sm:w-24" />
               <div className="w-8 opacity-95">
                 <Image src="/images/lotus.svg" alt="" width={90} height={90} unoptimized className="h-auto w-full" />
@@ -30,32 +29,31 @@ export function RevealScene({ scene }: SceneComponentProps) {
           </ScrollSequenceItem>
 
           <ScrollSequenceItem index={1}>
-            <h2 className="font-heading text-display tracking-display text-silver/90">{scene.content.title}</h2>
+            <h2 className="font-heading text-display tracking-display text-silver/84">{scene.content.title}</h2>
           </ScrollSequenceItem>
 
           {scene.content.subtitle ? (
             <ScrollSequenceItem index={2}>
-              <p className="mt-4 font-body text-body text-silver/90">{scene.content.subtitle}</p>
+              <p className="mt-5 font-body text-body text-silver/84">{scene.content.subtitle}</p>
             </ScrollSequenceItem>
           ) : null}
 
           {scene.content.accent ? (
             <ScrollSequenceItem index={3}>
-              <p className="mt-2 font-body text-body text-silver/90">{scene.content.accent}</p>
+              <p className="mt-4 font-body text-body text-silver/84">{scene.content.accent}</p>
             </ScrollSequenceItem>
           ) : null}
 
           <ScrollSequenceItem index={4}>
-            <p className="mt-3 text-body text-silver/90">{scene.content.body}</p>
+            <p className="mt-5 text-body text-silver/84">{scene.content.body}</p>
           </ScrollSequenceItem>
 
           <ScrollSequenceItem index={5}>
-            <AddToCalendarButton label={scene.content.ctaLabel} className="mt-8" />
+            <AddToCalendarButton label={scene.content.ctaLabel} className="mt-10" />
           </ScrollSequenceItem>
 
-          {/* Bottom ornamental divider */}
           <ScrollSequenceItem index={6}>
-            <div className="mt-divider flex items-center justify-center gap-5" aria-hidden>
+            <div className="mt-[calc(var(--space-divider)+1rem)] flex items-center justify-center gap-5" aria-hidden>
               <div className="h-px w-20 bg-silver/70 sm:w-24" />
               <div className="w-8 opacity-95">
                 <Image src="/images/lotus.svg" alt="" width={90} height={90} unoptimized className="h-auto w-full" />

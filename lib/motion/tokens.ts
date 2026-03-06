@@ -34,6 +34,6 @@ export const motionTokens = {
       mass: 0.34,
     },
     ease: [0.22, 1, 0.36, 1] as const,
-    defaultScrollPerItem: 25, // vh per item
+    defaultScrollPerItem: 30, // vh per item
   },
 } as const;

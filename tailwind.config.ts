@@ -28,6 +28,7 @@ const config: Config = {
         body: ["var(--text-body)", { lineHeight: "var(--leading-body)" }],
         "body-sm": ["var(--text-body-sm)", { lineHeight: "var(--leading-body)" }],
         label: ["var(--text-label)", { lineHeight: "var(--leading-label)" }],
+        detail: ["var(--text-detail)", { lineHeight: "var(--leading-label)" }],
         button: ["var(--text-button)", { lineHeight: "var(--leading-label)" }],
         micro: ["var(--text-micro)", { lineHeight: "var(--leading-label)" }]
       },
