@@ -60,27 +60,30 @@ export function ExploreScene({ scene, actions }: SceneComponentProps) {
         </ContentLayer>
       </ScrollSequence>
 
-      <ScrollSequence transparent itemCount={3} className="relative">
+      <ScrollSequence transparent itemCount={4} className="relative">
         <ContentLayer align="center" className="flex-col" innerClassName="mx-auto max-w-measure-lg" pinned>
           <div className="space-y-6 text-center">
+            <ScrollSequenceItem index={0} className="flex w-full justify-center">
+              <div className="h-10 w-px bg-silver/65" aria-hidden />
+            </ScrollSequenceItem>
             {scene.content.subtitle ? (
-              <ScrollSequenceItem index={0}>
+              <ScrollSequenceItem index={1}>
                 <p className="mx-auto max-w-[30rem] font-body text-headline text-silver/84">
                   {scene.content.subtitle}
                 </p>
               </ScrollSequenceItem>
             ) : null}
-            <ScrollSequenceItem index={1}>
+            <ScrollSequenceItem index={2}>
               <p className="font-body text-body text-silver/84">{scene.content.body}</p>
             </ScrollSequenceItem>
-            <ScrollSequenceItem index={2} className="mx-auto pt-14">
+            <ScrollSequenceItem index={3} className="mx-auto pt-14">
               <div className="relative mx-auto flex justify-center">
                 <div
                   aria-hidden
-                  className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(245,239,228,0.26),rgba(245,239,228,0.08)_40%,transparent_72%)] blur-xl"
+                  className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(245,239,228,0.2),rgba(245,239,228,0.06)_40%,transparent_72%)] blur-xl"
                 />
                 <div className="relative w-24 sm:w-28">
-                  <Image src="/images/monogram.png" alt="" width={260} height={314} unoptimized className="h-auto w-full opacity-90" />
+                  <Image src="/images/monogram.png" alt="" width={260} height={314} unoptimized className="h-auto w-full opacity-85 brightness-90" />
                 </div>
               </div>
             </ScrollSequenceItem>

@@ -40,7 +40,7 @@ export function RevealScene({ scene }: SceneComponentProps) {
 
           {scene.content.accent ? (
             <ScrollSequenceItem index={3}>
-              <p className="mt-4 font-body text-body text-silver/84">{scene.content.accent}</p>
+              <p className="mt-4 font-heading text-detail uppercase tracking-[0.18em] text-silver/94">{scene.content.accent}</p>
             </ScrollSequenceItem>
           ) : null}
 
