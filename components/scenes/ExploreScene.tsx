@@ -25,9 +25,6 @@ export function ExploreScene({ scene, actions }: SceneComponentProps) {
           <div className="flex flex-col gap-explore-gap">
             <div className="text-center">
               <div className="relative py-10">
-                <div className="absolute left-0 top-0 h-full w-px bg-silver/40" />
-                <div className="absolute right-0 top-0 h-full w-px bg-silver/40" />
-
                 <ScrollSequenceItem index={0}>
                   <h2 className="font-heading text-subhead uppercase tracking-heading text-silver/84">
                     {scene.content.title}

@@ -21,16 +21,16 @@ export function PartyScene({ scene }: SceneComponentProps) {
             <div className="mx-auto mb-[calc(var(--space-divider)+0.75rem)] h-14 w-px bg-silver/70" />
           </ScrollSequenceItem>
 
-          <h2 className="font-body text-subhead leading-[1.55] text-silver/84">
-            <ScrollSequenceItem index={1} as="span" className="block">
+          <h2 className="font-body text-silver/84">
+            <ScrollSequenceItem index={1} as="span" className="block text-[clamp(1.75rem,1.45rem+1vw,2.25rem)] leading-[1.18]">
               {scene.content.title}
             </ScrollSequenceItem>
             {scene.content.subtitle ? (
-              <ScrollSequenceItem index={2} as="span" className="mt-2 block">
+              <ScrollSequenceItem index={2} as="span" className="mt-3 block text-[clamp(1.28rem,1.16rem+0.45vw,1.55rem)] italic leading-[1.35] text-silver/78">
                 {scene.content.subtitle}
               </ScrollSequenceItem>
             ) : null}
-            <ScrollSequenceItem index={3} as="span" className="mt-3 block">
+            <ScrollSequenceItem index={3} as="span" className="mt-5 block text-[clamp(1.08rem,1rem+0.24vw,1.2rem)] leading-[1.65] tracking-[0.03em] text-silver/88">
               {scene.content.body}
             </ScrollSequenceItem>
           </h2>

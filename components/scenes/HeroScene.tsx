@@ -18,16 +18,16 @@ export function HeroScene({ scene }: SceneComponentProps) {
         pinned
       >
         <div className="text-center">
-          <h1 className="font-body text-headline text-silver">
-            <ScrollSequenceItem index={0} as="span" className="block">
+          <h1 className="font-body text-silver">
+            <ScrollSequenceItem index={0} as="span" className="block text-[clamp(2.15rem,1.9rem+1.45vw,2.85rem)] leading-[1.02]">
               {scene.content.title}
             </ScrollSequenceItem>
             {scene.content.subtitle ? (
-              <ScrollSequenceItem index={1} as="span" className="block">
+              <ScrollSequenceItem index={1} as="span" className="block pl-6 pt-2 text-[clamp(1.08rem,0.98rem+0.35vw,1.24rem)] italic tracking-[0.08em] text-silver/74 sm:pl-10">
                 {scene.content.subtitle}
               </ScrollSequenceItem>
             ) : null}
-            <ScrollSequenceItem index={2} as="span" className="block">
+            <ScrollSequenceItem index={2} as="span" className="block pt-5 text-[clamp(1.52rem,1.28rem+0.72vw,1.95rem)] leading-[1.18] text-silver/94">
               {scene.content.body}
             </ScrollSequenceItem>
           </h1>

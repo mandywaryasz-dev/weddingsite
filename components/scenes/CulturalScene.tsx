@@ -22,9 +22,6 @@ export function CulturalScene({ scene }: SceneComponentProps) {
         }
       >
         <div className="relative px-6">
-          <div className="absolute left-0 top-0 h-full w-px bg-silver/40" />
-          <div className="absolute right-0 top-0 h-full w-px bg-silver/40" />
-
           <div className="text-center">
             <ScrollSequenceItem index={0} className="mx-auto mb-5 w-10 opacity-95">
               <Image src="/images/lotus.svg" alt="" width={108} height={108} unoptimized className="h-auto w-full" />
