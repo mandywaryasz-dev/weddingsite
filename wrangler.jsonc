@@ -2,9 +2,16 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "main": ".open-next/worker.js",
   "name": "weddingsite",
+  "workers_dev": true,
   "compatibility_date": "2025-09-27",
   "compatibility_flags": [
     "nodejs_compat"
+  ],
+  "routes": [
+    {
+      "pattern": "meetusinasheville.com",
+      "custom_domain": true
+    }
   ],
   "assets": {
     "directory": ".open-next/assets",
