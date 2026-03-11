@@ -26,7 +26,14 @@ type AudioProviderProps = PropsWithChildren<{
 
 export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3" }: AudioProviderProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const mediaSourceRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+  const graphStatusRef = useRef<"unknown" | "enabled" | "failed">("unknown");
   const isMutedRef = useRef(false);
+  const isPlayingRef = useRef(false);
+  const fallbackDuckActiveRef = useRef(false);
+  const fallbackShouldResumeRef = useRef(false);
   const frameRef = useRef<number | null>(null);
   const mountedRef = useRef(true);
   const [isMuted, setIsMutedState] = useState(false);
@@ -52,22 +59,94 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
         cancelAnimationFrame(frameRef.current);
         frameRef.current = null;
       }
+      gainNodeRef.current?.disconnect();
+      mediaSourceRef.current?.disconnect();
+      void audioContextRef.current?.close().catch(() => undefined);
+      gainNodeRef.current = null;
+      mediaSourceRef.current = null;
+      audioContextRef.current = null;
+      graphStatusRef.current = "unknown";
+      isPlayingRef.current = false;
+      fallbackDuckActiveRef.current = false;
+      fallbackShouldResumeRef.current = false;
       audio.removeEventListener("canplay", markReady);
       audio.pause();
       audioRef.current = null;
     };
   }, [ambientSrc]);
 
-  const play = useCallback(async () => {
-    if (!audioRef.current) return;
+  const ensureAudioGraph = useCallback(async () => {
+    const audio = audioRef.current;
+    if (!audio) return false;
+    if (graphStatusRef.current === "enabled" && gainNodeRef.current && audioContextRef.current) {
+      if (audioContextRef.current.state === "suspended") {
+        try {
+          await audioContextRef.current.resume();
+        } catch {
+          graphStatusRef.current = "failed";
+          return false;
+        }
+      }
+      return true;
+    }
+    if (graphStatusRef.current === "failed") {
+      return false;
+    }
+
+    const AudioContextCtor = window.AudioContext ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextCtor) {
+      graphStatusRef.current = "failed";
+      return false;
+    }
+
     try {
-      await audioRef.current.play();
+      const context = audioContextRef.current ?? new AudioContextCtor();
+      const source = mediaSourceRef.current ?? context.createMediaElementSource(audio);
+      const gain = gainNodeRef.current ?? context.createGain();
+
+      if (!mediaSourceRef.current) {
+        source.connect(gain);
+      }
+      if (!gainNodeRef.current) {
+        gain.connect(context.destination);
+      }
+
+      gain.gain.value = clampVolume(volume);
+      audio.volume = 1;
+
+      audioContextRef.current = context;
+      mediaSourceRef.current = source;
+      gainNodeRef.current = gain;
+
+      if (context.state === "suspended") {
+        await context.resume();
+      }
+
+      graphStatusRef.current = "enabled";
+      return true;
+    } catch {
+      graphStatusRef.current = "failed";
+      gainNodeRef.current = null;
+      mediaSourceRef.current = null;
+      audioContextRef.current = null;
+      return false;
+    }
+  }, [volume]);
+
+  const play = useCallback(async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    await ensureAudioGraph();
+    try {
+      await audio.play();
+      isPlayingRef.current = true;
     } catch {
       // Ignore autoplay policy rejections; play is retried on user interaction.
     }
-  }, []);
+  }, [ensureAudioGraph]);
 
   const pause = useCallback(() => {
+    isPlayingRef.current = false;
     audioRef.current?.pause();
   }, []);
 
@@ -75,7 +154,9 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
     const audio = audioRef.current;
     if (!audio) return;
 
-    const from = clampVolume(audio.volume);
+    const hasGraph = (await ensureAudioGraph()) && gainNodeRef.current;
+    const controlledGain = hasGraph ? gainNodeRef.current : null;
+    const from = clampVolume(controlledGain ? controlledGain.gain.value : audio.volume);
     const to = clampVolume(targetVolume);
     const safeDuration = Math.max(durationMs, MIN_FADE_MS);
 
@@ -92,15 +173,26 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
         const elapsed = now - start;
         const progress = Math.min(1, elapsed / safeDuration);
         const nextVolume = from + (to - from) * progress;
-        audio.volume = clampVolume(nextVolume);
+        const nextClampedVolume = clampVolume(nextVolume);
+        if (controlledGain) {
+          controlledGain.gain.value = nextClampedVolume;
+          audio.volume = 1;
+        } else {
+          audio.volume = nextClampedVolume;
+        }
         if (mountedRef.current) {
-          setVolume(audio.volume);
+          setVolume(nextClampedVolume);
         }
 
         if (progress < 1) {
           frameRef.current = requestAnimationFrame(step);
         } else {
-          audio.volume = to;
+          if (controlledGain) {
+            controlledGain.gain.value = to;
+            audio.volume = 1;
+          } else {
+            audio.volume = to;
+          }
           if (mountedRef.current) {
             setVolume(to);
           }
@@ -110,7 +202,12 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
       };
 
       if (frameCount === 1) {
-        audio.volume = to;
+        if (controlledGain) {
+          controlledGain.gain.value = to;
+          audio.volume = 1;
+        } else {
+          audio.volume = to;
+        }
         if (mountedRef.current) {
           setVolume(to);
         }
@@ -127,6 +224,13 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
       setIsMutedState(nextMuted);
       if (!audio) return;
       audio.muted = nextMuted;
+      if (nextMuted) {
+        fallbackShouldResumeRef.current = false;
+        return;
+      }
+      if (fallbackDuckActiveRef.current) {
+        return;
+      }
       if (!nextMuted) {
         void play();
         void fadeTo(DEFAULT_AMBIENT_VOLUME, MIN_FADE_MS);
@@ -137,16 +241,42 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
 
   const duckAmbient = useCallback(
     async (lowVolume = DUCKED_AMBIENT_VOLUME) => {
+      if (!(await ensureAudioGraph())) {
+        fallbackDuckActiveRef.current = true;
+        fallbackShouldResumeRef.current = isPlayingRef.current && !isMutedRef.current;
+        if (fallbackShouldResumeRef.current) {
+          pause();
+        }
+        if (mountedRef.current) {
+          setVolume(clampVolume(lowVolume));
+        }
+        return;
+      }
       await fadeTo(lowVolume, MIN_FADE_MS);
     },
-    [fadeTo]
+    [ensureAudioGraph, fadeTo, pause]
   );
 
   const restoreAmbient = useCallback(
     async (normalVolume = DEFAULT_AMBIENT_VOLUME) => {
+      const nextVolume = clampVolume(normalVolume);
+      if (fallbackDuckActiveRef.current) {
+        fallbackDuckActiveRef.current = false;
+        if (mountedRef.current) {
+          setVolume(nextVolume);
+        }
+        if (audioRef.current) {
+          audioRef.current.volume = nextVolume;
+        }
+        if (!isMutedRef.current && fallbackShouldResumeRef.current) {
+          await play();
+        }
+        fallbackShouldResumeRef.current = false;
+        return;
+      }
       await fadeTo(normalVolume, MIN_FADE_MS);
     },
-    [fadeTo]
+    [fadeTo, play]
   );
 
   useEffect(() => {

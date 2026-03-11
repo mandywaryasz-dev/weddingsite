@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { act, fireEvent, render, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 import { AudioProvider, useAudio } from "@/components/audio/AudioProvider";
 
@@ -9,6 +9,7 @@ class ControlledAudio {
   loop = false;
   preload = "metadata";
   currentTime = 0;
+  paused = true;
   src = "";
   private canPlay = false;
   private listeners = new Map<string, Set<() => void>>();
@@ -16,8 +17,11 @@ class ControlledAudio {
     if (!this.canPlay) {
       throw new Error("Audio not ready");
     }
+    this.paused = false;
   });
-  readonly pause = vi.fn(() => undefined);
+  readonly pause = vi.fn(() => {
+    this.paused = true;
+  });
 
   constructor(src?: string) {
     if (src) this.src = src;
@@ -40,6 +44,30 @@ class ControlledAudio {
   }
 }
 
+class MockGainNode {
+  gain = { value: 0.3 };
+  readonly connect = vi.fn(() => undefined);
+  readonly disconnect = vi.fn(() => undefined);
+}
+
+class MockMediaElementAudioSourceNode {
+  readonly connect = vi.fn(() => undefined);
+  readonly disconnect = vi.fn(() => undefined);
+}
+
+class MockAudioContext {
+  state: AudioContextState = "running";
+  destination = {};
+  readonly gainNode = new MockGainNode();
+  readonly sourceNode = new MockMediaElementAudioSourceNode();
+  readonly resume = vi.fn(async () => {
+    this.state = "running";
+  });
+  readonly close = vi.fn(async () => undefined);
+  readonly createGain = vi.fn(() => this.gainNode);
+  readonly createMediaElementSource = vi.fn(() => this.sourceNode);
+}
+
 function ForceMutedOnMount() {
   const { setMuted } = useAudio();
 
@@ -51,12 +79,31 @@ function ForceMutedOnMount() {
   return null;
 }
 
+function AudioControls() {
+  const { duckAmbient, restoreAmbient, volume } = useAudio();
+
+  return (
+    <>
+      <button type="button" onClick={() => void duckAmbient(0)}>
+        Duck
+      </button>
+      <button type="button" onClick={() => void restoreAmbient(0.3)}>
+        Restore
+      </button>
+      <output data-testid="ambient-volume">{volume.toFixed(2)}</output>
+    </>
+  );
+}
+
 describe("AudioProvider startup playback", () => {
   const originalAudio = window.Audio;
+  const originalAudioContext = window.AudioContext;
   const instances: ControlledAudio[] = [];
+  const audioContexts: MockAudioContext[] = [];
 
   beforeEach(() => {
     instances.length = 0;
+    audioContexts.length = 0;
     Object.defineProperty(window, "Audio", {
       writable: true,
       value: vi.fn((src?: string) => {
@@ -65,12 +112,24 @@ describe("AudioProvider startup playback", () => {
         return audio;
       })
     });
+    Object.defineProperty(window, "AudioContext", {
+      writable: true,
+      value: vi.fn(() => {
+        const context = new MockAudioContext();
+        audioContexts.push(context);
+        return context;
+      })
+    });
   });
 
   afterEach(() => {
     Object.defineProperty(window, "Audio", {
       writable: true,
       value: originalAudio
+    });
+    Object.defineProperty(window, "AudioContext", {
+      writable: true,
+      value: originalAudioContext
     });
   });
 
@@ -83,7 +142,7 @@ describe("AudioProvider startup playback", () => {
 
     const audio = instances[0];
     fireEvent.pointerDown(window);
-    expect(audio.play).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
 
     act(() => {
       audio.emit("canplay");
@@ -101,7 +160,7 @@ describe("AudioProvider startup playback", () => {
 
     const audio = instances[0];
     fireEvent.wheel(window);
-    expect(audio.play).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
 
     act(() => {
       audio.emit("canplay");
@@ -127,5 +186,59 @@ describe("AudioProvider startup playback", () => {
     await new Promise((resolve) => window.setTimeout(resolve, 10));
 
     expect(audio.play).not.toHaveBeenCalled();
+  });
+
+  it("ducks and restores ambient through a gain node when Web Audio is available", async () => {
+    render(
+      <AudioProvider>
+        <AudioControls />
+      </AudioProvider>
+    );
+
+    const audio = instances[0];
+    fireEvent.pointerDown(window);
+    act(() => {
+      audio.emit("canplay");
+    });
+
+    await waitFor(() => expect(audioContexts).toHaveLength(1));
+    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(2));
+
+    fireEvent.click(screen.getByRole("button", { name: "Duck" }));
+    await waitFor(() => expect(audioContexts[0].gainNode.gain.value).toBeCloseTo(0, 2));
+    await waitFor(() => expect(screen.getByTestId("ambient-volume")).toHaveTextContent("0.00"));
+
+    fireEvent.click(screen.getByRole("button", { name: "Restore" }));
+    await waitFor(() => expect(audioContexts[0].gainNode.gain.value).toBeCloseTo(0.3, 2));
+    await waitFor(() => expect(screen.getByTestId("ambient-volume")).toHaveTextContent("0.30"));
+  });
+
+  it("pauses and resumes ambient when Web Audio is unavailable", async () => {
+    Object.defineProperty(window, "AudioContext", {
+      writable: true,
+      value: undefined
+    });
+
+    render(
+      <AudioProvider>
+        <AudioControls />
+      </AudioProvider>
+    );
+
+    const audio = instances[0];
+    fireEvent.pointerDown(window);
+    act(() => {
+      audio.emit("canplay");
+    });
+
+    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(2));
+
+    fireEvent.click(screen.getByRole("button", { name: "Duck" }));
+    await waitFor(() => expect(audio.pause).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(screen.getByTestId("ambient-volume")).toHaveTextContent("0.00"));
+
+    fireEvent.click(screen.getByRole("button", { name: "Restore" }));
+    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(3));
+    await waitFor(() => expect(screen.getByTestId("ambient-volume")).toHaveTextContent("0.30"));
   });
 });
