@@ -15,6 +15,7 @@ describe("AudioStartOverlay", () => {
     const overlay = screen.getByTestId("audio-start-overlay");
     expect(overlay).toBeInTheDocument();
     expect(overlay).toHaveClass("opacity-100");
+    expect(screen.getByText("Scroll to Begin")).toBeInTheDocument();
   });
 
   it("fades away after pointer interaction and keeps audio unmuted", () => {
