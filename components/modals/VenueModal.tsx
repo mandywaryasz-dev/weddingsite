@@ -10,7 +10,6 @@ type VenueModalProps = {
 
 const venueImages = [
   "/images/venue-1.png",
-  "/images/venue-2.png",
   "/images/venue-3.png",
   "/images/venue-4.png",
 ];
@@ -47,23 +46,10 @@ export function VenueModal({ open, onOpenChange }: VenueModalProps) {
             className="object-cover"
           />
         </div>
-
-        <div className="relative aspect-[4/3] overflow-hidden rounded-[1.1rem]">
-          <Image
-            src={venueImages[1]}
-            alt="Water feature and pergola at Haiku in Asheville"
-            fill
-            loading="lazy"
-            sizes="(max-width: 639px) 43vw, 22rem"
-            quality={90}
-            className="object-cover"
-          />
-        </div>
-
         <div className="grid gap-3 sm:gap-4">
           <div className="relative aspect-[4/3] overflow-hidden rounded-[1.1rem]">
             <Image
-              src={venueImages[2]}
+              src={venueImages[1]}
               alt="Haiku garden ceremony setting"
               fill
               loading="lazy"
@@ -74,7 +60,7 @@ export function VenueModal({ open, onOpenChange }: VenueModalProps) {
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-[1.1rem] sm:mr-0 sm:ml-0">
             <Image
-              src={venueImages[3]}
+              src={venueImages[2]}
               alt="Haiku reception space details"
               fill
               loading="lazy"
