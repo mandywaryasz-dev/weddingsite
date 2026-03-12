@@ -6,13 +6,13 @@ describe("calendar utilities", () => {
       title: "Amanda & Dushyant",
       start: new Date("2026-10-02T20:00:00.000Z"),
       end: new Date("2026-10-03T03:00:00.000Z"),
-      location: "Asheville, NC",
+      location: "Haiku - 26 Sweeten Creek Rd, Asheville, NC 28803",
       details: "Save the date"
     });
 
     expect(url).toContain("calendar.google.com");
     expect(url).toContain("text=Amanda+%26+Dushyant");
-    expect(url).toContain("Asheville%2C+NC");
+    expect(url).toContain("Haiku+-+26+Sweeten+Creek+Rd%2C+Asheville%2C+NC+28803");
   });
 
   it("generates ICS with explicit timezone fields", () => {
