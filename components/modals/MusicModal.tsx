@@ -10,9 +10,13 @@ type MusicModalProps = {
 };
 
 export function MusicModal({ open, onOpenChange }: MusicModalProps) {
-  const { duckAmbient, restoreAmbient } = useAudio();
+  const { duckAmbient, isAudioEnabled, restoreAmbient } = useAudio();
 
   useEffect(() => {
+    if (!isAudioEnabled) {
+      return;
+    }
+
     if (open) {
       // Keep ambient fully ducked while playlist preview is visible to avoid overlapping audio layers.
       void duckAmbient(0);
@@ -23,7 +27,7 @@ export function MusicModal({ open, onOpenChange }: MusicModalProps) {
     return () => {
       void restoreAmbient(0.3);
     };
-  }, [duckAmbient, open, restoreAmbient]);
+  }, [duckAmbient, isAudioEnabled, open, restoreAmbient]);
 
   return (
     <Modal

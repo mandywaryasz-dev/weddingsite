@@ -1,7 +1,17 @@
 import { expect, test, type Locator } from "@playwright/test";
 
 test("save-the-date renders scenes and opens modal", async ({ page }) => {
+  const ambientResponse = page.waitForResponse((response) =>
+    response.url().includes("/audio/ambient-loop.mp3")
+  );
+
   await page.goto("/save-the-date");
+  await ambientResponse;
+
+  const audioToggle = page.getByTestId("audio-toggle");
+  await page.getByTestId("audio-start-overlay").tap();
+  await expect(audioToggle).toHaveAttribute("data-audio-enabled", "true");
+  await expect(audioToggle).toHaveAttribute("data-audio-playing", "true");
 
   await expect(page.locator("section#hero")).toBeVisible();
   await expect(page.locator("section#cultural")).toBeVisible();
@@ -18,8 +28,18 @@ test("save-the-date renders scenes and opens modal", async ({ page }) => {
 
   expect(await getOpacity(heroBodyLine)).toBeLessThan(0.2);
   await page.mouse.wheel(0, 1600);
+  await expect(audioToggle).toHaveAttribute("data-audio-playing", "true");
   await page.waitForTimeout(250);
   expect(await getOpacity(heroBodyLine)).toBeGreaterThan(0.9);
+
+  await audioToggle.tap();
+  await expect(audioToggle).toHaveAttribute("data-audio-enabled", "false");
+  await expect(audioToggle).toHaveAttribute("data-audio-playing", "false");
+
+  await audioToggle.tap();
+  await expect(audioToggle).toHaveAttribute("data-audio-enabled", "true");
+  await expect(audioToggle).toHaveAttribute("data-audio-playing", "true");
+
   await page.mouse.wheel(0, -1600);
   await page.waitForTimeout(250);
   expect(await getOpacity(heroBodyLine)).toBeGreaterThan(0.9);

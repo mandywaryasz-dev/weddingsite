@@ -1,42 +1,64 @@
 import React from "react";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { vi } from "vitest";
 import { AudioProvider } from "@/components/audio/AudioProvider";
 import { AudioStartOverlay } from "@/components/audio/AudioStartOverlay";
-import { AudioToggle } from "@/components/audio/AudioToggle";
+
+class OverlayAudio {
+  volume = 0.3;
+  loop = false;
+  preload = "auto";
+  currentTime = 0;
+  paused = true;
+  src = "";
+  private listeners = new Map<string, Set<() => void>>();
+  readonly load = vi.fn(() => undefined);
+  readonly play = vi.fn(async () => {
+    this.paused = false;
+  });
+  readonly pause = vi.fn(() => {
+    this.paused = true;
+  });
+
+  addEventListener(event: string, cb: () => void) {
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, new Set());
+    }
+    this.listeners.get(event)?.add(cb);
+    if (event === "canplay") {
+      cb();
+    }
+  }
+
+  removeEventListener(event: string, cb: () => void) {
+    this.listeners.get(event)?.delete(cb);
+  }
+}
 
 describe("AudioStartOverlay", () => {
-  it("shows on initial load", () => {
-    render(
-      <AudioProvider>
-        <AudioStartOverlay />
-      </AudioProvider>
-    );
+  const originalAudio = window.Audio;
+  const instances: OverlayAudio[] = [];
 
-    const overlay = screen.getByTestId("audio-start-overlay");
-    expect(overlay).toBeInTheDocument();
-    expect(overlay).toHaveClass("opacity-100");
-    expect(screen.getByText("Scroll to Begin")).toBeInTheDocument();
+  beforeEach(() => {
+    instances.length = 0;
+    Object.defineProperty(window, "Audio", {
+      writable: true,
+      value: vi.fn(() => {
+        const audio = new OverlayAudio();
+        instances.push(audio);
+        return audio;
+      })
+    });
   });
 
-  it("fades away after pointer interaction and keeps audio unmuted", async () => {
-    render(
-      <AudioProvider>
-        <AudioToggle />
-        <AudioStartOverlay />
-      </AudioProvider>
-    );
-
-    const overlay = screen.getByTestId("audio-start-overlay");
-    await act(async () => {
-      fireEvent.pointerDown(overlay);
+  afterEach(() => {
+    Object.defineProperty(window, "Audio", {
+      writable: true,
+      value: originalAudio
     });
-
-    expect(overlay).toHaveClass("opacity-0");
-    expect(overlay).toHaveClass("pointer-events-none");
-    expect(screen.getByRole("button", { name: /disable page audio/i })).toBeInTheDocument();
   });
 
-  it("fades away after touch interaction on the overlay", async () => {
+  it("dismisses on touchend", async () => {
     render(
       <AudioProvider>
         <AudioStartOverlay />
@@ -44,15 +66,14 @@ describe("AudioStartOverlay", () => {
     );
 
     const overlay = screen.getByTestId("audio-start-overlay");
-    await act(async () => {
-      fireEvent.touchStart(overlay);
-    });
+    fireEvent.touchEnd(overlay);
 
+    await waitFor(() => expect(instances[0].play).toHaveBeenCalledTimes(1));
     expect(overlay).toHaveClass("opacity-0");
     expect(overlay).toHaveClass("pointer-events-none");
   });
 
-  it("fades away after click interaction on the overlay", async () => {
+  it("dismisses on click", async () => {
     render(
       <AudioProvider>
         <AudioStartOverlay />
@@ -60,15 +81,14 @@ describe("AudioStartOverlay", () => {
     );
 
     const overlay = screen.getByTestId("audio-start-overlay");
-    await act(async () => {
-      fireEvent.click(overlay);
-    });
+    fireEvent.click(overlay);
 
+    await waitFor(() => expect(instances[0].play).toHaveBeenCalledTimes(1));
     expect(overlay).toHaveClass("opacity-0");
     expect(overlay).toHaveClass("pointer-events-none");
   });
 
-  it("fades away after wheel interaction", async () => {
+  it("does not double-start on touchend followed by a synthetic click", async () => {
     render(
       <AudioProvider>
         <AudioStartOverlay />
@@ -76,11 +96,9 @@ describe("AudioStartOverlay", () => {
     );
 
     const overlay = screen.getByTestId("audio-start-overlay");
-    await act(async () => {
-      fireEvent.wheel(window);
-    });
+    fireEvent.touchEnd(overlay);
+    fireEvent.click(overlay);
 
-    expect(overlay).toHaveClass("opacity-0");
-    expect(overlay).toHaveClass("pointer-events-none");
+    await waitFor(() => expect(instances[0].play).toHaveBeenCalledTimes(1));
   });
 });
