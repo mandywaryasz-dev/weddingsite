@@ -1,11 +1,11 @@
 import "@testing-library/jest-dom/vitest";
 
 class MockAudio {
-  muted = true;
   volume = 0.3;
   loop = false;
-  preload = "metadata";
+  preload = "auto";
   currentTime = 0;
+  paused = true;
   src = "";
   private listeners = new Map<string, Set<() => void>>();
 
@@ -23,11 +23,17 @@ class MockAudio {
     this.listeners.get(event)?.delete(cb);
   }
 
+  load() {
+    return undefined;
+  }
+
   play() {
+    this.paused = false;
     return Promise.resolve();
   }
 
   pause() {
+    this.paused = true;
     return undefined;
   }
 }

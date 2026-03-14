@@ -1,15 +1,17 @@
 export type AudioState = {
-  isMuted: boolean;
+  isAudioEnabled: boolean;
   volume: number;
   isReady: boolean;
-  hasUserInteracted: boolean;
+  hasActivatedAudio: boolean;
+  isPlaying: boolean;
+  pendingStart: boolean;
 };
 
 export type AudioContextValue = AudioState & {
   play: () => Promise<void>;
   pause: () => void;
-  registerUserGesture: () => void;
-  setMuted: (nextMuted: boolean) => void;
+  activateAudioFromGesture: () => Promise<void>;
+  setAudioEnabled: (nextEnabled: boolean) => void;
   fadeTo: (targetVolume: number, durationMs: number) => Promise<void>;
   duckAmbient: (lowVolume?: number) => Promise<void>;
   restoreAmbient: (normalVolume?: number) => Promise<void>;

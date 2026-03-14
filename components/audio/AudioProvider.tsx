@@ -16,62 +16,140 @@ import {
   MIN_FADE_MS
 } from "@/lib/audio/constants";
 import { buildFadeFrames, clampVolume } from "@/lib/audio/controller";
-import { AudioContextValue } from "@/lib/audio/types";
+import type { AudioContextValue } from "@/lib/audio/types";
 
 const AudioContext = createContext<AudioContextValue | null>(null);
+
+const RETRY_GESTURE_EVENTS = ["touchend", "click", "pointerup", "keydown"] as const;
 
 type AudioProviderProps = PropsWithChildren<{
   ambientSrc?: string;
 }>;
 
-export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3" }: AudioProviderProps) {
+export function AudioProvider({
+  children,
+  ambientSrc = "/audio/ambient-loop.mp3"
+}: AudioProviderProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const mediaSourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
   const graphStatusRef = useRef<"unknown" | "enabled" | "failed">("unknown");
-  const isMutedRef = useRef(false);
-  const isPlayingRef = useRef(false);
-  const startRequestedRef = useRef(false);
   const startAttemptRef = useRef<Promise<boolean> | null>(null);
-  const retryPlaybackRef = useRef<() => void>(() => undefined);
+  const startAttemptTokenRef = useRef(0);
   const fallbackDuckActiveRef = useRef(false);
   const fallbackShouldResumeRef = useRef(false);
   const frameRef = useRef<number | null>(null);
   const mountedRef = useRef(true);
-  const [isMuted, setIsMutedState] = useState(false);
+  const volumeRef = useRef(DEFAULT_AMBIENT_VOLUME);
+  const isAudioEnabledRef = useRef(true);
+  const hasActivatedAudioRef = useRef(false);
+  const isPlayingRef = useRef(false);
+  const pendingStartRef = useRef(false);
+  const [isAudioEnabled, setIsAudioEnabledState] = useState(true);
   const [volume, setVolume] = useState(DEFAULT_AMBIENT_VOLUME);
   const [isReady, setIsReady] = useState(false);
-  const [hasUserInteracted, setHasUserInteracted] = useState(false);
-  const [awaitingInitialPlayback, setAwaitingInitialPlayback] = useState(true);
+  const [hasActivatedAudio, setHasActivatedAudioState] = useState(false);
+  const [isPlaying, setIsPlayingState] = useState(false);
+  const [pendingStart, setPendingStartState] = useState(false);
+
+  const setAudioEnabledValue = useCallback((nextEnabled: boolean) => {
+    isAudioEnabledRef.current = nextEnabled;
+    if (mountedRef.current) {
+      setIsAudioEnabledState(nextEnabled);
+    }
+  }, []);
+
+  const setHasActivatedAudioValue = useCallback((nextActivated: boolean) => {
+    hasActivatedAudioRef.current = nextActivated;
+    if (mountedRef.current) {
+      setHasActivatedAudioState(nextActivated);
+    }
+  }, []);
+
+  const setIsPlayingValue = useCallback((nextPlaying: boolean) => {
+    isPlayingRef.current = nextPlaying;
+    if (mountedRef.current) {
+      setIsPlayingState(nextPlaying);
+    }
+  }, []);
+
+  const setPendingStartValue = useCallback((nextPending: boolean) => {
+    pendingStartRef.current = nextPending;
+    if (mountedRef.current) {
+      setPendingStartState(nextPending);
+    }
+  }, []);
+
+  const stopFade = useCallback(() => {
+    if (frameRef.current) {
+      cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    }
+  }, []);
+
+  const applyVolume = useCallback((nextVolume: number) => {
+    const clampedVolume = clampVolume(nextVolume);
+    const audio = audioRef.current;
+    const gainNode = gainNodeRef.current;
+
+    volumeRef.current = clampedVolume;
+
+    if (gainNode && graphStatusRef.current === "enabled") {
+      gainNode.gain.value = clampedVolume;
+      if (audio) {
+        audio.volume = 1;
+      }
+    } else if (audio) {
+      audio.volume = clampedVolume;
+    }
+
+    if (mountedRef.current) {
+      setVolume(clampedVolume);
+    }
+
+    return clampedVolume;
+  }, []);
+
+  const cancelPendingStart = useCallback(() => {
+    startAttemptTokenRef.current += 1;
+    startAttemptRef.current = null;
+    setPendingStartValue(false);
+  }, [setPendingStartValue]);
 
   useEffect(() => {
     mountedRef.current = true;
+    graphStatusRef.current = "unknown";
+    fallbackDuckActiveRef.current = false;
+    fallbackShouldResumeRef.current = false;
     startAttemptRef.current = null;
-    isPlayingRef.current = false;
+    startAttemptTokenRef.current = 0;
+    volumeRef.current = DEFAULT_AMBIENT_VOLUME;
+    setAudioEnabledValue(true);
+    setHasActivatedAudioValue(false);
+    setIsPlayingValue(false);
+    setPendingStartValue(false);
     setIsReady(false);
-    setAwaitingInitialPlayback(true);
+    setVolume(DEFAULT_AMBIENT_VOLUME);
+
     const audio = new Audio(ambientSrc);
     audio.loop = true;
-    audio.preload = "metadata";
-    audio.muted = false;
+    audio.preload = "auto";
     audio.volume = DEFAULT_AMBIENT_VOLUME;
     audioRef.current = audio;
 
     const markReady = () => {
-      setIsReady(true);
-      queueMicrotask(() => {
-        retryPlaybackRef.current();
-      });
+      if (mountedRef.current) {
+        setIsReady(true);
+      }
     };
+
     audio.addEventListener("canplay", markReady);
+    audio.load();
 
     return () => {
       mountedRef.current = false;
-      if (frameRef.current) {
-        cancelAnimationFrame(frameRef.current);
-        frameRef.current = null;
-      }
+      stopFade();
       gainNodeRef.current?.disconnect();
       mediaSourceRef.current?.disconnect();
       void audioContextRef.current?.close().catch(() => undefined);
@@ -79,36 +157,55 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
       mediaSourceRef.current = null;
       audioContextRef.current = null;
       graphStatusRef.current = "unknown";
-      isPlayingRef.current = false;
-      startRequestedRef.current = false;
-      startAttemptRef.current = null;
       fallbackDuckActiveRef.current = false;
       fallbackShouldResumeRef.current = false;
+      startAttemptRef.current = null;
       audio.removeEventListener("canplay", markReady);
       audio.pause();
       audioRef.current = null;
     };
-  }, [ambientSrc]);
+  }, [
+    ambientSrc,
+    setAudioEnabledValue,
+    setHasActivatedAudioValue,
+    setIsPlayingValue,
+    setPendingStartValue,
+    stopFade
+  ]);
 
   const ensureAudioGraph = useCallback(async () => {
     const audio = audioRef.current;
-    if (!audio) return false;
-    if (graphStatusRef.current === "enabled" && gainNodeRef.current && audioContextRef.current) {
+    if (!audio) {
+      return false;
+    }
+
+    if (
+      graphStatusRef.current === "enabled" &&
+      gainNodeRef.current &&
+      audioContextRef.current
+    ) {
       if (audioContextRef.current.state === "suspended") {
         try {
           await audioContextRef.current.resume();
         } catch {
           graphStatusRef.current = "failed";
+          gainNodeRef.current = null;
+          mediaSourceRef.current = null;
+          audioContextRef.current = null;
           return false;
         }
       }
       return true;
     }
+
     if (graphStatusRef.current === "failed") {
       return false;
     }
 
-    const AudioContextCtor = window.AudioContext ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    const AudioContextCtor =
+      window.AudioContext ??
+      (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+
     if (!AudioContextCtor) {
       graphStatusRef.current = "failed";
       return false;
@@ -117,27 +214,25 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
     try {
       const context = audioContextRef.current ?? new AudioContextCtor();
       const source = mediaSourceRef.current ?? context.createMediaElementSource(audio);
-      const gain = gainNodeRef.current ?? context.createGain();
+      const gainNode = gainNodeRef.current ?? context.createGain();
 
       if (!mediaSourceRef.current) {
-        source.connect(gain);
+        source.connect(gainNode);
       }
       if (!gainNodeRef.current) {
-        gain.connect(context.destination);
+        gainNode.connect(context.destination);
       }
-
-      gain.gain.value = clampVolume(volume);
-      audio.volume = 1;
 
       audioContextRef.current = context;
       mediaSourceRef.current = source;
-      gainNodeRef.current = gain;
+      gainNodeRef.current = gainNode;
+      graphStatusRef.current = "enabled";
+      applyVolume(volumeRef.current);
 
       if (context.state === "suspended") {
         await context.resume();
       }
 
-      graphStatusRef.current = "enabled";
       return true;
     } catch {
       graphStatusRef.current = "failed";
@@ -146,55 +241,66 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
       audioContextRef.current = null;
       return false;
     }
-  }, [volume]);
+  }, [applyVolume]);
 
-  const markPlaybackStarted = useCallback(() => {
-    isPlayingRef.current = true;
-    if (mountedRef.current) {
-      setAwaitingInitialPlayback(false);
+  const enhanceStartedPlayback = useCallback(async () => {
+    const didEnableGraph = await ensureAudioGraph();
+    if (!didEnableGraph) {
+      return;
     }
-  }, []);
+    applyVolume(volumeRef.current);
+  }, [applyVolume, ensureAudioGraph]);
 
   const tryStartPlayback = useCallback(
-    async ({ fromGesture = false }: { fromGesture?: boolean } = {}) => {
+    async ({ trustedGesture = false }: { trustedGesture?: boolean } = {}) => {
       const audio = audioRef.current;
-      if (!audio || isMutedRef.current) return false;
+      if (!audio || !isAudioEnabledRef.current) {
+        setPendingStartValue(false);
+        return false;
+      }
+
+      if (trustedGesture) {
+        setHasActivatedAudioValue(true);
+      }
+
       if (isPlayingRef.current) {
-        markPlaybackStarted();
+        setPendingStartValue(false);
         return true;
       }
+
       if (startAttemptRef.current) {
-        const pendingAttempt = startAttemptRef.current;
-        const didStart = await pendingAttempt;
-        if (startAttemptRef.current === pendingAttempt) {
-          startAttemptRef.current = null;
-        }
-        if (!didStart && !fromGesture && startRequestedRef.current && !isMutedRef.current && !isPlayingRef.current) {
-          return tryStartPlayback();
-        }
-        return didStart;
+        return startAttemptRef.current;
       }
 
-      const attemptPromise = (async () => {
-        if (fromGesture) {
-          const graphPromise = ensureAudioGraph();
-          try {
-            await audio.play();
-            markPlaybackStarted();
-            return true;
-          } catch {
-            return false;
-          } finally {
-            void graphPromise;
-          }
-        }
+      const attemptToken = startAttemptTokenRef.current + 1;
+      startAttemptTokenRef.current = attemptToken;
 
-        await ensureAudioGraph();
+      if (trustedGesture) {
+        setPendingStartValue(true);
+      }
+
+      const playPromise = audio.play();
+      const attemptPromise = (async () => {
         try {
-          await audio.play();
-          markPlaybackStarted();
+          await playPromise;
+
+          if (
+            attemptToken !== startAttemptTokenRef.current ||
+            !isAudioEnabledRef.current
+          ) {
+            audio.pause();
+            return false;
+          }
+
+          setIsPlayingValue(true);
+          setPendingStartValue(false);
+          void enhanceStartedPlayback();
           return true;
         } catch {
+          if (attemptToken === startAttemptTokenRef.current) {
+            setIsPlayingValue(false);
+            setPendingStartValue(trustedGesture && isAudioEnabledRef.current);
+          }
           return false;
         }
       })();
@@ -208,210 +314,211 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
 
       return attemptPromise;
     },
-    [ensureAudioGraph, markPlaybackStarted]
+    [
+      enhanceStartedPlayback,
+      setHasActivatedAudioValue,
+      setIsPlayingValue,
+      setPendingStartValue
+    ]
   );
 
   const play = useCallback(async () => {
     await tryStartPlayback();
   }, [tryStartPlayback]);
 
-  retryPlaybackRef.current = () => {
-    if (!startRequestedRef.current || isMutedRef.current || isPlayingRef.current) {
-      return;
-    }
-    void tryStartPlayback();
-  };
+  const pause = useCallback(() => {
+    cancelPendingStart();
+    setIsPlayingValue(false);
+    audioRef.current?.pause();
+  }, [cancelPendingStart, setIsPlayingValue]);
 
-  const registerUserGesture = useCallback(() => {
-    startRequestedRef.current = true;
-    setHasUserInteracted(true);
-    if (!isMutedRef.current) {
-      void tryStartPlayback({ fromGesture: true });
-    }
+  const activateAudioFromGesture = useCallback(async () => {
+    await tryStartPlayback({ trustedGesture: true });
   }, [tryStartPlayback]);
 
-  const pause = useCallback(() => {
-    isPlayingRef.current = false;
-    audioRef.current?.pause();
-  }, []);
-
-  const fadeTo = useCallback(async (targetVolume: number, durationMs: number) => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const hasGraph = (await ensureAudioGraph()) && gainNodeRef.current;
-    const controlledGain = hasGraph ? gainNodeRef.current : null;
-    const from = clampVolume(controlledGain ? controlledGain.gain.value : audio.volume);
-    const to = clampVolume(targetVolume);
-    const safeDuration = Math.max(durationMs, MIN_FADE_MS);
-
-    if (frameRef.current) {
-      cancelAnimationFrame(frameRef.current);
-      frameRef.current = null;
-    }
-
-    await new Promise<void>((resolve) => {
-      const start = performance.now();
-      const { frameCount } = buildFadeFrames(from, to, safeDuration);
-
-      const step = (now: number) => {
-        const elapsed = now - start;
-        const progress = Math.min(1, elapsed / safeDuration);
-        const nextVolume = from + (to - from) * progress;
-        const nextClampedVolume = clampVolume(nextVolume);
-        if (controlledGain) {
-          controlledGain.gain.value = nextClampedVolume;
-          audio.volume = 1;
-        } else {
-          audio.volume = nextClampedVolume;
-        }
-        if (mountedRef.current) {
-          setVolume(nextClampedVolume);
-        }
-
-        if (progress < 1) {
-          frameRef.current = requestAnimationFrame(step);
-        } else {
-          if (controlledGain) {
-            controlledGain.gain.value = to;
-            audio.volume = 1;
-          } else {
-            audio.volume = to;
-          }
-          if (mountedRef.current) {
-            setVolume(to);
-          }
-          frameRef.current = null;
-          resolve();
-        }
-      };
-
-      if (frameCount === 1) {
-        if (controlledGain) {
-          controlledGain.gain.value = to;
-          audio.volume = 1;
-        } else {
-          audio.volume = to;
-        }
-        if (mountedRef.current) {
-          setVolume(to);
-        }
-        resolve();
+  const fadeTo = useCallback(
+    async (targetVolume: number, durationMs: number) => {
+      const audio = audioRef.current;
+      if (!audio) {
         return;
       }
-      frameRef.current = requestAnimationFrame(step);
-    });
-  }, []);
 
-  const setMuted = useCallback(
-    (nextMuted: boolean) => {
-      const audio = audioRef.current;
-      setIsMutedState(nextMuted);
-      if (!audio) return;
-      audio.muted = nextMuted;
-      if (nextMuted) {
+      const hasGraph = (await ensureAudioGraph()) && gainNodeRef.current;
+      const controlledGain = hasGraph ? gainNodeRef.current : null;
+      const from = clampVolume(
+        controlledGain ? controlledGain.gain.value : audio.volume
+      );
+      const to = clampVolume(targetVolume);
+      const safeDuration = Math.max(durationMs, MIN_FADE_MS);
+
+      stopFade();
+
+      await new Promise<void>((resolve) => {
+        const start = performance.now();
+        const { frameCount } = buildFadeFrames(from, to, safeDuration);
+
+        const step = (now: number) => {
+          const elapsed = now - start;
+          const progress = Math.min(1, elapsed / safeDuration);
+          const nextVolume = from + (to - from) * progress;
+          const nextClampedVolume = clampVolume(nextVolume);
+
+          if (controlledGain) {
+            controlledGain.gain.value = nextClampedVolume;
+            audio.volume = 1;
+          } else {
+            audio.volume = nextClampedVolume;
+          }
+
+          volumeRef.current = nextClampedVolume;
+          if (mountedRef.current) {
+            setVolume(nextClampedVolume);
+          }
+
+          if (progress < 1) {
+            frameRef.current = requestAnimationFrame(step);
+            return;
+          }
+
+          applyVolume(to);
+          frameRef.current = null;
+          resolve();
+        };
+
+        if (frameCount === 1) {
+          applyVolume(to);
+          resolve();
+          return;
+        }
+
+        frameRef.current = requestAnimationFrame(step);
+      });
+    },
+    [applyVolume, ensureAudioGraph, stopFade]
+  );
+
+  const setAudioEnabled = useCallback(
+    (nextEnabled: boolean) => {
+      setAudioEnabledValue(nextEnabled);
+
+      if (nextEnabled) {
         fallbackShouldResumeRef.current = false;
         return;
       }
-      if (fallbackDuckActiveRef.current) {
-        return;
-      }
-      if (!nextMuted) {
-        void tryStartPlayback({ fromGesture: true });
-        void fadeTo(DEFAULT_AMBIENT_VOLUME, MIN_FADE_MS);
-      }
+
+      fallbackDuckActiveRef.current = false;
+      fallbackShouldResumeRef.current = false;
+      stopFade();
+      cancelPendingStart();
+      setIsPlayingValue(false);
+      audioRef.current?.pause();
     },
-    [fadeTo, tryStartPlayback]
+    [cancelPendingStart, setAudioEnabledValue, setIsPlayingValue, stopFade]
   );
 
   const duckAmbient = useCallback(
     async (lowVolume = DUCKED_AMBIENT_VOLUME) => {
+      if (!isAudioEnabledRef.current || !isPlayingRef.current) {
+        fallbackShouldResumeRef.current = false;
+        return;
+      }
+
       if (!(await ensureAudioGraph())) {
         fallbackDuckActiveRef.current = true;
-        fallbackShouldResumeRef.current = isPlayingRef.current && !isMutedRef.current;
+        fallbackShouldResumeRef.current =
+          isAudioEnabledRef.current && isPlayingRef.current;
         if (fallbackShouldResumeRef.current) {
           pause();
         }
-        if (mountedRef.current) {
-          setVolume(clampVolume(lowVolume));
-        }
+        applyVolume(lowVolume);
         return;
       }
+
+      fallbackDuckActiveRef.current = false;
+      fallbackShouldResumeRef.current = false;
       await fadeTo(lowVolume, MIN_FADE_MS);
     },
-    [ensureAudioGraph, fadeTo, pause]
+    [applyVolume, ensureAudioGraph, fadeTo, pause]
   );
 
   const restoreAmbient = useCallback(
     async (normalVolume = DEFAULT_AMBIENT_VOLUME) => {
       const nextVolume = clampVolume(normalVolume);
+
+      if (!isAudioEnabledRef.current) {
+        fallbackDuckActiveRef.current = false;
+        fallbackShouldResumeRef.current = false;
+        applyVolume(nextVolume);
+        return;
+      }
+
       if (fallbackDuckActiveRef.current) {
         fallbackDuckActiveRef.current = false;
-        if (mountedRef.current) {
-          setVolume(nextVolume);
-        }
-        if (audioRef.current) {
-          audioRef.current.volume = nextVolume;
-        }
-        if (!isMutedRef.current && fallbackShouldResumeRef.current) {
+        applyVolume(nextVolume);
+        if (fallbackShouldResumeRef.current) {
           await play();
         }
         fallbackShouldResumeRef.current = false;
         return;
       }
-      await fadeTo(normalVolume, MIN_FADE_MS);
+
+      await fadeTo(nextVolume, MIN_FADE_MS);
     },
-    [fadeTo, play]
+    [applyVolume, fadeTo, play]
   );
 
   useEffect(() => {
-    isMutedRef.current = isMuted;
-  }, [isMuted]);
-
-  useEffect(() => {
-    if (!awaitingInitialPlayback) {
+    if (!pendingStart || !isAudioEnabled || isPlaying) {
       return;
     }
 
-    function onInteraction() {
-      registerUserGesture();
-    }
+    const onTrustedRetry = () => {
+      void activateAudioFromGesture();
+    };
 
-    window.addEventListener("pointerdown", onInteraction);
-    window.addEventListener("touchstart", onInteraction, { passive: true });
-    window.addEventListener("click", onInteraction);
-    window.addEventListener("keydown", onInteraction);
-    window.addEventListener("wheel", onInteraction, { passive: true });
+    window.addEventListener("touchend", onTrustedRetry, { passive: true });
+    window.addEventListener("click", onTrustedRetry);
+    window.addEventListener("pointerup", onTrustedRetry);
+    window.addEventListener("keydown", onTrustedRetry);
 
     return () => {
-      window.removeEventListener("pointerdown", onInteraction);
-      window.removeEventListener("touchstart", onInteraction);
-      window.removeEventListener("click", onInteraction);
-      window.removeEventListener("keydown", onInteraction);
-      window.removeEventListener("wheel", onInteraction);
+      RETRY_GESTURE_EVENTS.forEach((eventName) => {
+        window.removeEventListener(eventName, onTrustedRetry);
+      });
     };
-  }, [awaitingInitialPlayback, registerUserGesture]);
-
-  useEffect(() => {
-    if (!hasUserInteracted || isMuted || !isReady || !startRequestedRef.current || isPlayingRef.current) return;
-    void tryStartPlayback();
-  }, [hasUserInteracted, isMuted, isReady, tryStartPlayback]);
+  }, [activateAudioFromGesture, isAudioEnabled, isPlaying, pendingStart]);
 
   const value = useMemo<AudioContextValue>(
     () => ({
-      isMuted,
+      isAudioEnabled,
       volume,
       isReady,
-      hasUserInteracted,
+      hasActivatedAudio,
+      isPlaying,
+      pendingStart,
       play,
       pause,
-      registerUserGesture,
-      setMuted,
+      activateAudioFromGesture,
+      setAudioEnabled,
       fadeTo,
       duckAmbient,
       restoreAmbient
     }),
-    [duckAmbient, fadeTo, hasUserInteracted, isMuted, isReady, pause, play, registerUserGesture, restoreAmbient, setMuted, volume]
+    [
+      activateAudioFromGesture,
+      duckAmbient,
+      fadeTo,
+      hasActivatedAudio,
+      isAudioEnabled,
+      isPlaying,
+      isReady,
+      pause,
+      pendingStart,
+      play,
+      restoreAmbient,
+      setAudioEnabled,
+      volume
+    ]
   );
 
   return <AudioContext.Provider value={value}>{children}</AudioContext.Provider>;
