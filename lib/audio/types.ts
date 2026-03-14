@@ -8,6 +8,7 @@ export type AudioState = {
 export type AudioContextValue = AudioState & {
   play: () => Promise<void>;
   pause: () => void;
+  registerUserGesture: () => void;
   setMuted: (nextMuted: boolean) => void;
   fadeTo: (targetVolume: number, durationMs: number) => Promise<void>;
   duckAmbient: (lowVolume?: number) => Promise<void>;

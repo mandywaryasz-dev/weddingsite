@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { AudioProvider } from "@/components/audio/AudioProvider";
 import { AudioStartOverlay } from "@/components/audio/AudioStartOverlay";
 import { AudioToggle } from "@/components/audio/AudioToggle";
@@ -18,7 +18,7 @@ describe("AudioStartOverlay", () => {
     expect(screen.getByText("Scroll to Begin")).toBeInTheDocument();
   });
 
-  it("fades away after pointer interaction and keeps audio unmuted", () => {
+  it("fades away after pointer interaction and keeps audio unmuted", async () => {
     render(
       <AudioProvider>
         <AudioToggle />
@@ -27,14 +27,16 @@ describe("AudioStartOverlay", () => {
     );
 
     const overlay = screen.getByTestId("audio-start-overlay");
-    fireEvent.pointerDown(window);
+    await act(async () => {
+      fireEvent.pointerDown(overlay);
+    });
 
     expect(overlay).toHaveClass("opacity-0");
     expect(overlay).toHaveClass("pointer-events-none");
     expect(screen.getByRole("button", { name: /disable page audio/i })).toBeInTheDocument();
   });
 
-  it("fades away after wheel interaction", () => {
+  it("fades away after touch interaction on the overlay", async () => {
     render(
       <AudioProvider>
         <AudioStartOverlay />
@@ -42,7 +44,41 @@ describe("AudioStartOverlay", () => {
     );
 
     const overlay = screen.getByTestId("audio-start-overlay");
-    fireEvent.wheel(window);
+    await act(async () => {
+      fireEvent.touchStart(overlay);
+    });
+
+    expect(overlay).toHaveClass("opacity-0");
+    expect(overlay).toHaveClass("pointer-events-none");
+  });
+
+  it("fades away after click interaction on the overlay", async () => {
+    render(
+      <AudioProvider>
+        <AudioStartOverlay />
+      </AudioProvider>
+    );
+
+    const overlay = screen.getByTestId("audio-start-overlay");
+    await act(async () => {
+      fireEvent.click(overlay);
+    });
+
+    expect(overlay).toHaveClass("opacity-0");
+    expect(overlay).toHaveClass("pointer-events-none");
+  });
+
+  it("fades away after wheel interaction", async () => {
+    render(
+      <AudioProvider>
+        <AudioStartOverlay />
+      </AudioProvider>
+    );
+
+    const overlay = screen.getByTestId("audio-start-overlay");
+    await act(async () => {
+      fireEvent.wheel(window);
+    });
 
     expect(overlay).toHaveClass("opacity-0");
     expect(overlay).toHaveClass("pointer-events-none");

@@ -3,6 +3,17 @@ import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { vi } from "vitest";
 import { AudioProvider, useAudio } from "@/components/audio/AudioProvider";
 
+let gestureInProgress = false;
+
+function withUserGesture(action: () => void) {
+  gestureInProgress = true;
+  try {
+    action();
+  } finally {
+    gestureInProgress = false;
+  }
+}
+
 class ControlledAudio {
   muted = true;
   volume = 0.3;
@@ -11,9 +22,13 @@ class ControlledAudio {
   currentTime = 0;
   paused = true;
   src = "";
+  requireGesture = false;
   private canPlay = false;
   private listeners = new Map<string, Set<() => void>>();
   readonly play = vi.fn(async () => {
+    if (this.requireGesture && !gestureInProgress) {
+      throw new Error("Gesture required");
+    }
     if (!this.canPlay) {
       throw new Error("Audio not ready");
     }
@@ -149,6 +164,53 @@ describe("AudioProvider startup playback", () => {
     });
 
     await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(2));
+  });
+
+  it("calls audio.play inside the original gesture handler", async () => {
+    render(
+      <AudioProvider>
+        <div>probe</div>
+      </AudioProvider>
+    );
+
+    const audio = instances[0];
+    audio.requireGesture = true;
+
+    act(() => {
+      audio.emit("canplay");
+    });
+
+    withUserGesture(() => fireEvent.pointerDown(window));
+
+    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
+    expect(audio.paused).toBe(false);
+  });
+
+  it("keeps touch listeners active after an early mobile start fails", async () => {
+    render(
+      <AudioProvider>
+        <div>probe</div>
+      </AudioProvider>
+    );
+
+    const audio = instances[0];
+    audio.requireGesture = true;
+
+    withUserGesture(() => fireEvent.touchStart(window));
+    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
+    expect(audio.paused).toBe(true);
+
+    act(() => {
+      audio.emit("canplay");
+    });
+
+    await waitFor(() => expect(audio.play.mock.calls.length).toBeGreaterThanOrEqual(2));
+    const playCallsAfterReady = audio.play.mock.calls.length;
+    expect(audio.paused).toBe(true);
+
+    withUserGesture(() => fireEvent.touchStart(window));
+    await waitFor(() => expect(audio.play.mock.calls.length).toBeGreaterThan(playCallsAfterReady));
+    expect(audio.paused).toBe(false);
   });
 
   it("starts playback path on wheel interaction and retries on canplay", async () => {

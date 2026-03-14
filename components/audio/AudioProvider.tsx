@@ -32,6 +32,9 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
   const graphStatusRef = useRef<"unknown" | "enabled" | "failed">("unknown");
   const isMutedRef = useRef(false);
   const isPlayingRef = useRef(false);
+  const startRequestedRef = useRef(false);
+  const startAttemptRef = useRef<Promise<boolean> | null>(null);
+  const retryPlaybackRef = useRef<() => void>(() => undefined);
   const fallbackDuckActiveRef = useRef(false);
   const fallbackShouldResumeRef = useRef(false);
   const frameRef = useRef<number | null>(null);
@@ -40,9 +43,14 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
   const [volume, setVolume] = useState(DEFAULT_AMBIENT_VOLUME);
   const [isReady, setIsReady] = useState(false);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  const [awaitingInitialPlayback, setAwaitingInitialPlayback] = useState(true);
 
   useEffect(() => {
     mountedRef.current = true;
+    startAttemptRef.current = null;
+    isPlayingRef.current = false;
+    setIsReady(false);
+    setAwaitingInitialPlayback(true);
     const audio = new Audio(ambientSrc);
     audio.loop = true;
     audio.preload = "metadata";
@@ -50,7 +58,12 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
     audio.volume = DEFAULT_AMBIENT_VOLUME;
     audioRef.current = audio;
 
-    const markReady = () => setIsReady(true);
+    const markReady = () => {
+      setIsReady(true);
+      queueMicrotask(() => {
+        retryPlaybackRef.current();
+      });
+    };
     audio.addEventListener("canplay", markReady);
 
     return () => {
@@ -67,6 +80,8 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
       audioContextRef.current = null;
       graphStatusRef.current = "unknown";
       isPlayingRef.current = false;
+      startRequestedRef.current = false;
+      startAttemptRef.current = null;
       fallbackDuckActiveRef.current = false;
       fallbackShouldResumeRef.current = false;
       audio.removeEventListener("canplay", markReady);
@@ -133,17 +148,87 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
     }
   }, [volume]);
 
-  const play = useCallback(async () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    await ensureAudioGraph();
-    try {
-      await audio.play();
-      isPlayingRef.current = true;
-    } catch {
-      // Ignore autoplay policy rejections; play is retried on user interaction.
+  const markPlaybackStarted = useCallback(() => {
+    isPlayingRef.current = true;
+    if (mountedRef.current) {
+      setAwaitingInitialPlayback(false);
     }
-  }, [ensureAudioGraph]);
+  }, []);
+
+  const tryStartPlayback = useCallback(
+    async ({ fromGesture = false }: { fromGesture?: boolean } = {}) => {
+      const audio = audioRef.current;
+      if (!audio || isMutedRef.current) return false;
+      if (isPlayingRef.current) {
+        markPlaybackStarted();
+        return true;
+      }
+      if (startAttemptRef.current) {
+        const pendingAttempt = startAttemptRef.current;
+        const didStart = await pendingAttempt;
+        if (startAttemptRef.current === pendingAttempt) {
+          startAttemptRef.current = null;
+        }
+        if (!didStart && !fromGesture && startRequestedRef.current && !isMutedRef.current && !isPlayingRef.current) {
+          return tryStartPlayback();
+        }
+        return didStart;
+      }
+
+      const attemptPromise = (async () => {
+        if (fromGesture) {
+          const graphPromise = ensureAudioGraph();
+          try {
+            await audio.play();
+            markPlaybackStarted();
+            return true;
+          } catch {
+            return false;
+          } finally {
+            void graphPromise;
+          }
+        }
+
+        await ensureAudioGraph();
+        try {
+          await audio.play();
+          markPlaybackStarted();
+          return true;
+        } catch {
+          return false;
+        }
+      })();
+
+      startAttemptRef.current = attemptPromise;
+      void attemptPromise.finally(() => {
+        if (startAttemptRef.current === attemptPromise) {
+          startAttemptRef.current = null;
+        }
+      });
+
+      return attemptPromise;
+    },
+    [ensureAudioGraph, markPlaybackStarted]
+  );
+
+  const play = useCallback(async () => {
+    await tryStartPlayback();
+  }, [tryStartPlayback]);
+
+  retryPlaybackRef.current = () => {
+    if (!startRequestedRef.current || isMutedRef.current || isPlayingRef.current) {
+      return;
+    }
+    void tryStartPlayback();
+  };
+
+  const registerUserGesture = useCallback(() => {
+    startRequestedRef.current = true;
+    setHasUserInteracted(true);
+    if (!isMutedRef.current) {
+      void tryStartPlayback({ fromGesture: true });
+    }
+  }, [tryStartPlayback]);
 
   const pause = useCallback(() => {
     isPlayingRef.current = false;
@@ -232,11 +317,11 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
         return;
       }
       if (!nextMuted) {
-        void play();
+        void tryStartPlayback({ fromGesture: true });
         void fadeTo(DEFAULT_AMBIENT_VOLUME, MIN_FADE_MS);
       }
     },
-    [fadeTo, play]
+    [fadeTo, tryStartPlayback]
   );
 
   const duckAmbient = useCallback(
@@ -284,33 +369,33 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
   }, [isMuted]);
 
   useEffect(() => {
-    function detachInteractionListeners() {
-      window.removeEventListener("pointerdown", onInteraction);
-      window.removeEventListener("keydown", onInteraction);
-      window.removeEventListener("wheel", onInteraction);
+    if (!awaitingInitialPlayback) {
+      return;
     }
 
     function onInteraction() {
-      setHasUserInteracted(true);
-      if (!isMutedRef.current) {
-        void play();
-      }
-      detachInteractionListeners();
+      registerUserGesture();
     }
 
     window.addEventListener("pointerdown", onInteraction);
+    window.addEventListener("touchstart", onInteraction, { passive: true });
+    window.addEventListener("click", onInteraction);
     window.addEventListener("keydown", onInteraction);
     window.addEventListener("wheel", onInteraction, { passive: true });
 
     return () => {
-      detachInteractionListeners();
+      window.removeEventListener("pointerdown", onInteraction);
+      window.removeEventListener("touchstart", onInteraction);
+      window.removeEventListener("click", onInteraction);
+      window.removeEventListener("keydown", onInteraction);
+      window.removeEventListener("wheel", onInteraction);
     };
-  }, [play]);
+  }, [awaitingInitialPlayback, registerUserGesture]);
 
   useEffect(() => {
-    if (!hasUserInteracted || isMuted || !isReady) return;
-    void play();
-  }, [hasUserInteracted, isMuted, isReady, play]);
+    if (!hasUserInteracted || isMuted || !isReady || !startRequestedRef.current || isPlayingRef.current) return;
+    void tryStartPlayback();
+  }, [hasUserInteracted, isMuted, isReady, tryStartPlayback]);
 
   const value = useMemo<AudioContextValue>(
     () => ({
@@ -320,12 +405,13 @@ export function AudioProvider({ children, ambientSrc = "/audio/ambient-loop.mp3"
       hasUserInteracted,
       play,
       pause,
+      registerUserGesture,
       setMuted,
       fadeTo,
       duckAmbient,
       restoreAmbient
     }),
-    [duckAmbient, fadeTo, hasUserInteracted, isMuted, isReady, pause, play, restoreAmbient, setMuted, volume]
+    [duckAmbient, fadeTo, hasUserInteracted, isMuted, isReady, pause, play, registerUserGesture, restoreAmbient, setMuted, volume]
   );
 
   return <AudioContext.Provider value={value}>{children}</AudioContext.Provider>;
