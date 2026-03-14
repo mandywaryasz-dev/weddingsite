@@ -7,7 +7,7 @@ const eventData = {
   title: "Amanda & Dushyant's Wedding",
   start: new Date("2026-10-02T20:00:00.000Z"),
   end: new Date("2026-10-03T03:00:00.000Z"),
-  location: "Asheville, NC",
+  location: "Haiku - 26 Sweeten Creek Rd, Asheville, NC 28803",
   details: 'Save the date for Amanda & Dushyant. Full details and RSVP to follow. Check for updates at <a href="https://meetusinasheville.com">meetusinasheville.com</a>.',
 } as const;
 

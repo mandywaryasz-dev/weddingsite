@@ -20,12 +20,11 @@ export function VenueModal({ open, onOpenChange }: VenueModalProps) {
       open={open}
       onOpenChange={onOpenChange}
       eyebrow="Where We Gather"
-      title="The Venue"
+      title="Haiku"
       contentClassName="w-[min(94vw,900px)]"
       headerAdornment={
-        <div className="space-y-2 text-ivory/72">
+        <div className="-mt-2 space-y-2 text-ivory/72">
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 sm:gap-x-4">
-            <p className="font-heading text-detail uppercase tracking-[0.18em] text-gold/92">Haiku</p>
             <p className="font-heading text-micro uppercase tracking-[0.22em] text-ivory/58">Asheville</p>
           </div>
           <p className="max-w-[32rem] font-body text-body-sm leading-[1.4] text-ivory/76">
