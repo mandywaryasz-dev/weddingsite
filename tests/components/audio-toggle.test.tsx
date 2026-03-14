@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { AudioProvider } from "@/components/audio/AudioProvider";
 import { AudioToggle } from "@/components/audio/AudioToggle";
 import { AUDIO_MUTED_KEY } from "@/lib/audio/constants";
@@ -9,7 +9,7 @@ describe("AudioToggle", () => {
     window.sessionStorage.clear();
   });
 
-  it("defaults to unmuted on first visit and toggles to muted on click", () => {
+  it("defaults to unmuted on first visit and toggles to muted on click", async () => {
     render(
       <AudioProvider>
         <AudioToggle />
@@ -21,7 +21,9 @@ describe("AudioToggle", () => {
     expect(screen.queryByText(/audio off/i)).not.toBeInTheDocument();
     expect(button.querySelector("svg")).not.toBeNull();
 
-    fireEvent.click(button);
+    await act(async () => {
+      fireEvent.click(button);
+    });
 
     const toggledButton = screen.getByRole("button", { name: /enable page audio/i });
     expect(toggledButton.querySelector("svg")).not.toBeNull();

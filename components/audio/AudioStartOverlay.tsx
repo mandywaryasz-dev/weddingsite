@@ -1,13 +1,22 @@
 "use client";
 
+import type { MouseEvent, PointerEvent, TouchEvent } from "react";
 import { useAudio } from "@/components/audio/AudioProvider";
 
 export function AudioStartOverlay() {
-  const { hasUserInteracted } = useAudio();
+  const { hasUserInteracted, registerUserGesture } = useAudio();
+
+  function handleGesture(event: MouseEvent<HTMLDivElement> | PointerEvent<HTMLDivElement> | TouchEvent<HTMLDivElement>) {
+    event.stopPropagation();
+    registerUserGesture();
+  }
 
   return (
     <div
       data-testid="audio-start-overlay"
+      onPointerDown={handleGesture}
+      onTouchStart={handleGesture}
+      onClick={handleGesture}
       className={`fixed inset-0 z-50 bg-black/45 backdrop-blur-[2px] transition-opacity duration-300 ${
         hasUserInteracted ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
