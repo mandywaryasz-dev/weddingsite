@@ -58,6 +58,16 @@ describe("AudioStartOverlay", () => {
     });
   });
 
+  it("shows the updated entrance copy", () => {
+    render(
+      <AudioProvider>
+        <AudioStartOverlay />
+      </AudioProvider>
+    );
+
+    expect(screen.getByText("Tap and Scroll to Begin")).toBeInTheDocument();
+  });
+
   it("dismisses on touchend", async () => {
     render(
       <AudioProvider>

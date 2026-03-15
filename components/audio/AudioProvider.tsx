@@ -20,11 +20,25 @@ import type { AudioContextValue } from "@/lib/audio/types";
 
 const AudioContext = createContext<AudioContextValue | null>(null);
 
-const RETRY_GESTURE_EVENTS = ["touchend", "click", "pointerup", "keydown"] as const;
-
 type AudioProviderProps = PropsWithChildren<{
   ambientSrc?: string;
 }>;
+
+function isAudioToggleTarget(target: EventTarget | null) {
+  return target instanceof Element && Boolean(target.closest("[data-testid='audio-toggle']"));
+}
+
+function hasBeenUserActivated() {
+  return Boolean(
+    (
+      navigator as Navigator & {
+        userActivation?: {
+          hasBeenActive?: boolean;
+        };
+      }
+    ).userActivation?.hasBeenActive
+  );
+}
 
 export function AudioProvider({
   children,
@@ -46,6 +60,9 @@ export function AudioProvider({
   const hasActivatedAudioRef = useRef(false);
   const isPlayingRef = useRef(false);
   const pendingStartRef = useRef(false);
+  const touchGestureActiveRef = useRef(false);
+  const pointerGestureActiveRef = useRef(false);
+  const pendingScrollRetryRef = useRef(false);
   const [isAudioEnabled, setIsAudioEnabledState] = useState(true);
   const [volume, setVolume] = useState(DEFAULT_AMBIENT_VOLUME);
   const [isReady, setIsReady] = useState(false);
@@ -114,6 +131,9 @@ export function AudioProvider({
   const cancelPendingStart = useCallback(() => {
     startAttemptTokenRef.current += 1;
     startAttemptRef.current = null;
+    touchGestureActiveRef.current = false;
+    pointerGestureActiveRef.current = false;
+    pendingScrollRetryRef.current = false;
     setPendingStartValue(false);
   }, [setPendingStartValue]);
 
@@ -125,6 +145,9 @@ export function AudioProvider({
     startAttemptRef.current = null;
     startAttemptTokenRef.current = 0;
     volumeRef.current = DEFAULT_AMBIENT_VOLUME;
+    touchGestureActiveRef.current = false;
+    pointerGestureActiveRef.current = false;
+    pendingScrollRetryRef.current = false;
     setAudioEnabledValue(true);
     setHasActivatedAudioValue(false);
     setIsPlayingValue(false);
@@ -160,6 +183,9 @@ export function AudioProvider({
       fallbackDuckActiveRef.current = false;
       fallbackShouldResumeRef.current = false;
       startAttemptRef.current = null;
+      touchGestureActiveRef.current = false;
+      pointerGestureActiveRef.current = false;
+      pendingScrollRetryRef.current = false;
       audio.removeEventListener("canplay", markReady);
       audio.pause();
       audioRef.current = null;
@@ -252,14 +278,22 @@ export function AudioProvider({
   }, [applyVolume, ensureAudioGraph]);
 
   const tryStartPlayback = useCallback(
-    async ({ trustedGesture = false }: { trustedGesture?: boolean } = {}) => {
+    async ({
+      trustedGesture = false,
+      markActivated = trustedGesture,
+      preservePendingStartOnFailure = trustedGesture
+    }: {
+      trustedGesture?: boolean;
+      markActivated?: boolean;
+      preservePendingStartOnFailure?: boolean;
+    } = {}) => {
       const audio = audioRef.current;
       if (!audio || !isAudioEnabledRef.current) {
         setPendingStartValue(false);
         return false;
       }
 
-      if (trustedGesture) {
+      if (markActivated) {
         setHasActivatedAudioValue(true);
       }
 
@@ -299,7 +333,9 @@ export function AudioProvider({
         } catch {
           if (attemptToken === startAttemptTokenRef.current) {
             setIsPlayingValue(false);
-            setPendingStartValue(trustedGesture && isAudioEnabledRef.current);
+            setPendingStartValue(
+              preservePendingStartOnFailure && isAudioEnabledRef.current
+            );
           }
           return false;
         }
@@ -468,25 +504,139 @@ export function AudioProvider({
   );
 
   useEffect(() => {
-    if (!pendingStart || !isAudioEnabled || isPlaying) {
+    const shouldListenForActivation =
+      isAudioEnabled && !isPlaying && (!hasActivatedAudio || pendingStart);
+
+    if (!shouldListenForActivation) {
+      touchGestureActiveRef.current = false;
+      pointerGestureActiveRef.current = false;
+      pendingScrollRetryRef.current = false;
       return;
     }
 
-    const onTrustedRetry = () => {
+    const onTouchStart = () => {
+      touchGestureActiveRef.current = true;
+      pendingScrollRetryRef.current = false;
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType === "mouse") {
+        return;
+      }
+      pointerGestureActiveRef.current = true;
+      pendingScrollRetryRef.current = false;
+    };
+
+    const onTrustedActivation = (event: Event) => {
+      if (isAudioToggleTarget(event.target)) {
+        return;
+      }
+
+      touchGestureActiveRef.current = false;
+      pointerGestureActiveRef.current = false;
+      pendingScrollRetryRef.current = false;
       void activateAudioFromGesture();
     };
 
-    window.addEventListener("touchend", onTrustedRetry, { passive: true });
-    window.addEventListener("click", onTrustedRetry);
-    window.addEventListener("pointerup", onTrustedRetry);
-    window.addEventListener("keydown", onTrustedRetry);
+    const onTouchCancel = () => {
+      if (!touchGestureActiveRef.current) {
+        return;
+      }
+      touchGestureActiveRef.current = false;
+      pendingScrollRetryRef.current = true;
+    };
 
-    return () => {
-      RETRY_GESTURE_EVENTS.forEach((eventName) => {
-        window.removeEventListener(eventName, onTrustedRetry);
+    const onPointerCancel = (event: PointerEvent) => {
+      if (event.pointerType === "mouse" || !pointerGestureActiveRef.current) {
+        return;
+      }
+      pointerGestureActiveRef.current = false;
+      pendingScrollRetryRef.current = true;
+    };
+
+    const onScrollRetry = () => {
+      if (!pendingScrollRetryRef.current) {
+        return;
+      }
+
+      pendingScrollRetryRef.current = false;
+
+      if (!hasBeenUserActivated()) {
+        return;
+      }
+
+      void tryStartPlayback({
+        markActivated: true,
+        preservePendingStartOnFailure: true
       });
     };
-  }, [activateAudioFromGesture, isAudioEnabled, isPlaying, pendingStart]);
+
+    const onKeydown = (event: KeyboardEvent) => {
+      if (
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey ||
+        event.key === "Shift" ||
+        event.key === "Control" ||
+        event.key === "Alt" ||
+        event.key === "Meta"
+      ) {
+        return;
+      }
+
+      onTrustedActivation(event);
+    };
+
+    window.addEventListener("touchstart", onTouchStart, {
+      capture: true,
+      passive: true
+    });
+    window.addEventListener("pointerdown", onPointerDown, {
+      capture: true,
+      passive: true
+    });
+    window.addEventListener("touchend", onTrustedActivation, {
+      capture: true,
+      passive: true
+    });
+    window.addEventListener("pointerup", onTrustedActivation, {
+      capture: true,
+      passive: true
+    });
+    window.addEventListener("click", onTrustedActivation, true);
+    window.addEventListener("keydown", onKeydown, true);
+    window.addEventListener("touchcancel", onTouchCancel, {
+      capture: true,
+      passive: true
+    });
+    window.addEventListener("pointercancel", onPointerCancel, {
+      capture: true,
+      passive: true
+    });
+    window.addEventListener("scroll", onScrollRetry, {
+      capture: true,
+      passive: true
+    });
+
+    return () => {
+      window.removeEventListener("touchstart", onTouchStart, true);
+      window.removeEventListener("pointerdown", onPointerDown, true);
+      window.removeEventListener("touchend", onTrustedActivation, true);
+      window.removeEventListener("pointerup", onTrustedActivation, true);
+      window.removeEventListener("click", onTrustedActivation, true);
+      window.removeEventListener("keydown", onKeydown, true);
+      window.removeEventListener("touchcancel", onTouchCancel, true);
+      window.removeEventListener("pointercancel", onPointerCancel, true);
+      window.removeEventListener("scroll", onScrollRetry, true);
+    };
+  }, [
+    activateAudioFromGesture,
+    hasActivatedAudio,
+    isAudioEnabled,
+    isPlaying,
+    pendingStart,
+    tryStartPlayback
+  ]);
 
   const value = useMemo<AudioContextValue>(
     () => ({
