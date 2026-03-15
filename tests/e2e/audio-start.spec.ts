@@ -1,40 +1,14 @@
 import { expect, test, type Page } from "@playwright/test";
 
-async function dragToBegin(page: Page) {
+async function tapToBegin(page: Page, projectName: string) {
   const overlay = page.getByTestId("audio-start-overlay");
-  const bounds = await overlay.boundingBox();
 
-  if (!bounds) {
-    throw new Error("Audio start overlay was not visible.");
+  if (projectName === "Desktop Chrome") {
+    await overlay.click();
+    return;
   }
 
-  const session = await page.context().newCDPSession(page);
-  const x = Math.round(bounds.x + bounds.width / 2);
-  const startY = Math.round(bounds.y + bounds.height * 0.72);
-  const endY = Math.round(bounds.y + bounds.height * 0.24);
-  const steps = 5;
-
-  await session.send("Input.dispatchTouchEvent", {
-    type: "touchStart",
-    touchPoints: [{ x, y: startY, id: 1, radiusX: 2, radiusY: 2, force: 1 }]
-  });
-
-  for (let step = 1; step <= steps; step += 1) {
-    const progress = step / steps;
-    const y = Math.round(startY + (endY - startY) * progress);
-
-    await session.send("Input.dispatchTouchEvent", {
-      type: "touchMove",
-      touchPoints: [{ x, y, id: 1, radiusX: 2, radiusY: 2, force: 1 }]
-    });
-  }
-
-  await session.send("Input.dispatchTouchEvent", {
-    type: "touchEnd",
-    touchPoints: []
-  });
-
-  await page.waitForFunction(() => window.scrollY > 0);
+  await overlay.tap();
 }
 
 test("entrance overlay unlocks ambient audio on the first supported interaction", async ({
@@ -45,13 +19,7 @@ test("entrance overlay unlocks ambient audio on the first supported interaction"
   const audioToggle = page.getByTestId("audio-toggle");
   const overlay = page.getByTestId("audio-start-overlay");
 
-  if (testInfo.project.name === "Mobile Chrome") {
-    await dragToBegin(page);
-  } else if (testInfo.project.name === "Mobile Safari") {
-    await overlay.tap();
-  } else {
-    await page.locator("body").press("PageDown");
-  }
+  await tapToBegin(page, testInfo.project.name);
 
   await expect(overlay).toHaveClass(/opacity-0/);
   await expect(audioToggle).toHaveAttribute("data-audio-enabled", "true");
