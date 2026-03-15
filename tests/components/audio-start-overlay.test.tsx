@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 import { AudioProvider } from "@/components/audio/AudioProvider";
 import { AudioStartOverlay } from "@/components/audio/AudioStartOverlay";
@@ -11,9 +11,18 @@ class OverlayAudio {
   currentTime = 0;
   paused = true;
   src = "";
+  private canPlay = false;
   private listeners = new Map<string, Set<() => void>>();
+  private playBlock: Promise<void> | null = null;
+  private releasePlayBlock: (() => void) | null = null;
   readonly load = vi.fn(() => undefined);
   readonly play = vi.fn(async () => {
+    if (!this.canPlay) {
+      throw new Error("Audio not ready");
+    }
+    if (this.playBlock) {
+      await this.playBlock;
+    }
     this.paused = false;
   });
   readonly pause = vi.fn(() => {
@@ -25,13 +34,29 @@ class OverlayAudio {
       this.listeners.set(event, new Set());
     }
     this.listeners.get(event)?.add(cb);
-    if (event === "canplay") {
-      cb();
-    }
   }
 
   removeEventListener(event: string, cb: () => void) {
     this.listeners.get(event)?.delete(cb);
+  }
+
+  emit(event: string) {
+    if (event === "canplay") {
+      this.canPlay = true;
+    }
+    this.listeners.get(event)?.forEach((cb) => cb());
+  }
+
+  blockNextPlay() {
+    this.playBlock = new Promise<void>((resolve) => {
+      this.releasePlayBlock = resolve;
+    });
+  }
+
+  releasePlay() {
+    this.releasePlayBlock?.();
+    this.playBlock = null;
+    this.releasePlayBlock = null;
   }
 }
 
@@ -65,37 +90,74 @@ describe("AudioStartOverlay", () => {
       </AudioProvider>
     );
 
-    expect(screen.getByText("Tap and Scroll to Begin")).toBeInTheDocument();
+    expect(screen.getByText("Loading audio...")).toBeInTheDocument();
   });
 
-  it("dismisses on touchend", async () => {
+  it("shows the ready copy once ambient audio can play", async () => {
     render(
       <AudioProvider>
         <AudioStartOverlay />
       </AudioProvider>
     );
 
-    const overlay = screen.getByTestId("audio-start-overlay");
-    fireEvent.touchEnd(overlay);
+    act(() => {
+      instances[0].emit("canplay");
+    });
 
-    await waitFor(() => expect(instances[0].play).toHaveBeenCalledTimes(1));
-    expect(overlay).toHaveClass("opacity-0");
-    expect(overlay).toHaveClass("pointer-events-none");
+    expect(screen.getByText("Tap to begin")).toBeInTheDocument();
   });
 
-  it("dismisses on click", async () => {
+  it("starts playback from the overlay control and hides only after play resolves", async () => {
     render(
       <AudioProvider>
         <AudioStartOverlay />
       </AudioProvider>
     );
 
+    const audio = instances[0];
     const overlay = screen.getByTestId("audio-start-overlay");
+    audio.blockNextPlay();
+
+    act(() => {
+      audio.emit("canplay");
+    });
+
     fireEvent.click(overlay);
 
-    await waitFor(() => expect(instances[0].play).toHaveBeenCalledTimes(1));
-    expect(overlay).toHaveClass("opacity-0");
+    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
+    expect(screen.getByText("Starting audio...")).toBeInTheDocument();
+    expect(overlay).toHaveClass("opacity-100");
+
+    act(() => {
+      audio.releasePlay();
+    });
+
+    await waitFor(() => expect(overlay).toHaveClass("opacity-0"));
     expect(overlay).toHaveClass("pointer-events-none");
+  });
+
+  it("keeps the overlay visible after an early failed start and prompts again once ready", async () => {
+    render(
+      <AudioProvider>
+        <AudioStartOverlay />
+      </AudioProvider>
+    );
+
+    const audio = instances[0];
+    const overlay = screen.getByTestId("audio-start-overlay");
+
+    fireEvent.click(overlay);
+
+    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
+    expect(overlay).toHaveClass("opacity-100");
+    expect(screen.getByText("Loading audio...")).toBeInTheDocument();
+
+    act(() => {
+      audio.emit("canplay");
+    });
+
+    await waitFor(() => expect(screen.getByText("Tap to begin")).toBeInTheDocument());
+    expect(audio.play).toHaveBeenCalledTimes(1);
   });
 
   it("does not double-start on touchend followed by a synthetic click", async () => {
@@ -105,10 +167,16 @@ describe("AudioStartOverlay", () => {
       </AudioProvider>
     );
 
+    const audio = instances[0];
     const overlay = screen.getByTestId("audio-start-overlay");
+
+    act(() => {
+      audio.emit("canplay");
+    });
+
     fireEvent.touchEnd(overlay);
     fireEvent.click(overlay);
 
-    await waitFor(() => expect(instances[0].play).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
   });
 });

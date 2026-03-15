@@ -192,26 +192,6 @@ describe("AudioProvider trusted activation", () => {
     }
   });
 
-  it("starts ambient from a touchend unlock gesture", async () => {
-    renderAudioExperience();
-
-    const audio = instances[0];
-    const overlay = screen.getByTestId("audio-start-overlay");
-
-    act(() => {
-      audio.emit("canplay");
-    });
-
-    withUserGesture(() => {
-      fireEvent.touchEnd(overlay);
-    });
-
-    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
-    expect(audio.paused).toBe(false);
-    expect(overlay).toHaveClass("opacity-0");
-    expect(screen.getByTestId("audio-toggle")).toHaveAttribute("data-audio-playing", "true");
-  });
-
   it("starts ambient from a click unlock gesture", async () => {
     renderAudioExperience();
 
@@ -228,72 +208,11 @@ describe("AudioProvider trusted activation", () => {
 
     await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
     expect(audio.paused).toBe(false);
-    expect(screen.getByTestId("audio-toggle")).toHaveAttribute("data-audio-playing", "true");
-  });
-
-  it("starts ambient from a keyboard unlock gesture", async () => {
-    renderAudioExperience();
-
-    const audio = instances[0];
-    const overlay = screen.getByTestId("audio-start-overlay");
-
-    act(() => {
-      audio.emit("canplay");
-    });
-
-    withUserGesture(() => {
-      fireEvent.keyDown(window, { key: "ArrowDown" });
-    });
-
-    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
-    expect(audio.paused).toBe(false);
     expect(overlay).toHaveClass("opacity-0");
     expect(screen.getByTestId("audio-toggle")).toHaveAttribute("data-audio-playing", "true");
   });
 
-  it("starts ambient after a drag that ends off the overlay", async () => {
-    renderAudioExperience();
-
-    const audio = instances[0];
-    const overlay = screen.getByTestId("audio-start-overlay");
-
-    act(() => {
-      audio.emit("canplay");
-    });
-
-    withUserGesture(() => {
-      fireEvent.touchStart(overlay);
-      fireEvent.touchMove(window);
-      fireEvent.touchEnd(window);
-    });
-
-    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
-    expect(audio.paused).toBe(false);
-    expect(overlay).toHaveClass("opacity-0");
-    expect(screen.getByTestId("audio-toggle")).toHaveAttribute("data-audio-playing", "true");
-  });
-
-  it("starts ambient after a pointer gesture ends outside the overlay", async () => {
-    renderAudioExperience();
-
-    const audio = instances[0];
-    const overlay = screen.getByTestId("audio-start-overlay");
-
-    act(() => {
-      audio.emit("canplay");
-    });
-
-    withUserGesture(() => {
-      fireEvent.pointerDown(overlay, { pointerType: "touch" });
-      fireEvent.pointerUp(window, { pointerType: "touch" });
-    });
-
-    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
-    expect(audio.paused).toBe(false);
-    expect(overlay).toHaveClass("opacity-0");
-  });
-
-  it("retries once on scroll after a canceled touch gesture if the page has been activated", async () => {
+  it("does not start ambient from scroll even after prior user activation", async () => {
     renderAudioExperience();
 
     const audio = instances[0];
@@ -305,19 +224,12 @@ describe("AudioProvider trusted activation", () => {
       audio.emit("canplay");
     });
 
-    withUserGesture(() => {
-      fireEvent.touchStart(overlay);
-      fireEvent.touchCancel(window);
-    });
+    fireEvent.scroll(window);
+    await new Promise((resolve) => window.setTimeout(resolve, 10));
 
     expect(audio.play).not.toHaveBeenCalled();
-
-    fireEvent.scroll(window);
-
-    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
-    expect(audio.paused).toBe(false);
-    expect(overlay).toHaveClass("opacity-0");
-    expect(screen.getByTestId("audio-toggle")).toHaveAttribute("data-audio-playing", "true");
+    expect(overlay).toHaveClass("opacity-100");
+    expect(screen.getByText("Tap to begin")).toBeInTheDocument();
   });
 
   it("calls audio.play before any post-start audio graph setup", async () => {
@@ -407,36 +319,37 @@ describe("AudioProvider trusted activation", () => {
     expect(toggle).toHaveAttribute("data-audio-playing", "true");
   });
 
-  it("keeps retrying only on the next trusted gesture when the first attempt happens before readiness", async () => {
+  it("requires another explicit tap after an early start attempt fails before readiness", async () => {
     renderAudioExperience();
 
     const audio = instances[0];
     const overlay = screen.getByTestId("audio-start-overlay");
     const toggle = screen.getByTestId("audio-toggle");
 
-    audio.requireGesture = true;
-
     withUserGesture(() => {
-      fireEvent.touchEnd(overlay);
+      fireEvent.click(overlay);
     });
 
     await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
     expect(audio.paused).toBe(true);
-    expect(toggle).toHaveAttribute("data-audio-pending", "true");
+    expect(overlay).toHaveClass("opacity-100");
+    expect(screen.getByText("Loading audio...")).toBeInTheDocument();
+    expect(toggle).toHaveAttribute("data-audio-pending", "false");
 
     act(() => {
       audio.emit("canplay");
     });
 
-    await new Promise((resolve) => window.setTimeout(resolve, 10));
+    await waitFor(() => expect(screen.getByText("Tap to begin")).toBeInTheDocument());
     expect(audio.play).toHaveBeenCalledTimes(1);
 
     withUserGesture(() => {
-      fireEvent.click(window);
+      fireEvent.click(overlay);
     });
 
     await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(2));
     expect(audio.paused).toBe(false);
+    expect(overlay).toHaveClass("opacity-0");
     expect(toggle).toHaveAttribute("data-audio-playing", "true");
     expect(toggle).toHaveAttribute("data-audio-pending", "false");
   });
