@@ -1,11 +1,18 @@
 import React from "react";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AudioProvider, useAudio } from "@/components/audio/AudioProvider";
 import { AudioStartOverlay } from "@/components/audio/AudioStartOverlay";
 import { AudioToggle } from "@/components/audio/AudioToggle";
 
+type NextAudioConfig = {
+  ready?: boolean;
+  requireGesture?: boolean;
+  blockOnPlay?: boolean;
+};
+
 let gestureInProgress = false;
+let nextAudioConfig: NextAudioConfig = {};
 
 function withUserGesture(action: () => void) {
   gestureInProgress = true;
@@ -16,6 +23,10 @@ function withUserGesture(action: () => void) {
   }
 }
 
+function prepareNextAudio(config: NextAudioConfig) {
+  nextAudioConfig = config;
+}
+
 class ControlledAudio {
   volume = 0.3;
   loop = false;
@@ -23,8 +34,8 @@ class ControlledAudio {
   currentTime = 0;
   paused = true;
   src = "";
-  requireGesture = false;
-  private canPlay = false;
+  requireGesture = nextAudioConfig.requireGesture ?? false;
+  private canPlay = nextAudioConfig.ready ?? false;
   private listeners = new Map<string, Set<() => void>>();
   private playBlock: Promise<void> | null = null;
   private releasePlayBlock: (() => void) | null = null;
@@ -49,6 +60,10 @@ class ControlledAudio {
     if (src) {
       this.src = src;
     }
+    if (nextAudioConfig.blockOnPlay) {
+      this.blockNextPlay();
+    }
+    nextAudioConfig = {};
   }
 
   addEventListener(event: string, cb: () => void) {
@@ -107,7 +122,7 @@ class MockAudioContext {
 }
 
 function AudioControls() {
-  const { duckAmbient, restoreAmbient } = useAudio();
+  const { duckAmbient, enterSilently, restoreAmbient } = useAudio();
 
   return (
     <>
@@ -116,6 +131,9 @@ function AudioControls() {
       </button>
       <button type="button" onClick={() => void restoreAmbient(0.3)}>
         Restore
+      </button>
+      <button type="button" onClick={enterSilently}>
+        Silent
       </button>
     </>
   );
@@ -131,29 +149,17 @@ function renderAudioExperience() {
   );
 }
 
-function setUserActivation(hasBeenActive: boolean) {
-  Object.defineProperty(window.navigator, "userActivation", {
-    configurable: true,
-    value: {
-      hasBeenActive
-    }
-  });
-}
-
 describe("AudioProvider trusted activation", () => {
   const originalAudio = window.Audio;
   const originalAudioContext = window.AudioContext;
-  const originalUserActivation = Object.getOwnPropertyDescriptor(
-    window.navigator,
-    "userActivation"
-  );
   const instances: ControlledAudio[] = [];
   const audioContexts: MockAudioContext[] = [];
 
   beforeEach(() => {
     instances.length = 0;
     audioContexts.length = 0;
-    setUserActivation(false);
+    gestureInProgress = false;
+    nextAudioConfig = {};
 
     Object.defineProperty(window, "Audio", {
       writable: true,
@@ -175,6 +181,8 @@ describe("AudioProvider trusted activation", () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
+
     Object.defineProperty(window, "Audio", {
       writable: true,
       value: originalAudio
@@ -184,69 +192,90 @@ describe("AudioProvider trusted activation", () => {
       writable: true,
       value: originalAudioContext
     });
+  });
 
-    if (originalUserActivation) {
-      Object.defineProperty(window.navigator, "userActivation", originalUserActivation);
-    } else {
-      delete (window.navigator as Navigator & { userActivation?: unknown }).userActivation;
-    }
+  it("does not request ambient audio on initial mount", () => {
+    renderAudioExperience();
+
+    expect(window.Audio).not.toHaveBeenCalled();
+    expect(screen.getByText("Tap to begin")).toBeInTheDocument();
   });
 
   it("starts ambient from a click unlock gesture", async () => {
+    prepareNextAudio({ ready: true });
     renderAudioExperience();
 
-    const audio = instances[0];
     const overlay = screen.getByTestId("audio-start-overlay");
-
-    act(() => {
-      audio.emit("canplay");
-    });
 
     withUserGesture(() => {
       fireEvent.click(overlay);
     });
 
+    const audio = instances[0];
     await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
     expect(audio.paused).toBe(false);
-    expect(overlay).toHaveClass("opacity-0");
+    await waitFor(() =>
+      expect(screen.getByTestId("audio-start-overlay-shell")).toHaveClass("opacity-0")
+    );
     expect(screen.getByTestId("audio-toggle")).toHaveAttribute("data-audio-playing", "true");
+    expect(screen.getByTestId("audio-toggle")).toHaveAttribute("data-audio-startup", "playing");
   });
 
-  it("does not start ambient from scroll even after prior user activation", async () => {
+  it("enters immediately while the first sound-start attempt is still pending", async () => {
+    prepareNextAudio({ ready: true, blockOnPlay: true });
     renderAudioExperience();
 
-    const audio = instances[0];
     const overlay = screen.getByTestId("audio-start-overlay");
+    const shell = screen.getByTestId("audio-start-overlay-shell");
+    const toggle = screen.getByTestId("audio-toggle");
 
-    setUserActivation(true);
+    withUserGesture(() => {
+      fireEvent.click(overlay);
+    });
+
+    const audio = instances[0];
+    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
+    expect(shell).toHaveClass("opacity-0");
+    expect(toggle).toHaveAttribute("data-audio-enabled", "true");
+    expect(toggle).toHaveAttribute("data-audio-playing", "false");
+    expect(toggle).toHaveAttribute("data-audio-pending", "true");
+    expect(toggle).toHaveAttribute("data-audio-startup", "starting");
 
     act(() => {
-      audio.emit("canplay");
+      audio.releasePlay();
     });
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(toggle).toHaveAttribute("data-audio-playing", "true");
+    expect(toggle).toHaveAttribute("data-audio-pending", "false");
+    expect(toggle).toHaveAttribute("data-audio-startup", "playing");
+  });
+
+  it("does not start ambient from scroll", async () => {
+    renderAudioExperience();
 
     fireEvent.scroll(window);
     await new Promise((resolve) => window.setTimeout(resolve, 10));
 
-    expect(audio.play).not.toHaveBeenCalled();
-    expect(overlay).toHaveClass("opacity-100");
-    expect(screen.getByText("Tap to begin")).toBeInTheDocument();
+    expect(window.Audio).not.toHaveBeenCalled();
+    expect(screen.getByTestId("audio-start-overlay-shell")).toHaveClass("opacity-100");
   });
 
   it("calls audio.play before any post-start audio graph setup", async () => {
+    prepareNextAudio({ ready: true, blockOnPlay: true });
     renderAudioExperience();
 
-    const audio = instances[0];
     const overlay = screen.getByTestId("audio-start-overlay");
-
-    audio.blockNextPlay();
-    act(() => {
-      audio.emit("canplay");
-    });
 
     withUserGesture(() => {
       fireEvent.click(overlay);
     });
 
+    const audio = instances[0];
     expect(audio.play).toHaveBeenCalledTimes(1);
     expect(audioContexts).toHaveLength(0);
 
@@ -257,21 +286,82 @@ describe("AudioProvider trusted activation", () => {
     await waitFor(() => expect(audioContexts).toHaveLength(1));
   });
 
-  it("turning audio off pauses playback immediately", async () => {
+  it("falls back to silent mode if the background startup watchdog expires", async () => {
+    vi.useFakeTimers();
+    prepareNextAudio({ ready: true, blockOnPlay: true });
     renderAudioExperience();
 
-    const audio = instances[0];
     const overlay = screen.getByTestId("audio-start-overlay");
     const toggle = screen.getByTestId("audio-toggle");
-
-    act(() => {
-      audio.emit("canplay");
-    });
 
     withUserGesture(() => {
       fireEvent.click(overlay);
     });
 
+    const audio = instances[0];
+    expect(audio.play).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("audio-start-overlay-shell")).toHaveClass("opacity-0");
+
+    await act(async () => {
+      vi.advanceTimersByTime(8000);
+      await Promise.resolve();
+    });
+
+    expect(toggle).toHaveAttribute("data-audio-enabled", "false");
+    expect(toggle).toHaveAttribute("data-audio-playing", "false");
+    expect(toggle).toHaveAttribute("data-audio-pending", "false");
+    expect(toggle).toHaveAttribute("data-audio-startup", "silent");
+    expect(audio.pause).toHaveBeenCalled();
+  });
+
+  it("enterSilently cancels a pending start attempt", async () => {
+    prepareNextAudio({ ready: true, blockOnPlay: true });
+    renderAudioExperience();
+
+    const overlay = screen.getByTestId("audio-start-overlay");
+    const toggle = screen.getByTestId("audio-toggle");
+
+    withUserGesture(() => {
+      fireEvent.click(overlay);
+    });
+
+    const audio = instances[0];
+    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
+    expect(toggle).toHaveAttribute("data-audio-pending", "true");
+
+    fireEvent.click(screen.getByRole("button", { name: "Silent" }));
+
+    expect(toggle).toHaveAttribute("data-audio-enabled", "false");
+    expect(toggle).toHaveAttribute("data-audio-playing", "false");
+    expect(toggle).toHaveAttribute("data-audio-pending", "false");
+    expect(toggle).toHaveAttribute("data-audio-startup", "silent");
+    expect(audio.pause).toHaveBeenCalled();
+
+    act(() => {
+      audio.releasePlay();
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(toggle).toHaveAttribute("data-audio-playing", "false");
+    expect(toggle).toHaveAttribute("data-audio-enabled", "false");
+  });
+
+  it("turning audio off pauses playback immediately", async () => {
+    prepareNextAudio({ ready: true });
+    renderAudioExperience();
+
+    const overlay = screen.getByTestId("audio-start-overlay");
+    const toggle = screen.getByTestId("audio-toggle");
+
+    withUserGesture(() => {
+      fireEvent.click(overlay);
+    });
+
+    const audio = instances[0];
     await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
 
     withUserGesture(() => {
@@ -283,22 +373,21 @@ describe("AudioProvider trusted activation", () => {
     expect(toggle).toHaveAttribute("data-audio-enabled", "false");
     expect(toggle).toHaveAttribute("data-audio-playing", "false");
     expect(toggle).toHaveAttribute("data-audio-pending", "false");
+    expect(toggle).toHaveAttribute("data-audio-startup", "silent");
   });
 
   it("turning audio on from the button resumes playback", async () => {
+    prepareNextAudio({ ready: true });
     renderAudioExperience();
 
-    const audio = instances[0];
     const overlay = screen.getByTestId("audio-start-overlay");
     const toggle = screen.getByTestId("audio-toggle");
-
-    act(() => {
-      audio.emit("canplay");
-    });
 
     withUserGesture(() => {
       fireEvent.click(overlay);
     });
+
+    const audio = instances[0];
     await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
 
     withUserGesture(() => {
@@ -307,6 +396,9 @@ describe("AudioProvider trusted activation", () => {
     expect(audio.pause).toHaveBeenCalledTimes(1);
 
     audio.currentTime = 42;
+    act(() => {
+      audio.emit("canplay");
+    });
 
     withUserGesture(() => {
       fireEvent.click(toggle);
@@ -317,12 +409,13 @@ describe("AudioProvider trusted activation", () => {
     expect(audio.paused).toBe(false);
     expect(toggle).toHaveAttribute("data-audio-enabled", "true");
     expect(toggle).toHaveAttribute("data-audio-playing", "true");
+    expect(toggle).toHaveAttribute("data-audio-startup", "playing");
   });
 
-  it("requires another explicit tap after an early start attempt fails before readiness", async () => {
+  it("falls back to silent entry when the first start attempt fails and allows retry", async () => {
+    prepareNextAudio({ ready: false });
     renderAudioExperience();
 
-    const audio = instances[0];
     const overlay = screen.getByTestId("audio-start-overlay");
     const toggle = screen.getByTestId("audio-toggle");
 
@@ -330,28 +423,27 @@ describe("AudioProvider trusted activation", () => {
       fireEvent.click(overlay);
     });
 
+    const audio = instances[0];
     await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
-    expect(audio.paused).toBe(true);
-    expect(overlay).toHaveClass("opacity-100");
-    expect(screen.getByText("Loading audio...")).toBeInTheDocument();
-    expect(toggle).toHaveAttribute("data-audio-pending", "false");
+    await waitFor(() =>
+      expect(screen.getByTestId("audio-start-overlay-shell")).toHaveClass("opacity-0")
+    );
+    expect(toggle).toHaveAttribute("data-audio-enabled", "false");
+    expect(toggle).toHaveAttribute("data-audio-playing", "false");
+    expect(toggle).toHaveAttribute("data-audio-startup", "silent");
 
     act(() => {
       audio.emit("canplay");
     });
 
-    await waitFor(() => expect(screen.getByText("Tap to begin")).toBeInTheDocument());
-    expect(audio.play).toHaveBeenCalledTimes(1);
-
     withUserGesture(() => {
-      fireEvent.click(overlay);
+      fireEvent.click(toggle);
     });
 
     await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(2));
-    expect(audio.paused).toBe(false);
-    expect(overlay).toHaveClass("opacity-0");
+    expect(toggle).toHaveAttribute("data-audio-enabled", "true");
     expect(toggle).toHaveAttribute("data-audio-playing", "true");
-    expect(toggle).toHaveAttribute("data-audio-pending", "false");
+    expect(toggle).toHaveAttribute("data-audio-startup", "playing");
   });
 
   it("manual audio-off prevents restoreAmbient from re-enabling sound", async () => {
@@ -360,19 +452,17 @@ describe("AudioProvider trusted activation", () => {
       value: undefined
     });
 
+    prepareNextAudio({ ready: true });
     renderAudioExperience();
 
-    const audio = instances[0];
     const overlay = screen.getByTestId("audio-start-overlay");
     const toggle = screen.getByTestId("audio-toggle");
-
-    act(() => {
-      audio.emit("canplay");
-    });
 
     withUserGesture(() => {
       fireEvent.click(overlay);
     });
+
+    const audio = instances[0];
     await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
 
     fireEvent.click(screen.getByRole("button", { name: "Duck" }));

@@ -6,11 +6,15 @@ export const sceneManifest: SceneDefinition[] = [
     component: "HeroScene",
     background: {
       type: "video",
-      src: "/media/hero-loop.mp4",
+      src: "/media/hero-loop-v2.mp4",
       sourceType: "video/mp4",
-      fallbackSrc: "/media/hero-loop.webm",
+      fallbackSrc: "/media/hero-loop-v2.webm",
       fallbackSourceType: "video/webm",
-      poster: "/images/hero-poster.png",
+      mobileSrc: "/media/hero-loop-mobile-v2.mp4",
+      mobileSourceType: "video/mp4",
+      mobileFallbackSrc: "/media/hero-loop-mobile-v2.webm",
+      mobileFallbackSourceType: "video/webm",
+      poster: "/images/hero-poster-v2.jpg",
       priority: true
     },
     overlay: { intensity: "medium" },

@@ -25,6 +25,7 @@ function inferVideoType(src: string) {
 type VideoSource = {
   src: string;
   type: string;
+  media?: string;
 };
 
 const isDev = process.env.NODE_ENV === "development";
@@ -50,24 +51,65 @@ export function BackgroundLayer({ background, overlayIntensity = "medium" }: Bac
   const playAttemptedRef = useRef(false);
   const isVideoBackground = background.type === "video";
   const videoSources = useMemo<VideoSource[]>(
-    () =>
-      isVideoBackground
-        ? [
-            {
-              src: background.src,
-              type: background.sourceType ?? inferVideoType(background.src)
-            },
-            ...(background.fallbackSrc
-              ? [
-                  {
-                    src: background.fallbackSrc,
-                    type: background.fallbackSourceType ?? inferVideoType(background.fallbackSrc)
-                  }
-                ]
-              : [])
-          ]
-        : [],
-    [isVideoBackground, background.src, background.sourceType, background.fallbackSrc, background.fallbackSourceType]
+    () => {
+      if (!isVideoBackground) {
+        return [];
+      }
+
+      const hasMobileVariant = Boolean(
+        background.mobileSrc || background.mobileFallbackSrc
+      );
+      const defaultMedia = hasMobileVariant ? "(min-width: 769px)" : undefined;
+      const sources: VideoSource[] = [];
+
+      if (background.mobileSrc) {
+        sources.push({
+          src: background.mobileSrc,
+          type: background.mobileSourceType ?? inferVideoType(background.mobileSrc),
+          media: "(max-width: 768px)"
+        });
+      }
+
+      if (background.mobileFallbackSrc) {
+        sources.push({
+          src: background.mobileFallbackSrc,
+          type:
+            background.mobileFallbackSourceType ??
+            inferVideoType(background.mobileFallbackSrc),
+          media: "(max-width: 768px)"
+        });
+      }
+
+      sources.push({
+        src: background.desktopSrc ?? background.src,
+        type: background.sourceType ?? inferVideoType(background.desktopSrc ?? background.src),
+        media: defaultMedia
+      });
+
+      if (background.fallbackSrc) {
+        sources.push({
+          src: background.fallbackSrc,
+          type:
+            background.fallbackSourceType ??
+            inferVideoType(background.fallbackSrc),
+          media: defaultMedia
+        });
+      }
+
+      return sources;
+    },
+    [
+      isVideoBackground,
+      background.desktopSrc,
+      background.fallbackSrc,
+      background.fallbackSourceType,
+      background.mobileFallbackSourceType,
+      background.mobileFallbackSrc,
+      background.mobileSourceType,
+      background.mobileSrc,
+      background.sourceType,
+      background.src
+    ]
   );
   const [showPosterFallback, setShowPosterFallback] = useState(false);
   const [hasLoadedData, setHasLoadedData] = useState(false);
@@ -149,16 +191,18 @@ export function BackgroundLayer({ background, overlayIntensity = "medium" }: Bac
             src={background.poster!}
             alt=""
             fill
+            data-testid="background-poster-fallback"
             priority={Boolean(background.priority)}
             loading={background.priority ? "eager" : "lazy"}
             sizes="100vw"
-            quality={90}
+            quality={85}
             className="object-cover"
             aria-hidden
           />
         ) : (
           <video
             ref={videoRef}
+            data-testid="background-video"
             className={`h-full w-full object-cover transition-opacity duration-500 ${
               hasLoadedData ? "opacity-100" : "opacity-95"
             }`}
@@ -167,7 +211,7 @@ export function BackgroundLayer({ background, overlayIntensity = "medium" }: Bac
             loop
             playsInline
             disablePictureInPicture
-            preload={background.priority ? "auto" : "metadata"}
+            preload="metadata"
             poster={background.poster}
             aria-hidden
             onCanPlay={() => handleReady("canplay")}
@@ -175,7 +219,12 @@ export function BackgroundLayer({ background, overlayIntensity = "medium" }: Bac
             onError={handleVideoError}
           >
             {playableSources.map((source) => (
-              <source key={`${source.src}-${source.type}`} src={source.src} type={source.type} />
+              <source
+                key={`${source.src}-${source.type}-${source.media ?? "default"}`}
+                src={source.src}
+                type={source.type}
+                media={source.media}
+              />
             ))}
           </video>
         )
@@ -187,7 +236,7 @@ export function BackgroundLayer({ background, overlayIntensity = "medium" }: Bac
           priority={Boolean(background.priority)}
           loading={background.priority ? "eager" : "lazy"}
           sizes="100vw"
-          quality={90}
+          quality={85}
           className="object-cover"
         />
       )}

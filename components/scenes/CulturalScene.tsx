@@ -22,7 +22,7 @@ export function CulturalScene({ scene }: SceneComponentProps) {
         pinned
         ornament={
           <div className="pointer-events-none absolute inset-0 opacity-[0.08] mix-blend-screen" aria-hidden>
-            <Image src="/images/bg-texture.png" alt="" fill sizes="100vw" quality={75} unoptimized className="object-cover" />
+            <Image src="/images/bg-texture.png" alt="" fill sizes="100vw" quality={75} className="object-cover" />
           </div>
         }
       >
