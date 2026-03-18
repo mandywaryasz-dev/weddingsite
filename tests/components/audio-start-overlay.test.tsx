@@ -130,6 +130,20 @@ describe("AudioStartOverlay", () => {
     expect(window.Audio).not.toHaveBeenCalled();
   });
 
+  it("keeps the overlay copy layer pointer-transparent while preserving the silent button", () => {
+    render(
+      <AudioProvider>
+        <AudioStartOverlay />
+      </AudioProvider>
+    );
+
+    const skipButton = screen.getByTestId("audio-skip-button");
+    const contentWrapper = skipButton.parentElement?.parentElement;
+
+    expect(contentWrapper).toHaveClass("pointer-events-none");
+    expect(skipButton).toHaveClass("pointer-events-auto");
+  });
+
   it("enters immediately from the overlay control while audio keeps starting", async () => {
     prepareNextAudio({ ready: true, blockOnPlay: true });
 

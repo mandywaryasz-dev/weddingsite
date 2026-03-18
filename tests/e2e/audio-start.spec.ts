@@ -67,18 +67,22 @@ async function installAudioPlayStub(page: Page, mode: "resolve" | "reject" | "de
 }
 
 async function tapToBegin(page: Page, projectName: string) {
-  const overlay = page.getByTestId("audio-start-overlay");
+  const overlayShell = page.getByTestId("audio-start-overlay-shell");
+  const box = await overlayShell.boundingBox();
+
+  if (!box) {
+    throw new Error("Audio start overlay was not visible");
+  }
+
+  const x = box.x + box.width / 2;
+  const y = box.y + box.height * 0.45;
 
   if (projectName === "Desktop Chrome") {
-    await overlay.evaluate((element) => {
-      (element as HTMLButtonElement).click();
-    });
+    await page.mouse.click(x, y);
     return;
   }
 
-  await overlay.evaluate((element) => {
-    (element as HTMLButtonElement).click();
-  });
+  await page.touchscreen.tap(x, y);
 }
 
 async function waitForInteractiveOverlay(page: Page) {
@@ -141,6 +145,20 @@ test("slow audio start keeps going after the overlay dismisses", async ({ page }
   await expect(audioToggle).toHaveAttribute("data-audio-startup", "playing");
 });
 
+test("silent fallback button dismisses the overlay without enabling audio", async ({ page }) => {
+  await page.goto("/save-the-date");
+  await waitForInteractiveOverlay(page);
+
+  const audioToggle = page.getByTestId("audio-toggle");
+  await page.getByTestId("audio-skip-button").click();
+
+  await expect(page.getByTestId("audio-start-overlay-shell")).toHaveClass(/opacity-0/);
+  await expect(audioToggle).toHaveAttribute("data-audio-enabled", "false");
+  await expect(audioToggle).toHaveAttribute("data-audio-playing", "false");
+  await expect(audioToggle).toHaveAttribute("data-audio-startup", "silent");
+  await expect(page.locator("section#hero")).toBeVisible();
+});
+
 test("desktop click also unlocks ambient audio", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "Desktop Chrome");
 
@@ -149,9 +167,7 @@ test("desktop click also unlocks ambient audio", async ({ page }, testInfo) => {
   await waitForInteractiveOverlay(page);
 
   const audioToggle = page.getByTestId("audio-toggle");
-  await page.getByTestId("audio-start-overlay").evaluate((element) => {
-    (element as HTMLButtonElement).click();
-  });
+  await tapToBegin(page, testInfo.project.name);
 
   await expect(page.getByTestId("audio-start-overlay-shell")).toHaveClass(/opacity-0/);
   await expect(audioToggle).toHaveAttribute("data-audio-enabled", "true");

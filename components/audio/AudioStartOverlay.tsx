@@ -33,7 +33,7 @@ export function AudioStartOverlay() {
         className="absolute inset-0 [touch-action:manipulation]"
       />
 
-      <div className="relative flex h-full items-end justify-center">
+      <div className="pointer-events-none relative flex h-full items-end justify-center">
         <div className="flex flex-col items-center gap-3 text-center">
           <span className="pointer-events-none font-heading text-detail uppercase tracking-label text-ivory/92">
             {overlayCopy}
@@ -43,7 +43,7 @@ export function AudioStartOverlay() {
             type="button"
             data-testid="audio-skip-button"
             onClick={enterSilently}
-            className="rounded-full border border-ivory/20 bg-black/15 px-4 py-2 font-heading text-[0.64rem] uppercase tracking-[0.2em] text-ivory/72 transition hover:border-ivory/28 hover:bg-white/10 hover:text-ivory"
+            className="pointer-events-auto rounded-full border border-ivory/20 bg-black/15 px-4 py-2 font-heading text-[0.64rem] uppercase tracking-[0.2em] text-ivory/72 transition hover:border-ivory/28 hover:bg-white/10 hover:text-ivory"
           >
             Continue without sound
           </button>
