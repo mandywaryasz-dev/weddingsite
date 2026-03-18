@@ -8,8 +8,11 @@ export type BackgroundMedia = {
   sourceType?: string;
   fallbackSrc?: string;
   fallbackSourceType?: string;
-  poster?: string;
   mobileSrc?: string;
+  mobileSourceType?: string;
+  mobileFallbackSrc?: string;
+  mobileFallbackSourceType?: string;
+  poster?: string;
   desktopSrc?: string;
   priority?: boolean;
 };

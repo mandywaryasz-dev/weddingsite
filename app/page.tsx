@@ -10,7 +10,6 @@ export default function HomePage() {
         fill
         priority
         quality={85}
-        unoptimized
         className="object-cover"
       />
       <div className="absolute inset-0 bg-black/45" aria-hidden />

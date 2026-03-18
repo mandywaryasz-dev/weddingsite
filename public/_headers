@@ -2,3 +2,21 @@
 # https://opennext.js.org/cloudflare/caching#static-assets-caching
 /_next/static/*
   Cache-Control: public,max-age=31536000,immutable
+
+/images/*-v*.*
+  Cache-Control: public,max-age=31536000,immutable
+
+/media/*-v*.*
+  Cache-Control: public,max-age=31536000,immutable
+
+/audio/*-v*.*
+  Cache-Control: public,max-age=31536000,immutable
+
+/images/*
+  Cache-Control: public,max-age=86400,stale-while-revalidate=604800
+
+/media/*
+  Cache-Control: public,max-age=86400,stale-while-revalidate=604800
+
+/audio/*
+  Cache-Control: public,max-age=86400,stale-while-revalidate=604800

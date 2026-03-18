@@ -44,6 +44,8 @@ npm run test
 npm run test:e2e
 ```
 
+The local dev server runs on `http://localhost:3000`.
+
 ## TODO Media Placeholders
 
 Add real assets under `/public`:

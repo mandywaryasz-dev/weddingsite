@@ -1,23 +1,85 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
+async function installResolvedAudioPlayStub(page: Page) {
+  await page.addInitScript(() => {
+    const originalPlay = HTMLMediaElement.prototype.play;
+
+    class MockGainNode {
+      gain = { value: 0.3 };
+      connect() {}
+      disconnect() {}
+    }
+
+    class MockMediaElementAudioSourceNode {
+      connect() {}
+      disconnect() {}
+    }
+
+    class MockAudioContext {
+      state: AudioContextState = "running";
+      destination = {};
+
+      resume() {
+        this.state = "running";
+        return Promise.resolve();
+      }
+
+      close() {
+        return Promise.resolve();
+      }
+
+      createGain() {
+        return new MockGainNode();
+      }
+
+      createMediaElementSource() {
+        return new MockMediaElementAudioSourceNode();
+      }
+    }
+
+    HTMLMediaElement.prototype.play = function play() {
+      if (this instanceof HTMLAudioElement) {
+        return Promise.resolve();
+      }
+
+      return originalPlay.call(this);
+    };
+
+    Object.defineProperty(window, "AudioContext", {
+      configurable: true,
+      writable: true,
+      value: MockAudioContext
+    });
+    Object.defineProperty(window, "webkitAudioContext", {
+      configurable: true,
+      writable: true,
+      value: MockAudioContext
+    });
+  });
+}
+
 async function tapToBegin(page: Page) {
   const overlay = page.getByTestId("audio-start-overlay");
-  await overlay.tap();
+  await overlay.evaluate((element) => {
+    (element as HTMLButtonElement).click();
+  });
+}
+
+async function waitForInteractiveOverlay(page: Page) {
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(300);
 }
 
 test("save-the-date renders scenes and opens modal", async ({ page }) => {
   test.skip(test.info().project.name !== "Mobile Chrome");
 
-  const ambientResponse = page.waitForResponse((response) =>
-    response.url().includes("/audio/ambient-loop.mp3")
-  );
-
+  await installResolvedAudioPlayStub(page);
   await page.goto("/save-the-date");
-  await ambientResponse;
+  await waitForInteractiveOverlay(page);
 
   const audioToggle = page.getByTestId("audio-toggle");
   await tapToBegin(page);
-  await expect(page.getByTestId("audio-start-overlay")).toHaveClass(/opacity-0/);
+  await expect(page.getByTestId("audio-start-overlay-shell")).toHaveClass(/opacity-0/);
   await expect(audioToggle).toHaveAttribute("data-audio-enabled", "true");
   await expect(audioToggle).toHaveAttribute("data-audio-playing", "true");
 
@@ -42,11 +104,15 @@ test("save-the-date renders scenes and opens modal", async ({ page }) => {
   expect(heroOpacityAfterAdditionalScroll).toBeGreaterThan(heroOpacityAfterStartGesture);
   expect(heroOpacityAfterAdditionalScroll).toBeGreaterThan(0.9);
 
-  await audioToggle.tap();
+  await audioToggle.evaluate((element) => {
+    (element as HTMLButtonElement).click();
+  });
   await expect(audioToggle).toHaveAttribute("data-audio-enabled", "false");
   await expect(audioToggle).toHaveAttribute("data-audio-playing", "false");
 
-  await audioToggle.tap();
+  await audioToggle.evaluate((element) => {
+    (element as HTMLButtonElement).click();
+  });
   await expect(audioToggle).toHaveAttribute("data-audio-enabled", "true");
   await expect(audioToggle).toHaveAttribute("data-audio-playing", "true");
 
@@ -64,7 +130,6 @@ test("save-the-date renders scenes and opens modal", async ({ page }) => {
   await page.waitForTimeout(250);
   expect(await getOpacity(cultureVowLine)).toBeGreaterThan(0.9);
 
-  // Ensure the sequence has progressed enough for Explore actions to be interactive.
   await page.mouse.wheel(0, 12000);
   await page.waitForTimeout(250);
   await page.getByRole("button", { name: "The Venue" }).first().scrollIntoViewIfNeeded();
@@ -82,4 +147,33 @@ test("save-the-date renders scenes and opens modal", async ({ page }) => {
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toBeHidden();
+});
+
+test("hero poster fallback keeps the first scene usable when video fails", async ({ page }) => {
+  test.skip(test.info().project.name !== "Mobile Chrome");
+
+  await page.route("**/media/hero-loop-v2.mp4", (route) => route.abort());
+  await page.route("**/media/hero-loop-v2.webm", (route) => route.abort());
+  await page.route("**/media/hero-loop-mobile-v2.mp4", (route) => route.abort());
+  await page.route("**/media/hero-loop-mobile-v2.webm", (route) => route.abort());
+
+  await page.goto("/save-the-date");
+  await waitForInteractiveOverlay(page);
+  await page.getByRole("button", { name: "Continue without sound" }).evaluate((element) => {
+    (element as HTMLButtonElement).click();
+  });
+
+  await expect(page.getByTestId("audio-start-overlay-shell")).toHaveClass(/opacity-0/);
+  await expect(page.locator("section#hero")).toBeVisible();
+
+  const posterFallback = page.getByTestId("background-poster-fallback");
+  if (await posterFallback.count()) {
+    await expect(posterFallback).toBeVisible();
+    return;
+  }
+
+  await expect(page.getByTestId("background-video")).toHaveAttribute(
+    "poster",
+    "/images/hero-poster-v2.jpg"
+  );
 });

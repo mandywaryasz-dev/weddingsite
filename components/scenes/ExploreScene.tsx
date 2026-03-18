@@ -15,7 +15,7 @@ export function ExploreScene({ scene, actions }: SceneComponentProps) {
         <AtmosphereLayer />
         <OrnamentLayer>
           <div className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-screen" aria-hidden>
-            <Image src="/images/bg-texture.png" alt="" fill sizes="100vw" quality={75} unoptimized className="object-cover" />
+            <Image src="/images/bg-texture.png" alt="" fill sizes="100vw" quality={75} className="object-cover" />
           </div>
         </OrnamentLayer>
       </div>
@@ -92,7 +92,7 @@ export function ExploreScene({ scene, actions }: SceneComponentProps) {
                     alt=""
                     width={260}
                     height={314}
-                    unoptimized
+                    quality={85}
                     className="h-auto w-full opacity-[0.98] drop-shadow-[0_1px_1px_rgba(0,0,0,0.14)]"
                   />
                 </div>

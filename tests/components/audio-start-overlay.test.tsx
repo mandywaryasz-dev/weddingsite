@@ -1,8 +1,19 @@
 import React from "react";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AudioProvider } from "@/components/audio/AudioProvider";
 import { AudioStartOverlay } from "@/components/audio/AudioStartOverlay";
+
+type NextAudioConfig = {
+  ready?: boolean;
+  blockOnPlay?: boolean;
+};
+
+let nextAudioConfig: NextAudioConfig = {};
+
+function prepareNextAudio(config: NextAudioConfig) {
+  nextAudioConfig = config;
+}
 
 class OverlayAudio {
   volume = 0.3;
@@ -11,7 +22,7 @@ class OverlayAudio {
   currentTime = 0;
   paused = true;
   src = "";
-  private canPlay = false;
+  private canPlay = nextAudioConfig.ready ?? false;
   private listeners = new Map<string, Set<() => void>>();
   private playBlock: Promise<void> | null = null;
   private releasePlayBlock: (() => void) | null = null;
@@ -28,6 +39,13 @@ class OverlayAudio {
   readonly pause = vi.fn(() => {
     this.paused = true;
   });
+
+  constructor() {
+    if (nextAudioConfig.blockOnPlay) {
+      this.blockNextPlay();
+    }
+    nextAudioConfig = {};
+  }
 
   addEventListener(event: string, cb: () => void) {
     if (!this.listeners.has(event)) {
@@ -66,6 +84,7 @@ describe("AudioStartOverlay", () => {
 
   beforeEach(() => {
     instances.length = 0;
+    nextAudioConfig = {};
     Object.defineProperty(window, "Audio", {
       writable: true,
       value: vi.fn(() => {
@@ -77,106 +96,108 @@ describe("AudioStartOverlay", () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     Object.defineProperty(window, "Audio", {
       writable: true,
       value: originalAudio
     });
   });
 
-  it("shows the updated entrance copy", () => {
+  it("shows the entrance copy and silent fallback before requesting audio", () => {
     render(
       <AudioProvider>
         <AudioStartOverlay />
       </AudioProvider>
     );
-
-    expect(screen.getByText("Loading audio...")).toBeInTheDocument();
-  });
-
-  it("shows the ready copy once ambient audio can play", async () => {
-    render(
-      <AudioProvider>
-        <AudioStartOverlay />
-      </AudioProvider>
-    );
-
-    act(() => {
-      instances[0].emit("canplay");
-    });
 
     expect(screen.getByText("Tap to begin")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Continue without sound" })).toBeInTheDocument();
+    expect(window.Audio).not.toHaveBeenCalled();
   });
 
-  it("starts playback from the overlay control and hides only after play resolves", async () => {
+  it("allows immediate silent entry without creating the audio element", async () => {
     render(
       <AudioProvider>
         <AudioStartOverlay />
       </AudioProvider>
     );
 
-    const audio = instances[0];
-    const overlay = screen.getByTestId("audio-start-overlay");
-    audio.blockNextPlay();
+    fireEvent.click(screen.getByTestId("audio-skip-button"));
 
-    act(() => {
-      audio.emit("canplay");
-    });
+    await waitFor(() =>
+      expect(screen.getByTestId("audio-start-overlay-shell")).toHaveClass("opacity-0")
+    );
+    expect(window.Audio).not.toHaveBeenCalled();
+  });
+
+  it("keeps the overlay copy layer pointer-transparent while preserving the silent button", () => {
+    render(
+      <AudioProvider>
+        <AudioStartOverlay />
+      </AudioProvider>
+    );
+
+    const skipButton = screen.getByTestId("audio-skip-button");
+    const contentWrapper = skipButton.parentElement?.parentElement;
+
+    expect(contentWrapper).toHaveClass("pointer-events-none");
+    expect(skipButton).toHaveClass("pointer-events-auto");
+  });
+
+  it("enters immediately from the overlay control while audio keeps starting", async () => {
+    prepareNextAudio({ ready: true, blockOnPlay: true });
+
+    render(
+      <AudioProvider>
+        <AudioStartOverlay />
+      </AudioProvider>
+    );
+
+    const overlay = screen.getByTestId("audio-start-overlay");
+    const shell = screen.getByTestId("audio-start-overlay-shell");
 
     fireEvent.click(overlay);
 
+    const audio = instances[0];
     await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
-    expect(screen.getByText("Starting audio...")).toBeInTheDocument();
-    expect(overlay).toHaveClass("opacity-100");
+    expect(shell).toHaveClass("opacity-0");
+    expect(shell).toHaveClass("pointer-events-none");
+    expect(audio.pause).not.toHaveBeenCalled();
 
     act(() => {
       audio.releasePlay();
     });
 
-    await waitFor(() => expect(overlay).toHaveClass("opacity-0"));
-    expect(overlay).toHaveClass("pointer-events-none");
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(audio.paused).toBe(false);
   });
 
-  it("keeps the overlay visible after an early failed start and prompts again once ready", async () => {
+  it("falls back to silent mode if background startup never finishes", async () => {
+    vi.useFakeTimers();
+    prepareNextAudio({ ready: true, blockOnPlay: true });
+
     render(
       <AudioProvider>
         <AudioStartOverlay />
       </AudioProvider>
     );
 
+    fireEvent.click(screen.getByTestId("audio-start-overlay"));
+
     const audio = instances[0];
-    const overlay = screen.getByTestId("audio-start-overlay");
-
-    fireEvent.click(overlay);
-
-    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
-    expect(overlay).toHaveClass("opacity-100");
-    expect(screen.getByText("Loading audio...")).toBeInTheDocument();
-
-    act(() => {
-      audio.emit("canplay");
-    });
-
-    await waitFor(() => expect(screen.getByText("Tap to begin")).toBeInTheDocument());
     expect(audio.play).toHaveBeenCalledTimes(1);
-  });
+    expect(screen.getByTestId("audio-start-overlay-shell")).toHaveClass("opacity-0");
 
-  it("does not double-start on touchend followed by a synthetic click", async () => {
-    render(
-      <AudioProvider>
-        <AudioStartOverlay />
-      </AudioProvider>
-    );
-
-    const audio = instances[0];
-    const overlay = screen.getByTestId("audio-start-overlay");
-
-    act(() => {
-      audio.emit("canplay");
+    await act(async () => {
+      vi.advanceTimersByTime(8000);
+      await Promise.resolve();
     });
 
-    fireEvent.touchEnd(overlay);
-    fireEvent.click(overlay);
-
-    await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
+    expect(screen.getByTestId("audio-start-overlay-shell")).toHaveClass("opacity-0");
+    expect(audio.pause).toHaveBeenCalled();
   });
 });

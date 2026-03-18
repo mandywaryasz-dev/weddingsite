@@ -9,6 +9,7 @@ export function AudioToggle() {
     isAudioEnabled,
     isPlaying,
     pendingStart,
+    startupStatus,
     setAudioEnabled
   } = useAudio();
 
@@ -31,6 +32,7 @@ export function AudioToggle() {
       data-audio-enabled={isAudioEnabled ? "true" : "false"}
       data-audio-playing={isPlaying ? "true" : "false"}
       data-audio-pending={pendingStart ? "true" : "false"}
+      data-audio-startup={startupStatus}
       aria-label={isAudioEnabled ? "Pause page audio" : "Resume page audio"}
       aria-pressed={isAudioEnabled}
       onClick={handleClick}
