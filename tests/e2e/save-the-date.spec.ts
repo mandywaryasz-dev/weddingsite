@@ -82,6 +82,8 @@ test("save-the-date renders scenes and opens modal", async ({ page }) => {
   await expect(page.getByTestId("audio-start-overlay-shell")).toHaveClass(/opacity-0/);
   await expect(audioToggle).toHaveAttribute("data-audio-enabled", "true");
   await expect(audioToggle).toHaveAttribute("data-audio-playing", "true");
+  const heroScrollHint = page.getByTestId("hero-scroll-hint");
+  await expect(heroScrollHint).toHaveAttribute("data-state", "visible");
 
   await expect(page.locator("section#hero")).toBeVisible();
   await expect(page.locator("section#cultural")).toBeVisible();
@@ -96,6 +98,10 @@ test("save-the-date renders scenes and opens modal", async ({ page }) => {
 
   const heroBodyLine = page.locator("section#hero h1 span").nth(2);
   const heroOpacityAfterStartGesture = await getOpacity(heroBodyLine);
+
+  await page.mouse.wheel(0, 240);
+  await page.waitForTimeout(200);
+  await expect(heroScrollHint).toHaveAttribute("data-state", "hidden");
 
   await page.mouse.wheel(0, 1600);
   await expect(audioToggle).toHaveAttribute("data-audio-playing", "true");
@@ -119,6 +125,7 @@ test("save-the-date renders scenes and opens modal", async ({ page }) => {
   await page.mouse.wheel(0, -1600);
   await page.waitForTimeout(250);
   expect(await getOpacity(heroBodyLine)).toBeGreaterThan(0.9);
+  await expect(heroScrollHint).toHaveAttribute("data-state", "hidden");
 
   await page.locator("section#cultural").scrollIntoViewIfNeeded();
   const cultureVowLine = page.getByText("You are mine.");
@@ -165,6 +172,7 @@ test("hero poster fallback keeps the first scene usable when video fails", async
 
   await expect(page.getByTestId("audio-start-overlay-shell")).toHaveClass(/opacity-0/);
   await expect(page.locator("section#hero")).toBeVisible();
+  await expect(page.getByTestId("hero-scroll-hint")).toHaveAttribute("data-state", "visible");
 
   const posterFallback = page.getByTestId("background-poster-fallback");
   if (await posterFallback.count()) {

@@ -72,13 +72,18 @@ const config: Config = {
         glow: {
           "0%, 100%": { opacity: "0.35" },
           "50%": { opacity: "0.5" }
+        },
+        "scroll-hint": {
+          "0%, 100%": { transform: "translateY(0)", opacity: "0.72" },
+          "50%": { transform: "translateY(4px)", opacity: "1" }
         }
       },
       animation: {
         "modal-in": "modal-in 260ms ease-out",
         "modal-out": "modal-out 180ms ease-in",
         grain: "grain 8s steps(6) infinite",
-        glow: "glow 6s ease-in-out infinite"
+        glow: "glow 6s ease-in-out infinite",
+        "scroll-hint": "scroll-hint 1.8s ease-in-out infinite"
       }
     }
   },
