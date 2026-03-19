@@ -80,11 +80,17 @@ class OverlayAudio {
 
 describe("AudioStartOverlay", () => {
   const originalAudio = window.Audio;
+  const originalScrollTo = window.scrollTo;
   const instances: OverlayAudio[] = [];
 
   beforeEach(() => {
     instances.length = 0;
     nextAudioConfig = {};
+    Object.defineProperty(window, "scrollTo", {
+      configurable: true,
+      writable: true,
+      value: vi.fn()
+    });
     Object.defineProperty(window, "Audio", {
       writable: true,
       value: vi.fn(() => {
@@ -101,6 +107,11 @@ describe("AudioStartOverlay", () => {
       writable: true,
       value: originalAudio
     });
+    Object.defineProperty(window, "scrollTo", {
+      configurable: true,
+      writable: true,
+      value: originalScrollTo
+    });
   });
 
   it("shows the entrance copy and silent fallback before requesting audio", () => {
@@ -110,8 +121,89 @@ describe("AudioStartOverlay", () => {
       </AudioProvider>
     );
 
-    expect(screen.getByText("Tap to begin")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Continue without sound" })).toBeInTheDocument();
+    expect(screen.getByTestId("audio-start-overlay-lotus")).toBeInTheDocument();
+    expect(screen.getByText("Save the Date")).toBeInTheDocument();
+    expect(
+      screen.getByText("For the full atmosphere, enter with sound.")
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Amanda & Dushyant")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("October 2, 2026 • Asheville, North Carolina")
+    ).not.toBeInTheDocument();
+    const primaryButton = screen.getByRole("button", { name: "Enter with sound" });
+    expect(primaryButton).toBeInTheDocument();
+    const silentButton = screen.getByRole("button", { name: "Continue without sound" });
+    expect(silentButton).toBeInTheDocument();
+    const sharedCtaClasses = [
+      "min-h-[var(--btn-min-h)]",
+      "w-full",
+      "rounded-full",
+      "border",
+      "border-ivory/[0.3]",
+      "bg-[linear-gradient(165deg,rgba(255,255,255,0.14),rgba(255,255,255,0.04))]",
+      "px-[var(--btn-px)]",
+      "py-[var(--btn-py)]",
+      "font-heading",
+      "text-[0.68rem]",
+      "uppercase",
+      "tracking-[0.22em]",
+      "text-ivory/[0.88]",
+      "shadow-[0_12px_28px_rgba(0,0,0,0.2)]",
+      "transition"
+    ];
+
+    for (const button of [primaryButton, silentButton]) {
+      expect(button).toHaveClass(...sharedCtaClasses);
+    }
+
+    expect(primaryButton).toHaveClass("disabled:cursor-wait", "disabled:opacity-100");
+    expect(silentButton).not.toHaveClass("border-ivory/12");
+    expect(silentButton).not.toHaveClass("text-ivory/56");
+    expect(silentButton).not.toHaveClass("hover:border-ivory/16");
+    expect(window.Audio).not.toHaveBeenCalled();
+  });
+
+  it("locks document scrolling while the overlay is visible and restores it after entry", async () => {
+    Object.defineProperty(window, "scrollY", {
+      configurable: true,
+      writable: true,
+      value: 148
+    });
+
+    render(
+      <AudioProvider>
+        <AudioStartOverlay />
+      </AudioProvider>
+    );
+
+    expect(document.body.style.position).toBe("fixed");
+    expect(document.body.style.top).toBe("-148px");
+    expect(document.body.style.width).toBe("100%");
+    expect(document.documentElement.style.overflow).toBe("hidden");
+    expect(document.documentElement.style.overscrollBehavior).toBe("none");
+
+    fireEvent.click(screen.getByTestId("audio-skip-button"));
+
+    await waitFor(() =>
+      expect(screen.getByTestId("audio-start-overlay-shell")).toHaveClass("opacity-0")
+    );
+    expect(document.body.style.position).toBe("");
+    expect(document.body.style.top).toBe("");
+    expect(document.body.style.width).toBe("");
+    expect(document.documentElement.style.overflow).toBe("");
+    expect(document.documentElement.style.overscrollBehavior).toBe("");
+    expect(window.scrollTo).toHaveBeenCalledWith(0, 148);
+  });
+
+  it("does not start audio when the shell itself is clicked", () => {
+    render(
+      <AudioProvider>
+        <AudioStartOverlay />
+      </AudioProvider>
+    );
+
+    fireEvent.click(screen.getByTestId("audio-start-overlay-shell"));
+
     expect(window.Audio).not.toHaveBeenCalled();
   });
 
@@ -130,18 +222,19 @@ describe("AudioStartOverlay", () => {
     expect(window.Audio).not.toHaveBeenCalled();
   });
 
-  it("keeps the overlay copy layer pointer-transparent while preserving the silent button", () => {
+  it("prepares audio on pointer down before starting playback on click", () => {
     render(
       <AudioProvider>
         <AudioStartOverlay />
       </AudioProvider>
     );
 
-    const skipButton = screen.getByTestId("audio-skip-button");
-    const contentWrapper = skipButton.parentElement?.parentElement;
+    const primaryButton = screen.getByTestId("audio-start-overlay");
 
-    expect(contentWrapper).toHaveClass("pointer-events-none");
-    expect(skipButton).toHaveClass("pointer-events-auto");
+    fireEvent.pointerDown(primaryButton);
+
+    expect(window.Audio).toHaveBeenCalledTimes(1);
+    expect(instances[0].play).not.toHaveBeenCalled();
   });
 
   it("enters immediately from the overlay control while audio keeps starting", async () => {
@@ -162,6 +255,7 @@ describe("AudioStartOverlay", () => {
     await waitFor(() => expect(audio.play).toHaveBeenCalledTimes(1));
     expect(shell).toHaveClass("opacity-0");
     expect(shell).toHaveClass("pointer-events-none");
+    expect(screen.getByTestId("audio-start-overlay")).toHaveTextContent("Starting audio...");
     expect(audio.pause).not.toHaveBeenCalled();
 
     act(() => {
