@@ -94,7 +94,7 @@ export function AudioStartOverlay() {
       }`}
     >
       <div className="relative flex h-full items-end justify-center">
-        <section className="pointer-events-auto w-full max-w-[23rem] rounded-[2rem] border border-ivory/[0.22] bg-[linear-gradient(165deg,rgba(255,255,255,0.16),rgba(255,255,255,0.04))] px-6 py-7 text-center text-ivory shadow-[0_24px_72px_rgba(0,0,0,0.34)] backdrop-blur-xl sm:px-8 sm:py-8">
+        <section className="w-full max-w-[23rem] rounded-[2rem] border border-ivory/[0.22] bg-[linear-gradient(165deg,rgba(255,255,255,0.16),rgba(255,255,255,0.04))] px-6 py-7 text-center text-ivory shadow-[0_24px_72px_rgba(0,0,0,0.34)] backdrop-blur-xl sm:px-8 sm:py-8">
           <div
             data-testid="audio-start-overlay-lotus"
             className="mx-auto flex w-full max-w-[14rem] items-center justify-center gap-4 opacity-[0.88]"

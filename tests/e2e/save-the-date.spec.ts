@@ -140,17 +140,17 @@ test("save-the-date renders scenes and opens modal", async ({ page }) => {
   await page.mouse.wheel(0, 12000);
   await page.waitForTimeout(250);
   await page.getByRole("button", { name: "The Venue" }).first().scrollIntoViewIfNeeded();
-  await page.getByRole("button", { name: "The Venue" }).first().click({ force: true });
+  await page.getByRole("button", { name: "The Venue" }).first().click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.getByRole("button", { name: "Close" }).click();
   await expect(page.getByRole("dialog")).toBeHidden();
 
-  await page.getByRole("button", { name: "Our Story" }).first().click({ force: true });
+  await page.getByRole("button", { name: "Our Story" }).first().click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.getByRole("button", { name: "Close" }).click();
   await expect(page.getByRole("dialog")).toBeHidden();
 
-  await page.getByRole("button", { name: "The Party" }).first().click({ force: true });
+  await page.getByRole("button", { name: "The Party" }).first().click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toBeHidden();
