@@ -1,20 +1,5 @@
-import { Cinzel, Cormorant, Tiro_Devanagari_Hindi } from "next/font/google";
-
-export const cinzel = Cinzel({
-  subsets: ["latin"],
-  variable: "--font-cinzel",
-  display: "swap"
-});
-
-export const cormorant = Cormorant({
-  subsets: ["latin"],
-  variable: "--font-cormorant",
-  display: "swap"
-});
-
-export const tiroDevanagari = Tiro_Devanagari_Hindi({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-tiro-devanagari",
-  display: "swap"
-});
+// Fonts are loaded via <link> tags in layout.tsx to avoid build-time network fetches.
+// These stubs preserve the import interface used by layout.tsx.
+export const cinzel = { variable: "" };
+export const cormorant = { variable: "" };
+export const tiroDevanagari = { variable: "" };

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cinzel, cormorant, tiroDevanagari } from "@/lib/theme/fonts";
 import "./globals.css";
 
 const shareImage = "/images/site-preview.png";
@@ -37,7 +36,22 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${cinzel.variable} ${cormorant.variable} ${tiroDevanagari.variable}`}>
+    <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant:wght@300..700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap"
+          rel="stylesheet"
+        />
+        <style>{`
+          :root {
+            --font-cinzel: 'Cinzel';
+            --font-cormorant: 'Cormorant';
+            --font-tiro-devanagari: 'Tiro Devanagari Hindi';
+          }
+        `}</style>
+      </head>
       <body>{children}</body>
     </html>
   );
