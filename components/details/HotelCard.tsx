@@ -32,7 +32,7 @@ export function HotelCard({ hotel }: HotelCardProps) {
       </div>
 
       <div className="flex flex-1 flex-col p-[clamp(22px,4vw,30px)]">
-        <h3 className="mb-4 font-heading font-semibold leading-[1.25] tracking-[0.06em] text-[color:var(--d-maroon)] text-[clamp(1.15rem,3vw,1.4rem)]">
+        <h3 className="mb-4 whitespace-pre-line font-heading font-semibold leading-[1.25] tracking-[0.06em] text-[color:var(--d-maroon)] text-[clamp(1.15rem,3vw,1.4rem)]">
           {hotel.name}
         </h3>
 

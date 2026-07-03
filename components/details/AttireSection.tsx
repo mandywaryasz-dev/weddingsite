@@ -1,6 +1,4 @@
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
-import { DetailsImage } from "@/components/details/DetailsImage";
-import { detailsAsset } from "@/lib/details/assets";
 import type { Attire, SectionIntro } from "@/lib/details/types";
 
 type AttireSectionProps = {
@@ -8,21 +6,13 @@ type AttireSectionProps = {
   attire: Attire;
 };
 
-/** Transparent — sits on the shared Travel/Stay/Attire backdrop (plan §2.3). */
+/** Transparent — sits on the shared Travel/Stay/Attire/FAQ backdrop (plan §2.3). */
 export function AttireSection({ intro, attire }: AttireSectionProps) {
   return (
     <section
       id="attire"
-      className="relative overflow-hidden px-[clamp(22px,6vw,80px)] py-[clamp(80px,12vw,140px)]"
+      className="relative overflow-hidden px-[clamp(22px,6vw,80px)] pb-[clamp(80px,10vw,116px)] pt-[clamp(56px,8vw,84px)]"
     >
-      <DetailsImage
-        src={detailsAsset("sprig")}
-        alt=""
-        width={96}
-        height={160}
-        className="pointer-events-none absolute left-9 top-[70px] hidden w-[clamp(52px,8vw,96px)] -scale-x-100 opacity-[0.28] sm:block"
-      />
-
       <div className="relative mx-auto max-w-[760px] text-center">
         <ScrollReveal>
           <p className="font-heading text-[11px] uppercase tracking-[0.34em] text-[color:var(--d-copper)]">

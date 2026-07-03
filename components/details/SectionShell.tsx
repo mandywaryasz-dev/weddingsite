@@ -50,7 +50,7 @@ export function SectionShell({
           <p
             className={
               subheadSize === "lg"
-                ? "mx-auto mt-[clamp(1.75rem,4vw,2.5rem)] max-w-[22rem] font-body italic leading-[1.3] text-[color:var(--d-maroon-warm)] text-[clamp(1.6rem,5.2vw,2.4rem)]"
+                ? "mx-auto mt-[clamp(1.75rem,4vw,2.5rem)] max-w-[22rem] whitespace-pre-line font-body italic leading-[1.3] text-[color:var(--d-maroon-warm)] text-[clamp(1.6rem,5.2vw,2.4rem)]"
                 : "mx-auto mt-4 max-w-[30rem] font-body italic leading-[1.5] text-[color:var(--d-maroon-warm)] text-[clamp(1.1rem,3vw,1.35rem)]"
             }
           >

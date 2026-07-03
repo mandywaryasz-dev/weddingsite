@@ -7,7 +7,7 @@ import type { SVGProps } from "react";
 
 type IconProps = SVGProps<SVGSVGElement>;
 
-const strokeGold = "#C7A45D";
+const strokeGold = "#C29A60";
 const strokeCopper = "#B07A4E";
 
 export function MapPinIcon({ stroke = strokeGold, ...props }: IconProps) {

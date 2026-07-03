@@ -4,6 +4,7 @@ import { DetailsChrome } from "@/components/details/DetailsChrome";
 import { HeroSection } from "@/components/details/HeroSection";
 import { EventsSection } from "@/components/details/EventsSection";
 import { SharedBackdropGroup } from "@/components/details/SharedBackdropGroup";
+import { SectionDivider } from "@/components/details/SectionDivider";
 import { TravelSection } from "@/components/details/TravelSection";
 import { StaySection } from "@/components/details/StaySection";
 import { AttireSection } from "@/components/details/AttireSection";
@@ -25,18 +26,21 @@ export default function HomePage() {
 
         <EventsSection intro={c.eventsIntro} events={c.events} />
 
-        {/* Travel + Stay + Attire share a single backdrop (plan §2.3) */}
+        {/* Travel + Stay + Attire + FAQ share one paper backdrop, separated by
+            gold-dot dividers (plan §2.3) */}
         <SharedBackdropGroup>
           <TravelSection
             intro={c.travelIntro}
             airportsLabel={c.airportsLabel}
             airports={c.airports}
           />
+          <SectionDivider />
           <StaySection intro={c.stayIntro} hotels={c.hotels} />
+          <SectionDivider />
           <AttireSection intro={c.attireIntro} attire={c.attire} />
+          <SectionDivider />
+          <FaqSection intro={c.faqIntro} groups={c.faqGroups} />
         </SharedBackdropGroup>
-
-        <FaqSection intro={c.faqIntro} groups={c.faqGroups} />
       </main>
 
       <FooterSection footer={c.footer} />
