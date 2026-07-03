@@ -1,0 +1,52 @@
+/* ──────────────────────────────────────────────────────────────
+   Light editorial palette — Full Details Page
+   Scoped to [data-theme="details"] so it never leaks into the dark
+   save-the-date route. Values extracted from the design mockup
+   (plan §4). Typography reuses the existing font variables.
+   ────────────────────────────────────────────────────────────── */
+
+[data-theme="details"] {
+  /* Surfaces */
+  --d-page: #faf6ee;
+  --d-hero-blush: #f5ded6;
+
+  /* Section gradients (Travel/Stay/Attire collapse to the shared backdrop) */
+  --d-grad-events: linear-gradient(180deg, #efe2d0, #eadcc7);
+  --d-grad-faq: linear-gradient(180deg, #efe2d0, #e9dac4);
+  --d-grad-footer: linear-gradient(180deg, #ecdccc, #e6d2c1);
+  --d-grad-shared: linear-gradient(180deg, #fbf7ef, #f3ecdd);
+
+  /* Ink */
+  --d-maroon: #7a2e34; /* headings, monogram */
+  --d-maroon-warm: #8a4248; /* italic subheads */
+  --d-gold: #c7a45d; /* metallic accent */
+  --d-copper: #b07a4e; /* eyebrows */
+  --d-terracotta: #9b5a4a; /* labels, links */
+  --d-body: #6c4e48; /* primary body */
+  --d-body-soft: #7a5c55; /* secondary body */
+  --d-body-muted: #8a6a62; /* muted body */
+  --d-scroll-cue: #a88463;
+  --d-on-maroon: #f5efe4; /* text on the maroon CTA */
+
+  /* Lines */
+  --d-hairline: rgba(122, 46, 52, 0.16);
+  --d-hairline-soft: rgba(122, 46, 52, 0.1);
+  --d-hairline-gold: rgba(199, 164, 93, 0.6);
+
+  color: var(--d-body);
+  background: var(--d-page);
+  font-family: var(--font-cormorant), serif;
+}
+
+/* Anchor navigation: smooth scroll + clear the fixed nav on all sizes.
+   Scoped via :has so the save-the-date route is unaffected. */
+html:has([data-theme="details"]) {
+  scroll-behavior: smooth;
+  scroll-padding-top: clamp(64px, 12vw, 82px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:has([data-theme="details"]) {
+    scroll-behavior: auto;
+  }
+}
