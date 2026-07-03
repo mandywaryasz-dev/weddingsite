@@ -18,10 +18,11 @@ export const detailsContent: DetailsContent = {
     scrollLabel: "SCROLL",
   },
 
+  // The events header is just the monogram + title in the mockup — no eyebrow
+  // or subhead (plan §6).
   eventsIntro: {
-    eyebrow: "OCTOBER 1–2, 2026 · ASHEVILLE, NC",
+    eyebrow: "",
     heading: "The Events",
-    subhead: "Two cultures, two families—one joyful weekend woven together in the Blue Ridge.",
   },
   events: [
     {
@@ -70,7 +71,7 @@ export const detailsContent: DetailsContent = {
   travelIntro: {
     eyebrow: "GETTING THERE",
     heading: "Travel",
-    subhead: "Fly into the Blue Ridge—the mountains do the rest.",
+    subhead: "Fly into the Blue Ridge,\nthe mountains do the rest.",
   },
   airportsLabel: "CLOSEST AIRPORTS",
   airports: [
@@ -82,11 +83,11 @@ export const detailsContent: DetailsContent = {
   stayIntro: {
     eyebrow: "WHERE TO REST",
     heading: "Stay",
-    subhead: "Two downtown blocks, saved just for you.",
+    subhead: "Two downtown blocks,\nsaved just for you.",
   },
   hotels: [
     {
-      name: "Hotel Block at Zelda Dearest",
+      name: "Hotel Block at\nZelda Dearest",
       badge: "DOWNTOWN ASHEVILLE",
       imageKey: "hotelZelda",
       imageAlt: "Hotel block at Zelda Dearest",
@@ -97,7 +98,7 @@ export const detailsContent: DetailsContent = {
       cta: { label: "CALL TO RESERVE YOUR STAY", href: "tel:+18285142489", external: false },
     },
     {
-      name: "Moxy Asheville Downtown",
+      name: "Moxy Asheville\nDowntown",
       badge: "DOWNTOWN ASHEVILLE",
       imageKey: "hotelMoxy",
       imageAlt: "Moxy Asheville Downtown",
@@ -115,7 +116,7 @@ export const detailsContent: DetailsContent = {
   },
   attire: {
     flourish: "Formal",
-    intro: "Dress to celebrate—in whichever tradition feels like you. Both are warmly welcomed, and equally at home.",
+    intro: "Dress to celebrate, in whichever tradition feels like you. Both are warmly welcomed, and equally at home.",
     columns: [
       {
         label: "WESTERN FORMAL",
@@ -123,10 +124,10 @@ export const detailsContent: DetailsContent = {
       },
       {
         label: "INDIAN FORMAL",
-        body: "Lehengas, sarees, sherwanis, kurtas—the celebration in full color. Wear it proudly.",
+        body: "Lehengas, sarees, sherwanis, kurtas, the celebration in full color. Wear it proudly.",
       },
     ],
-    eveningNote: "Evenings turn cool in the mountains—a wrap or layer for after dark is never a bad idea.",
+    eveningNote: "Evenings turn cool in the mountains, and a wrap or layer for after dark is never a bad idea.",
   },
 
   faqIntro: {
@@ -168,7 +169,7 @@ export const detailsContent: DetailsContent = {
         },
         {
           q: "Will transportation be provided?",
-          a: "We’re arranging rides between the downtown hotels and the venue. Details will be shared closer to the wedding.",
+          a: "Details will be shared closer to the wedding.",
         },
       ],
     },
@@ -179,8 +180,8 @@ export const detailsContent: DetailsContent = {
     portraitAlt: "Amanda and Dushyant",
     cutline: "The two of us, all dressed up with somewhere to be",
     eyebrow: "ANYTHING AT ALL",
-    lead: "Thank you for making the trip to celebrate with us — we’ll save you a place on the dance floor.",
-    body: "Until then, whatever you’re wondering — travel, timing, what to wear — we’re only ever a call or text away.",
+    lead: "Thank you for making the trip to celebrate with us. We’ll save you a place on the dance floor.",
+    body: "Until then, whatever you’re wondering (travel, timing, what to wear) we’re only ever a call or text away.",
     contacts: [
       { name: "Mandy", display: "(603) 440-9249", href: "tel:+16034409249" },
       { name: "Dushyant", display: "(216) 269-4967", href: "tel:+12162694967" },

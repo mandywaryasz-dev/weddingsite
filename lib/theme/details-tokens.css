@@ -10,16 +10,10 @@
   --d-page: #faf6ee;
   --d-hero-blush: #f5ded6;
 
-  /* Section gradients (Travel/Stay/Attire collapse to the shared backdrop) */
-  --d-grad-events: linear-gradient(180deg, #efe2d0, #eadcc7);
-  --d-grad-faq: linear-gradient(180deg, #efe2d0, #e9dac4);
-  --d-grad-footer: linear-gradient(180deg, #ecdccc, #e6d2c1);
-  --d-grad-shared: linear-gradient(180deg, #fbf7ef, #f3ecdd);
-
   /* Ink */
   --d-maroon: #7a2e34; /* headings, monogram */
   --d-maroon-warm: #8a4248; /* italic subheads */
-  --d-gold: #c7a45d; /* metallic accent */
+  --d-gold: #c29a60; /* metallic accent */
   --d-copper: #b07a4e; /* eyebrows */
   --d-terracotta: #9b5a4a; /* labels, links */
   --d-body: #6c4e48; /* primary body */
@@ -36,6 +30,36 @@
   color: var(--d-body);
   background: var(--d-page);
   font-family: var(--font-cormorant), serif;
+}
+
+/* Dark tone — the Events section sits on the deep-maroon Events.png and flips
+   its ink to ivory/silver on gold. Scoped so the shared vars above are only
+   overridden inside a [data-tone="dark"] region (plan §4). */
+[data-theme="details"] [data-tone="dark"] {
+  --d-maroon: #f5efe4; /* headings + event titles → ivory */
+  --d-copper: #c29a60; /* stamps + meta labels → gold */
+  --d-gold: #c29a60; /* event numerals */
+  --d-body: #ede6da; /* meta values */
+  --d-body-soft: #cdbfb6; /* event descriptions */
+  --d-hairline: rgba(219, 219, 219, 0.16); /* silver hairlines on dark */
+  --d-hairline-soft: rgba(219, 219, 219, 0.12);
+}
+
+/* Dark footer tone — the closing footer sits on its own deep-maroon gradient
+   with ivory/gold ink, a palette distinct from the Events dark tone. Scoped to
+   [data-tone="dark-footer"] so these overrides stay inside the footer (plan §6). */
+[data-theme="details"] [data-tone="dark-footer"] {
+  --d-footer-top: #4e1b2c; /* gradient surface — top */
+  --d-footer-bottom: #371320; /* gradient surface — bottom */
+  --d-ivory: #f5efe4; /* lead line */
+  --d-body: #d9c4bc; /* primary footer body */
+  --d-body-muted: #cbb0a8; /* italic cutline / sign-off */
+  --d-body-faint: #b79a93; /* colophon side labels */
+  --d-gold: #c29a60; /* masthead, eyebrow, signature, crest */
+  --d-gold-bright: #dfbb7b; /* links, colophon center */
+  --d-gold-line: rgba(194, 154, 96, 0.6); /* seams + portrait border */
+  --d-gold-line-mid: rgba(194, 154, 96, 0.55); /* masthead rule gradient */
+  --d-gold-line-soft: rgba(194, 154, 96, 0.4); /* link underlines, colophon rule */
 }
 
 /* Anchor navigation: smooth scroll + clear the fixed nav on all sizes.

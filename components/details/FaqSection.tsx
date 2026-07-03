@@ -1,7 +1,5 @@
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { FaqItem } from "@/components/details/FaqItem";
-import { DetailsImage } from "@/components/details/DetailsImage";
-import { detailsAsset } from "@/lib/details/assets";
 import type { FaqGroup, SectionIntro } from "@/lib/details/types";
 
 type FaqSectionProps = {
@@ -9,29 +7,15 @@ type FaqSectionProps = {
   groups: FaqGroup[];
 };
 
+/** Transparent — sits on the shared Travel/Stay/Attire/FAQ backdrop (plan §2.3). */
 export function FaqSection({ intro, groups }: FaqSectionProps) {
   return (
     <section
       id="faq"
-      className="relative overflow-hidden bg-[image:var(--d-grad-faq)] px-[clamp(20px,6vw,80px)] py-[clamp(74px,11vw,130px)] text-[color:var(--d-body)]"
+      className="relative overflow-hidden px-[clamp(20px,6vw,80px)] pb-[clamp(96px,13vw,168px)] pt-[clamp(56px,8vw,84px)] text-[color:var(--d-body)]"
     >
-      <DetailsImage
-        src={detailsAsset("eventsFloralR")}
-        alt=""
-        width={400}
-        height={400}
-        className="pointer-events-none absolute -right-[50px] top-10 hidden w-[clamp(200px,28vw,400px)] opacity-[0.12] sm:block"
-      />
-
       <div className="relative mx-auto max-w-[1000px]">
         <ScrollReveal className="mb-[clamp(44px,6vw,64px)] text-center">
-          <DetailsImage
-            src={detailsAsset("monogram")}
-            alt=""
-            width={40}
-            height={40}
-            className="mx-auto mb-[14px] w-10 opacity-90"
-          />
           <h2 className="font-heading font-semibold tracking-[0.14em] text-[color:var(--d-maroon)] text-[clamp(2rem,6.5vw,3.4rem)]">
             {intro.heading}
           </h2>

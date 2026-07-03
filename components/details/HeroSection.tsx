@@ -38,24 +38,8 @@ export function HeroSection({ hero }: HeroSectionProps) {
         }}
       />
 
-      {/* corner florals — decorative; hidden on the smallest screens to avoid crowding text */}
-      <DetailsImage
-        src={detailsAsset("heroFloralCorner")}
-        alt=""
-        width={400}
-        height={400}
-        className="pointer-events-none absolute -bottom-[18px] -left-[26px] hidden w-[clamp(170px,30vw,400px)] origin-bottom-left animate-ad-sway opacity-50 motion-reduce:animate-none sm:block"
-      />
-      <DetailsImage
-        src={detailsAsset("heroFloralCorner")}
-        alt=""
-        width={400}
-        height={400}
-        className="pointer-events-none absolute -bottom-[18px] -right-[26px] hidden w-[clamp(170px,30vw,400px)] origin-bottom-right animate-ad-sway-r opacity-50 motion-reduce:animate-none sm:block"
-      />
-
       <div className="relative z-[2] max-w-[760px] text-center">
-        {/* monogram divider */}
+        {/* monogram divider — the maroon lotus mark between two gradient rules */}
         <div className="mb-[26px] flex items-center justify-center gap-4">
           <span
             aria-hidden
@@ -63,11 +47,11 @@ export function HeroSection({ hero }: HeroSectionProps) {
             style={{ background: "linear-gradient(90deg,transparent,rgba(122,46,52,.4))" }}
           />
           <DetailsImage
-            src={detailsAsset("monogram")}
+            src={detailsAsset("monogramLotus")}
             alt=""
-            width={26}
-            height={26}
-            className="w-[26px] opacity-95"
+            width={34}
+            height={34}
+            className="w-[34px] opacity-95"
           />
           <span
             aria-hidden

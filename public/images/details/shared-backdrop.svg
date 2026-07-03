@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 2400" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="shared" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#fbf7ef"/>
-      <stop offset="1" stop-color="#f3ecdd"/>
-    </linearGradient>
-  </defs>
-  <rect width="1200" height="2400" fill="url(#shared)"/>
-</svg>
