@@ -55,6 +55,7 @@ export function EventsSection({ intro, events }: EventsSectionProps) {
         <SectionShell
           intro={intro}
           showMonogram
+          monogramSrc={detailsAsset("cultureFlower")}
           className="mb-[clamp(52px,8vw,92px)]"
         />
 

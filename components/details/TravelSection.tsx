@@ -24,12 +24,9 @@ export function TravelSection({ intro, airportsLabel, airports }: TravelSectionP
         />
 
         <ScrollReveal>
-          <div className="mb-[8px] flex items-center gap-[14px]">
-            <span className="font-heading text-[11px] tracking-[0.26em] text-[color:var(--d-copper)]">
-              {airportsLabel}
-            </span>
-            <span aria-hidden className="h-px flex-1 bg-[color:var(--d-hairline)]" />
-          </div>
+          <p className="mb-[clamp(22px,3.4vw,28px)] font-heading text-[11px] tracking-[0.26em] text-[color:var(--d-copper)]">
+            {airportsLabel}
+          </p>
 
           {airports.map((airport) => (
             <AirportRow key={airport.code} airport={airport} />
