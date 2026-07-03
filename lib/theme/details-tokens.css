@@ -45,6 +45,23 @@
   --d-hairline-soft: rgba(219, 219, 219, 0.12);
 }
 
+/* Dark footer tone — the closing footer sits on its own deep-maroon gradient
+   with ivory/gold ink, a palette distinct from the Events dark tone. Scoped to
+   [data-tone="dark-footer"] so these overrides stay inside the footer (plan §6). */
+[data-theme="details"] [data-tone="dark-footer"] {
+  --d-footer-top: #4e1b2c; /* gradient surface — top */
+  --d-footer-bottom: #371320; /* gradient surface — bottom */
+  --d-ivory: #f5efe4; /* lead line */
+  --d-body: #d9c4bc; /* primary footer body */
+  --d-body-muted: #cbb0a8; /* italic cutline / sign-off */
+  --d-body-faint: #b79a93; /* colophon side labels */
+  --d-gold: #c29a60; /* masthead, eyebrow, signature, crest */
+  --d-gold-bright: #dfbb7b; /* links, colophon center */
+  --d-gold-line: rgba(194, 154, 96, 0.6); /* seams + portrait border */
+  --d-gold-line-mid: rgba(194, 154, 96, 0.55); /* masthead rule gradient */
+  --d-gold-line-soft: rgba(194, 154, 96, 0.4); /* link underlines, colophon rule */
+}
+
 /* Anchor navigation: smooth scroll + clear the fixed nav on all sizes.
    Scoped via :has so the save-the-date route is unaffected. */
 html:has([data-theme="details"]) {

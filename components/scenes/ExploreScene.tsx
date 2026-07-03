@@ -88,10 +88,10 @@ export function ExploreScene({ scene, actions }: SceneComponentProps) {
                 />
                 <div className="relative w-24 sm:w-28">
                   <Image
-                    src="/images/monogram.png"
+                    src="/images/monogram.webp"
                     alt=""
-                    width={260}
-                    height={314}
+                    width={400}
+                    height={500}
                     quality={85}
                     className="h-auto w-full opacity-[0.98] drop-shadow-[0_1px_1px_rgba(0,0,0,0.14)]"
                   />
