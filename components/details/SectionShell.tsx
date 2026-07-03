@@ -7,6 +7,8 @@ type SectionShellProps = {
   intro: SectionIntro;
   /** Show the A&D monogram above the eyebrow (Events, FAQ). */
   showMonogram?: boolean;
+  /** Optional custom monogram image source. Defaults to the A&D monogram. */
+  monogramSrc?: string;
   /** Larger lyrical subhead (Travel, Stay) vs. the smaller Events subhead. */
   subheadSize?: "sm" | "lg";
   className?: string;
@@ -20,6 +22,7 @@ type SectionShellProps = {
 export function SectionShell({
   intro,
   showMonogram = false,
+  monogramSrc,
   subheadSize = "sm",
   className,
 }: SectionShellProps) {
@@ -28,7 +31,7 @@ export function SectionShell({
       <div className="text-center">
         {showMonogram ? (
           <DetailsImage
-            src={detailsAsset("monogram")}
+            src={monogramSrc || detailsAsset("monogram")}
             alt=""
             width={42}
             height={42}

@@ -8,6 +8,7 @@
 export const detailsAssets = {
   monogram: "/images/details/monogram.svg", // gold A&D mark (menu overlay, events heading)
   monogramLotus: "/images/details/monogram-lotus.svg", // maroon lotus (hero divider)
+  cultureFlower: "/images/culture-flower.svg", // floral design (events heading)
   crest: "/images/monogram.webp", // ornate gold footer seal
   heroBg: "/images/landing-hero-bg.png", // hero: misted Blue Ridge ridgelines
   eventsBg: "/images/Events.png", // events: dark maroon texture
