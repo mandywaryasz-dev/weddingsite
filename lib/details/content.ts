@@ -63,7 +63,7 @@ export const detailsContent: DetailsContent = {
       desc: "For anyone who wants to keep the celebration going, join us after the reception for a relaxed late-night gathering.",
       meta: [
         { label: "Time", value: "10 PM and beyond" },
-        { label: "Place", value: "We'll share this soon" },
+        { label: "Place", value: "To be revealed" },
       ],
     },
   ],
