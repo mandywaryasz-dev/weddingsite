@@ -76,6 +76,18 @@ const config: Config = {
         "scroll-hint": {
           "0%, 100%": { transform: "translateY(0)", opacity: "0.72" },
           "50%": { transform: "translateY(4px)", opacity: "1" }
+        },
+        "ad-sway": {
+          "0%, 100%": { transform: "rotate(0deg)" },
+          "50%": { transform: "rotate(2.2deg)" }
+        },
+        "ad-sway-r": {
+          "0%, 100%": { transform: "scaleX(-1) rotate(0deg)" },
+          "50%": { transform: "scaleX(-1) rotate(2.2deg)" }
+        },
+        "ad-bob": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(7px)" }
         }
       },
       animation: {
@@ -83,7 +95,10 @@ const config: Config = {
         "modal-out": "modal-out 180ms ease-in",
         grain: "grain 8s steps(6) infinite",
         glow: "glow 6s ease-in-out infinite",
-        "scroll-hint": "scroll-hint 1.8s ease-in-out infinite"
+        "scroll-hint": "scroll-hint 1.8s ease-in-out infinite",
+        "ad-sway": "ad-sway 11s ease-in-out infinite",
+        "ad-sway-r": "ad-sway-r 12s ease-in-out infinite",
+        "ad-bob": "ad-bob 2.4s ease-in-out infinite"
       }
     }
   },

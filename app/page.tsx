@@ -1,42 +1,45 @@
-import Link from "next/link";
-import Image from "next/image";
+import "@/lib/theme/details-tokens.css";
 
+import { DetailsChrome } from "@/components/details/DetailsChrome";
+import { HeroSection } from "@/components/details/HeroSection";
+import { EventsSection } from "@/components/details/EventsSection";
+import { SharedBackdropGroup } from "@/components/details/SharedBackdropGroup";
+import { TravelSection } from "@/components/details/TravelSection";
+import { StaySection } from "@/components/details/StaySection";
+import { AttireSection } from "@/components/details/AttireSection";
+import { FaqSection } from "@/components/details/FaqSection";
+import { FooterSection } from "@/components/details/FooterSection";
+import { detailsContent } from "@/lib/details/content";
+
+// The full weekend-details page. This is the home route `/` (plan §2.1);
+// `/save-the-date` remains the standalone cinematic experience.
 export default function HomePage() {
+  const c = detailsContent;
+
   return (
-    <main className="relative isolate flex min-h-screen items-center justify-center overflow-hidden px-6 text-center">
-      <Image
-        src="/images/explore-bg.png"
-        alt=""
-        fill
-        priority
-        quality={85}
-        className="object-cover"
-      />
-      <div className="absolute inset-0 bg-black/45" aria-hidden />
+    <div data-theme="details" className="relative w-full overflow-x-hidden">
+      <DetailsChrome menu={c.menu} />
 
-      <section className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center gap-6 py-16 text-silver/90">
-        <h1 className="font-heading text-display uppercase tracking-display">
-          AMANDA &amp; DUSHYANT
-        </h1>
+      <main>
+        <HeroSection hero={c.hero} />
 
-        <p className="font-heading text-body-sm tracking-heading text-silver/80">
-          October 2026 • Asheville, North Carolina
-        </p>
+        <EventsSection intro={c.eventsIntro} events={c.events} />
 
-        <div className="mt-2 space-y-2">
-          <p className="font-body text-body-sm text-silver/80">Our wedding celebration is on the horizon.</p>
-          <p className="font-body text-body-sm text-silver/80">Details for the full weekend experience will be shared soon.</p>
-        </div>
+        {/* Travel + Stay + Attire share a single backdrop (plan §2.3) */}
+        <SharedBackdropGroup>
+          <TravelSection
+            intro={c.travelIntro}
+            airportsLabel={c.airportsLabel}
+            airports={c.airports}
+          />
+          <StaySection intro={c.stayIntro} hotels={c.hotels} />
+          <AttireSection intro={c.attireIntro} attire={c.attire} />
+        </SharedBackdropGroup>
 
-        <p className="mt-2 font-body text-body-sm text-silver/80">In the meantime…</p>
+        <FaqSection intro={c.faqIntro} groups={c.faqGroups} />
+      </main>
 
-        <Link
-          href="/save-the-date"
-          className="mt-2 inline-block min-h-[var(--btn-min-h)] rounded-full border border-silver/25 bg-black/40 px-[var(--btn-px)] py-[var(--btn-py)] font-body text-button text-silver/90 shadow-[0_4px_24px_rgba(0,0,0,0.35)] backdrop-blur-md transition hover:bg-white/15"
-        >
-          SAVE THE DATE
-        </Link>
-      </section>
-    </main>
+      <FooterSection footer={c.footer} />
+    </div>
   );
 }

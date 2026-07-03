@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" fill="none">
+  <path d="M60 6 L112 26 V78 C112 108 88 128 60 136 C32 128 8 108 8 78 V26 Z" stroke="#C7A45D" stroke-width="1.5" fill="rgba(199,164,93,0.06)"/>
+  <text x="60" y="70" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="34" fill="#7A2E34">A&amp;D</text>
+  <text x="60" y="98" text-anchor="middle" font-family="Georgia, serif" letter-spacing="3" font-size="10" fill="#B07A4E">ASHEVILLE</text>
+</svg>

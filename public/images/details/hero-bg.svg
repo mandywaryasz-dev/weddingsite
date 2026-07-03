@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="hero" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e9c7bd"/>
+      <stop offset="0.55" stop-color="#f0d5cb"/>
+      <stop offset="1" stop-color="#f5ded6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1600" fill="url(#hero)"/>
+  <g opacity="0.35" stroke="#b07a4e" stroke-width="2" fill="none">
+    <path d="M0 1180 C220 1080 380 1220 600 1140 C820 1060 980 1200 1200 1120"/>
+    <path d="M0 1300 C220 1200 380 1340 600 1260 C820 1180 980 1320 1200 1240"/>
+  </g>
+  <text x="600" y="820" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="40" fill="#7A2E34" opacity="0.25">hero background placeholder</text>
+</svg>
