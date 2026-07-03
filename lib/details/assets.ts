@@ -8,10 +8,10 @@
 export const detailsAssets = {
   monogram: "/images/details/monogram.svg", // gold A&D mark (menu overlay, events heading)
   monogramLotus: "/images/details/monogram-lotus.svg", // maroon lotus (hero divider)
-  crest: "/images/monogram.png", // ornate gold footer seal
+  crest: "/images/monogram.webp", // ornate gold footer seal
   heroBg: "/images/landing-hero-bg.png", // hero: misted Blue Ridge ridgelines
   eventsBg: "/images/Events.png", // events: dark maroon texture
-  sharedBackdrop: "/images/travelbg.png", // paper texture behind Travel/Stay/Attire/FAQ (§2.3)
+  sharedBackdrop: "/images/travelbg.webp", // paper texture behind Travel/Stay/Attire/FAQ (§2.3)
   floralEdge: "/images/floral-edge.svg", // corner floral line art (events + footer)
   hotelZelda: "/images/details/hotel-zelda.png", // Zelda Dearest storefront
   hotelMoxy: "/images/details/hotel-moxy.png", // Moxy Asheville Downtown
