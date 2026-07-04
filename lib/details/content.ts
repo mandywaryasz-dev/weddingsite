@@ -63,7 +63,7 @@ export const detailsContent: DetailsContent = {
       desc: "For anyone who wants to keep the celebration going, join us after the reception for a relaxed late-night gathering.",
       meta: [
         { label: "Time", value: "10 PM and beyond" },
-        { label: "Place", value: "To be revealed" },
+        { label: "Place", value: "Radical Rooftop" },
       ],
     },
   ],
@@ -83,32 +83,45 @@ export const detailsContent: DetailsContent = {
   stayIntro: {
     eyebrow: "WHERE TO REST",
     heading: "Stay",
-    subhead: "Two downtown blocks,\nsaved just for you.",
   },
-  hotels: [
+  stayWelcome:
+    "We're so happy you'll be joining us in Asheville. To make things easy, here are a few places to stay — you're welcome to book anywhere you like, but these are our picks.",
+  featuredHotel: {
+    eyebrow: "OUR HOTEL",
+    name: "The Radical Asheville",
+    location: "River Arts District, Asheville",
+    imageKey: "hotelRadical",
+    imageAlt: "A guest room at The Radical Asheville",
+    body: "This is where we'll be staying, and where the after-party will be — right up on the rooftop. We fell for the setting: a 1920s factory turned hotel in the River Arts District, full of color and character, and just a few minutes from downtown.",
+    phone: "(828) 412-0200",
+    website: { label: "TheRadicalAVL.com", href: "https://www.theradicalavl.com/" },
+    cta: { label: "ASK ABOUT OUR ROOM BLOCK WHEN YOU BOOK", href: "tel:+18284120200", external: false },
+    signature: "Amanda & Dushyant",
+  },
+  budgetHotels: [
     {
-      name: "Hotel Block at\nZelda Dearest",
-      badge: "DOWNTOWN ASHEVILLE",
-      imageKey: "hotelZelda",
-      imageAlt: "Hotel block at Zelda Dearest",
-      address: "150 South Lexington Ave, Asheville, NC 28801",
-      phone: "(828) 514-2489",
-      website: { label: "ZeldaDearest.com", href: "https://ZeldaDearest.com" },
-      note: "Reserve directly with the front desk by phone, or online at the link above.",
-      cta: { label: "CALL TO RESERVE YOUR STAY", href: "tel:+18285142489", external: false },
+      name: "Clarion Pointe Biltmore Village",
+      href: "https://www.choicehotels.com/north-carolina/asheville/clarion-hotels/nc598",
+      description: "Basic but clean, free breakfast, outdoor pool.",
     },
     {
-      name: "Moxy Asheville\nDowntown",
-      badge: "DOWNTOWN ASHEVILLE",
-      imageKey: "hotelMoxy",
-      imageAlt: "Moxy Asheville Downtown",
-      address: "61 Biltmore Ave, Asheville, NC 28801",
-      phone: "(828) 949-0179",
-      website: { label: "MoxyAshevilleDowntown.com", href: "https://MoxyAshevilleDowntown.com" },
-      note: "Book online at the link above, or call the front desk to reserve.",
-      cta: { label: "RESERVE YOUR STAY", href: "https://MoxyAshevilleDowntown.com", external: true },
+      name: "Baymont by Wyndham — Biltmore Village",
+      href: "https://www.wyndhamhotels.com/baymont/asheville-north-carolina/baymont-asheville-biltmore/overview",
+      description: "Indoor pool and hot tub, free hot breakfast.",
+    },
+    {
+      name: "Lantern Lodge",
+      href: "https://www.tripadvisor.com/Hotel_Review-g60742-d652687-Reviews-Lantern_Lodge_700_Biltmore_Avenue-Asheville_North_Carolina.html",
+      description: "All-suite with full kitchens, closest of this group to downtown.",
+    },
+    {
+      name: "Home2 Suites by Hilton — Biltmore Village",
+      href: "https://www.hilton.com/en/hotels/avlvlht-home2-suites-asheville-biltmore-village/",
+      description: "All-suite with kitchenettes, pet-friendly, free breakfast.",
     },
   ],
+  stayGettingAround:
+    "Downtown Asheville is very walkable, and rideshare is quick and easy everywhere in town — and if you're staying with us at The Radical, you won't need to go anywhere on the wedding night.",
 
   attireIntro: {
     eyebrow: "DRESS CODE",

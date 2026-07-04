@@ -14,8 +14,7 @@ export const detailsAssets = {
   eventsBg: "/images/Events.png", // events: dark maroon texture
   sharedBackdrop: "/images/travelbg.webp", // paper texture behind Travel/Stay/Attire/FAQ (§2.3)
   floralEdge: "/images/floral-edge.svg", // corner floral line art (events + footer)
-  hotelZelda: "/images/details/hotel-zelda.png", // Zelda Dearest storefront
-  hotelMoxy: "/images/details/hotel-moxy.png", // Moxy Asheville Downtown
+  hotelRadical: "/images/details/hotel-radical.webp", // The Radical Asheville room (featured stay)
   couplePortrait: "/images/AD.jpeg", // Amanda & Dushyant portrait
 } as const;
 

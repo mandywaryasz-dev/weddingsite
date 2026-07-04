@@ -35,7 +35,13 @@ export default function HomePage() {
             airports={c.airports}
           />
           <SectionDivider />
-          <StaySection intro={c.stayIntro} hotels={c.hotels} />
+          <StaySection
+            intro={c.stayIntro}
+            welcome={c.stayWelcome}
+            featuredHotel={c.featuredHotel}
+            budgetHotels={c.budgetHotels}
+            gettingAround={c.stayGettingAround}
+          />
           <SectionDivider />
           <AttireSection intro={c.attireIntro} attire={c.attire} />
           <SectionDivider />

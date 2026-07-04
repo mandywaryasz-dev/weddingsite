@@ -32,20 +32,31 @@ export type HotelCta = {
   external: boolean;
 };
 
-export type Hotel = {
+export type FeaturedHotel = {
+  /** Small eyebrow that signals this is the primary pick, e.g. "OUR HOTEL". */
+  eyebrow: string;
   name: string;
-  badge: string;
+  /** Quiet location line, shown with a map pin in the contact block. */
+  location: string;
   /** Semantic asset key resolved through `assets.ts`. */
   imageKey: string;
   imageAlt: string;
-  address: string;
+  /** Narrative copy about the stay. */
+  body: string;
   phone: string;
   website: {
     label: string;
     href: string;
   };
-  note: string;
   cta: HotelCta;
+  /** Personal sign-off under the CTA, e.g. "Amanda & Dushyant". */
+  signature: string;
+};
+
+export type BudgetHotel = {
+  name: string;
+  href: string;
+  description: string;
 };
 
 export type AttireColumn = {
@@ -111,7 +122,12 @@ export type DetailsContent = {
   airportsLabel: string;
   airports: Airport[];
   stayIntro: SectionIntro;
-  hotels: Hotel[];
+  /** Warm framing paragraph under the heading (body copy, not the lyrical subhead). */
+  stayWelcome: string;
+  featuredHotel: FeaturedHotel;
+  budgetHotels: BudgetHotel[];
+  /** Closing "getting around" line under the lodging list. */
+  stayGettingAround: string;
   attireIntro: SectionIntro;
   attire: Attire;
   faqIntro: SectionIntro;
