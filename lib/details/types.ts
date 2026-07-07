@@ -87,10 +87,25 @@ export type SectionIntro = {
   subhead?: string;
 };
 
+export type RsvpContent = {
+  /** Button label, e.g. "RSVP". */
+  label: string;
+  /** External RSVP form URL — opens in a new tab. */
+  href: string;
+  /** Optional supporting line shown near the footer CTA. */
+  note?: string;
+};
+
 export type HeroContent = {
+  /** Small tracked eyebrow above the names, e.g. "YOU'RE INVITED". */
+  inviteEyebrow: string;
+  /** Italic host line above the names, e.g. "Together with our families,". */
+  hostLine: string;
   firstName: string;
   ampersand: string;
   lastName: string;
+  /** Italic invitational line below the names, completing the host line. */
+  requestLine: string;
   dateLocation: string;
   /** ISO string with offset — the moment we are counting down to. */
   countdownTarget: string;
@@ -116,6 +131,7 @@ export type FooterContent = {
 
 export type DetailsContent = {
   hero: HeroContent;
+  rsvp: RsvpContent;
   eventsIntro: SectionIntro;
   events: EventItem[];
   travelIntro: SectionIntro;
@@ -135,6 +151,5 @@ export type DetailsContent = {
   footer: FooterContent;
   menu: {
     links: { label: string; href: string }[];
-    email: { label: string; href: string };
   };
 };

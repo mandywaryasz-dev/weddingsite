@@ -9,13 +9,22 @@ import type { DetailsContent } from "@/lib/details/types";
 
 export const detailsContent: DetailsContent = {
   hero: {
-    firstName: "Amanda",
+    inviteEyebrow: "YOU'RE INVITED",
+    hostLine: "Together with our families,",
+    firstName: "Dushyant",
     ampersand: "&",
-    lastName: "Dushyant",
+    lastName: "Amanda",
+    requestLine: "we invite you to celebrate our wedding.",
     dateLocation: "October 2, 2026 · Asheville, North Carolina",
     countdownTarget: "2026-10-02T16:30:00-04:00",
     countdownLabel: "DAYS UNTIL WE CELEBRATE",
     scrollLabel: "SCROLL",
+  },
+
+  rsvp: {
+    label: "RSVP",
+    href: "https://partiful.com/e/a5r5tyTKP5tjmxja9WQd?f=1&photo=all",
+    note: "Kindly respond by the first of September.",
   },
 
   // The events header is just the monogram + title in the mockup — no eyebrow
@@ -29,10 +38,10 @@ export const detailsContent: DetailsContent = {
       no: "01",
       stamp: "THU · OCT 1",
       title: "Welcome Gathering",
-      desc: "For anyone in town the night prior, please join us for a casual and joyful meal and refreshments. A relaxed evening to settle in, connect, and begin the celebrations together.",
+      desc: "If you're in town the night before, we'd love for you to drift in for a casual, come-as-you-are meal. A relaxed evening to settle in and reconnect before the weekend begins. Entirely optional, so no need to plan around it.",
       meta: [
         { label: "Time", value: "6:30 in the evening" },
-        { label: "Place", value: "Shared with your invitation" },
+        { label: "Place", value: "To be determined" },
       ],
     },
     {
@@ -85,14 +94,14 @@ export const detailsContent: DetailsContent = {
     heading: "Stay",
   },
   stayWelcome:
-    "We're so happy you'll be joining us in Asheville. To make things easy, here are a few places to stay — you're welcome to book anywhere you like, but these are our picks.",
+    "We're so happy you'll be joining us in Asheville. To make things easy, here are a few places to stay. You're welcome to book anywhere you like, but these are our picks.",
   featuredHotel: {
     eyebrow: "OUR HOTEL",
     name: "The Radical Asheville",
     location: "River Arts District, Asheville",
     imageKey: "hotelRadical",
     imageAlt: "A guest room at The Radical Asheville",
-    body: "This is where we'll be staying, and where the after-party will be — right up on the rooftop. We fell for the setting: a 1920s factory turned hotel in the River Arts District, full of color and character, and just a few minutes from downtown.",
+    body: "This is where we'll be staying, and where the after-party will be, right up on the rooftop. We fell for the setting: a 1920s factory turned hotel in the River Arts District, full of color and character, and just a few minutes from downtown.",
     phone: "(828) 412-0200",
     website: { label: "TheRadicalAVL.com", href: "https://www.theradicalavl.com/" },
     cta: { label: "ASK ABOUT OUR ROOM BLOCK WHEN YOU BOOK", href: "tel:+18284120200", external: false },
@@ -105,7 +114,7 @@ export const detailsContent: DetailsContent = {
       description: "Basic but clean, free breakfast, outdoor pool.",
     },
     {
-      name: "Baymont by Wyndham — Biltmore Village",
+      name: "Baymont by Wyndham, Biltmore Village",
       href: "https://www.wyndhamhotels.com/baymont/asheville-north-carolina/baymont-asheville-biltmore/overview",
       description: "Indoor pool and hot tub, free hot breakfast.",
     },
@@ -115,13 +124,13 @@ export const detailsContent: DetailsContent = {
       description: "All-suite with full kitchens, closest of this group to downtown.",
     },
     {
-      name: "Home2 Suites by Hilton — Biltmore Village",
+      name: "Home2 Suites by Hilton, Biltmore Village",
       href: "https://www.hilton.com/en/hotels/avlvlht-home2-suites-asheville-biltmore-village/",
       description: "All-suite with kitchenettes, pet-friendly, free breakfast.",
     },
   ],
   stayGettingAround:
-    "Downtown Asheville is very walkable, and rideshare is quick and easy everywhere in town — and if you're staying with us at The Radical, you won't need to go anywhere on the wedding night.",
+    "Downtown Asheville is very walkable, and rideshare is quick and easy everywhere in town, and if you're staying with us at The Radical, you won't need to go anywhere on the wedding night.",
 
   attireIntro: {
     eyebrow: "DRESS CODE",
@@ -133,7 +142,7 @@ export const detailsContent: DetailsContent = {
     columns: [
       {
         label: "WESTERN FORMAL",
-        body: "Suits and ties; cocktail or floor-length dresses. Jewel tones and warm autumn hues feel right at home.",
+        body: "Suits and ties; cocktail or floor-length dresses.",
       },
       {
         label: "INDIAN FORMAL",
@@ -153,7 +162,7 @@ export const detailsContent: DetailsContent = {
       items: [
         {
           q: "When should I RSVP?",
-          a: "Formal invitations will arrive later this year with everything you need to reply. We’ll ask you to respond as early as you’re able so we can plan a joyful celebration for everyone.",
+          a: "Please RSVP by September 1, 2026 using the RSVP button on this page. That gives us about a month to finalize counts with our venue and caterer. If your plans change after you reply, just let us know as soon as you can.",
         },
         {
           q: "Can I bring a plus-one?",
@@ -161,7 +170,7 @@ export const detailsContent: DetailsContent = {
         },
         {
           q: "Are children invited?",
-          a: "We adore your little ones — any details about children will come with your formal invitation. Please don’t hesitate to ask in the meantime.",
+          a: "We adore your little ones, and any details about children will come with your formal invitation. Please don’t hesitate to ask in the meantime.",
         },
         {
           q: "Can I bring a gift?",
@@ -174,11 +183,11 @@ export const detailsContent: DetailsContent = {
       items: [
         {
           q: "Where should I stay?",
-          a: "We’ve held room blocks at Zelda Dearest and Moxy Asheville Downtown — both downtown and minutes from the celebration. See the Stay section above to book.",
+          a: "We’ll be at The Radical in the River Arts District, where the after-party will be, so ask about our room block when you book. We’ve also gathered a few comfortable, budget-friendly options in nearby Biltmore Village. See the Stay section above for all the details.",
         },
         {
           q: "What will the weather be like?",
-          a: "Early October in Asheville is crisp and golden — typically 60–75°F by day and cooler in the evening. We’d suggest a layer for the night air.",
+          a: "Early October in Asheville is crisp and golden, typically 60–75°F by day and cooler in the evening. We’d suggest a layer for the night air.",
         },
         {
           q: "Will transportation be provided?",
@@ -200,9 +209,9 @@ export const detailsContent: DetailsContent = {
       { name: "Dushyant", display: "(216) 269-4967", href: "tel:+12162694967" },
     ],
     signOff: "With love,",
-    signature: "AMANDA & DUSHYANT",
+    signature: "DUSHYANT & AMANDA",
     crestAlt: "Amanda & Dushyant crest",
-    crestNote: "RSVP DETAILS COMING SOON",
+    crestNote: "SEE YOU IN ASHEVILLE",
     colophon: {
       left: "ASHEVILLE, NORTH CAROLINA",
       center: "meetusinasheville.com",
@@ -218,6 +227,5 @@ export const detailsContent: DetailsContent = {
       { label: "Attire", href: "#attire" },
       { label: "FAQ", href: "#faq" },
     ],
-    email: { label: "HELLO@MEETUSINASHEVILLE.COM", href: "mailto:hello@meetusinasheville.com" },
   },
 };

@@ -19,10 +19,10 @@ export default function HomePage() {
 
   return (
     <div data-theme="details" className="relative w-full overflow-x-hidden">
-      <DetailsChrome menu={c.menu} />
+      <DetailsChrome menu={c.menu} rsvp={c.rsvp} />
 
       <main>
-        <HeroSection hero={c.hero} />
+        <HeroSection hero={c.hero} rsvp={c.rsvp} />
 
         <EventsSection intro={c.eventsIntro} events={c.events} />
 
@@ -49,7 +49,7 @@ export default function HomePage() {
         </SharedBackdropGroup>
       </main>
 
-      <FooterSection footer={c.footer} />
+      <FooterSection footer={c.footer} rsvp={c.rsvp} />
     </div>
   );
 }

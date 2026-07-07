@@ -88,6 +88,10 @@ const config: Config = {
         "ad-bob": {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(7px)" }
+        },
+        "invite-rise": {
+          "0%": { opacity: "0", transform: "translateY(16px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" }
         }
       },
       animation: {
@@ -98,7 +102,8 @@ const config: Config = {
         "scroll-hint": "scroll-hint 1.8s ease-in-out infinite",
         "ad-sway": "ad-sway 11s ease-in-out infinite",
         "ad-sway-r": "ad-sway-r 12s ease-in-out infinite",
-        "ad-bob": "ad-bob 2.4s ease-in-out infinite"
+        "ad-bob": "ad-bob 2.4s ease-in-out infinite",
+        "invite-rise": "invite-rise 900ms cubic-bezier(0.22,1,0.36,1) both"
       }
     }
   },

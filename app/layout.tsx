@@ -8,17 +8,17 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://meetusinasheville.com"),
   title: "Amanda & Dushyant | Meet Us In Asheville",
   description:
-    "Join Amanda & Dushyant in Asheville, October 2, 2026 — events, travel, where to stay, attire, and FAQs for the weekend.",
+    "Join Amanda & Dushyant in Asheville, October 2, 2026. Events, travel, where to stay, attire, and FAQs for the weekend.",
   openGraph: {
     title: "Amanda & Dushyant | Meet Us In Asheville",
     description:
-      "Join Amanda & Dushyant in Asheville, October 2, 2026 — events, travel, where to stay, attire, and FAQs for the weekend.",
+      "Join Amanda & Dushyant in Asheville, October 2, 2026. Events, travel, where to stay, attire, and FAQs for the weekend.",
     images: [
       {
         url: shareImage,
         width: 1200,
         height: 630,
-        alt: "Amanda and Dushyant wedding — Asheville, October 2, 2026"
+        alt: "Amanda and Dushyant wedding in Asheville, October 2, 2026"
       }
     ]
   },
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Amanda & Dushyant | Meet Us In Asheville",
     description:
-      "Join Amanda & Dushyant in Asheville, October 2, 2026 — events, travel, where to stay, attire, and FAQs for the weekend.",
+      "Join Amanda & Dushyant in Asheville, October 2, 2026. Events, travel, where to stay, attire, and FAQs for the weekend.",
     images: [shareImage]
   },
   icons: {
