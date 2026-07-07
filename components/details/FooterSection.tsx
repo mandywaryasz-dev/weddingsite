@@ -1,10 +1,12 @@
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { DetailsImage } from "@/components/details/DetailsImage";
+import { RsvpButton } from "@/components/details/RsvpButton";
 import { detailsAsset } from "@/lib/details/assets";
-import type { FooterContent } from "@/lib/details/types";
+import type { FooterContent, RsvpContent } from "@/lib/details/types";
 
 type FooterSectionProps = {
   footer: FooterContent;
+  rsvp: RsvpContent;
 };
 
 /**
@@ -13,7 +15,7 @@ type FooterSectionProps = {
  * token block via [data-tone="dark-footer"] (see lib/theme/details-tokens.css)
  * — all colours below resolve through those --d-* vars.
  */
-export function FooterSection({ footer }: FooterSectionProps) {
+export function FooterSection({ footer, rsvp }: FooterSectionProps) {
   return (
     <footer
       data-tone="dark-footer"
@@ -125,6 +127,18 @@ export function FooterSection({ footer }: FooterSectionProps) {
             </div>
           </ScrollReveal>
         </div>
+
+        {/* RSVP call to action — below the names, above the crest */}
+        <ScrollReveal className="mx-auto mb-[clamp(56px,8vw,88px)] text-center">
+          <div className="flex justify-center">
+            <RsvpButton rsvp={rsvp} tone="dark" />
+          </div>
+          {rsvp.note ? (
+            <p className="mt-[clamp(16px,2.4vw,22px)] font-body italic text-[color:var(--d-body-muted)] text-[clamp(1rem,2vw,1.12rem)]">
+              {rsvp.note}
+            </p>
+          ) : null}
+        </ScrollReveal>
 
         {/* crest seal */}
         <ScrollReveal className="mx-auto mb-[clamp(48px,7vw,76px)] text-center">

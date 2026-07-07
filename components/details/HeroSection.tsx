@@ -1,15 +1,17 @@
 import { DetailsImage } from "@/components/details/DetailsImage";
 import { Countdown } from "@/components/details/Countdown";
+import { RsvpButton } from "@/components/details/RsvpButton";
 import { ScrollCueIcon } from "@/components/icons";
 import { detailsAsset } from "@/lib/details/assets";
 import { daysUntil } from "@/lib/details/countdown";
-import type { HeroContent } from "@/lib/details/types";
+import type { HeroContent, RsvpContent } from "@/lib/details/types";
 
 type HeroSectionProps = {
   hero: HeroContent;
+  rsvp: RsvpContent;
 };
 
-export function HeroSection({ hero }: HeroSectionProps) {
+export function HeroSection({ hero, rsvp }: HeroSectionProps) {
   // Server-computed initial value → flash-free first paint (plan §5.2).
   const initialDays = daysUntil(hero.countdownTarget);
 
@@ -78,9 +80,13 @@ export function HeroSection({ hero }: HeroSectionProps) {
           initialDays={initialDays}
         />
 
+        <div className="mt-[clamp(44px,8vw,64px)] flex justify-center">
+          <RsvpButton rsvp={rsvp} tone="light" />
+        </div>
+
         <a
           href="#events"
-          className="mt-[26px] flex min-h-[var(--btn-min-h)] flex-col items-center justify-end gap-2 no-underline"
+          className="mt-[clamp(48px,9vw,72px)] flex min-h-[var(--btn-min-h)] flex-col items-center justify-end gap-2 no-underline"
         >
           <span className="font-heading text-[10px] tracking-[0.22em] text-[color:var(--d-scroll-cue)]">
             {hero.scrollLabel}

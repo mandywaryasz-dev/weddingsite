@@ -25,7 +25,7 @@ export function DetailsNav({ scrolled, menuOpen, onOpenMenu }: DetailsNavProps) 
         href="#top"
         className="font-heading text-[13px] font-semibold tracking-[0.22em] text-[color:var(--d-maroon)] no-underline"
       >
-        A&nbsp;&amp;&nbsp;D
+        D&nbsp;&amp;&nbsp;A
       </a>
       <button
         type="button"

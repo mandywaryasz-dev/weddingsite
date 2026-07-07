@@ -87,6 +87,15 @@ export type SectionIntro = {
   subhead?: string;
 };
 
+export type RsvpContent = {
+  /** Button label, e.g. "RSVP". */
+  label: string;
+  /** External RSVP form URL — opens in a new tab. */
+  href: string;
+  /** Optional supporting line shown near the footer CTA. */
+  note?: string;
+};
+
 export type HeroContent = {
   firstName: string;
   ampersand: string;
@@ -116,6 +125,7 @@ export type FooterContent = {
 
 export type DetailsContent = {
   hero: HeroContent;
+  rsvp: RsvpContent;
   eventsIntro: SectionIntro;
   events: EventItem[];
   travelIntro: SectionIntro;

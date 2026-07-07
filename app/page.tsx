@@ -22,7 +22,7 @@ export default function HomePage() {
       <DetailsChrome menu={c.menu} />
 
       <main>
-        <HeroSection hero={c.hero} />
+        <HeroSection hero={c.hero} rsvp={c.rsvp} />
 
         <EventsSection intro={c.eventsIntro} events={c.events} />
 
@@ -49,7 +49,7 @@ export default function HomePage() {
         </SharedBackdropGroup>
       </main>
 
-      <FooterSection footer={c.footer} />
+      <FooterSection footer={c.footer} rsvp={c.rsvp} />
     </div>
   );
 }
