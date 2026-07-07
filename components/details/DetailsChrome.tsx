@@ -7,6 +7,7 @@ import type { DetailsContent } from "@/lib/details/types";
 
 type DetailsChromeProps = {
   menu: DetailsContent["menu"];
+  rsvp: DetailsContent["rsvp"];
 };
 
 /**
@@ -14,7 +15,7 @@ type DetailsChromeProps = {
  * the nav's scroll state and the menu's open state (plan §3, §5.1). Everything
  * else on the page stays a server component.
  */
-export function DetailsChrome({ menu }: DetailsChromeProps) {
+export function DetailsChrome({ menu, rsvp }: DetailsChromeProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -31,7 +32,7 @@ export function DetailsChrome({ menu }: DetailsChromeProps) {
   return (
     <>
       <DetailsNav scrolled={scrolled} menuOpen={menuOpen} onOpenMenu={openMenu} />
-      <MenuOverlay open={menuOpen} onClose={closeMenu} links={menu.links} email={menu.email} />
+      <MenuOverlay open={menuOpen} onClose={closeMenu} links={menu.links} rsvp={rsvp} />
     </>
   );
 }

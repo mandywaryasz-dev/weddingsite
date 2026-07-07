@@ -9,9 +9,12 @@ import type { DetailsContent } from "@/lib/details/types";
 
 export const detailsContent: DetailsContent = {
   hero: {
-    firstName: "Amanda",
+    inviteEyebrow: "YOU'RE INVITED",
+    hostLine: "Together with our families,",
+    firstName: "Dushyant",
     ampersand: "&",
-    lastName: "Dushyant",
+    lastName: "Amanda",
+    requestLine: "we invite you to celebrate our wedding.",
     dateLocation: "October 2, 2026 · Asheville, North Carolina",
     countdownTarget: "2026-10-02T16:30:00-04:00",
     countdownLabel: "DAYS UNTIL WE CELEBRATE",
@@ -224,6 +227,5 @@ export const detailsContent: DetailsContent = {
       { label: "Attire", href: "#attire" },
       { label: "FAQ", href: "#faq" },
     ],
-    email: { label: "HELLO@MEETUSINASHEVILLE.COM", href: "mailto:hello@meetusinasheville.com" },
   },
 };

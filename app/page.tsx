@@ -19,7 +19,7 @@ export default function HomePage() {
 
   return (
     <div data-theme="details" className="relative w-full overflow-x-hidden">
-      <DetailsChrome menu={c.menu} />
+      <DetailsChrome menu={c.menu} rsvp={c.rsvp} />
 
       <main>
         <HeroSection hero={c.hero} rsvp={c.rsvp} />

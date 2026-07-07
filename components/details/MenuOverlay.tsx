@@ -10,7 +10,7 @@ type MenuOverlayProps = {
   open: boolean;
   onClose: () => void;
   links: DetailsContent["menu"]["links"];
-  email: DetailsContent["menu"]["email"];
+  rsvp: DetailsContent["rsvp"];
 };
 
 /**
@@ -19,7 +19,7 @@ type MenuOverlayProps = {
  * a lightweight focus trap, focus restore, and body-scroll lock including the
  * iOS touchmove lock (matching AudioStartOverlay).
  */
-export function MenuOverlay({ open, onClose, links, email }: MenuOverlayProps) {
+export function MenuOverlay({ open, onClose, links, rsvp }: MenuOverlayProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const closeRef = useRef<HTMLButtonElement | null>(null);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
@@ -116,13 +116,24 @@ export function MenuOverlay({ open, onClose, links, email }: MenuOverlayProps) {
           ))}
         </div>
 
-        <a
-          href={email.href}
-          onClick={onClose}
-          className="mt-[34px] inline-flex min-h-[var(--btn-min-h)] items-center font-heading tracking-[0.22em] text-[color:var(--d-copper)] no-underline text-[11px]"
-        >
-          {email.label}
-        </a>
+        {/* RSVP — the emphasized close to the menu, a gold pill set apart from
+            the section links so replying reads as the primary action. */}
+        <div className="mt-[36px] flex flex-col items-center">
+          <a
+            href={rsvp.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={onClose}
+            className="inline-flex min-h-[var(--btn-min-h)] items-center rounded-full border border-[color:var(--d-hairline-gold)] bg-[color:var(--d-gold)] px-[clamp(30px,8vw,44px)] py-[12px] font-heading text-[13px] tracking-[0.24em] text-[color:var(--d-maroon)] no-underline shadow-[0_10px_28px_rgba(122,46,52,0.16)]"
+          >
+            {rsvp.label}
+          </a>
+          {rsvp.note ? (
+            <p className="mt-[14px] font-body italic text-[color:var(--d-body-muted)] text-[13px]">
+              {rsvp.note}
+            </p>
+          ) : null}
+        </div>
       </div>
     </div>
   );
