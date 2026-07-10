@@ -37,7 +37,14 @@ export function FeaturedHotelSection({ hotel }: FeaturedHotelSectionProps) {
         </p>
 
         <h3 className="mt-3 whitespace-pre-line font-heading font-semibold leading-[1.3] tracking-[0.06em] text-[color:var(--d-maroon)] text-[clamp(1.35rem,4vw,1.6rem)]">
-          {hotel.name}
+          <a
+            href={hotel.website.href}
+            target="_blank"
+            rel="noopener"
+            className="text-inherit no-underline transition hover:text-[color:var(--d-terracotta)]"
+          >
+            {hotel.name}
+          </a>
         </h3>
 
         <p className="mt-[clamp(16px,3vw,22px)] leading-[1.6] text-[color:var(--d-body)]">
@@ -81,9 +88,6 @@ export function FeaturedHotelSection({ hotel }: FeaturedHotelSectionProps) {
           >
             {hotel.cta.label}
           </a>
-          <p className="mt-4 font-body italic text-[color:var(--d-maroon-warm)] text-[1.05rem]">
-            {hotel.signature}
-          </p>
         </div>
       </div>
     </div>

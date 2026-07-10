@@ -94,20 +94,26 @@ export const detailsContent: DetailsContent = {
     heading: "Stay",
   },
   stayWelcome:
-    "We're so happy you'll be joining us in Asheville. To make things easy, here are a few places to stay. You're welcome to book anywhere you like, but these are our picks.",
+    "We're so happy you'll be joining us in Asheville. Book anywhere you like, but here are a few places we love.",
   featuredHotel: {
     eyebrow: "OUR HOTEL",
     name: "The Radical Asheville",
     location: "River Arts District, Asheville",
     imageKey: "hotelRadical",
-    imageAlt: "A guest room at The Radical Asheville",
-    body: "This is where we'll be staying, and where the after-party will be, right up on the rooftop. We fell for the setting: a 1920s factory turned hotel in the River Arts District, full of color and character, and just a few minutes from downtown.",
+    imageAlt: "The color-filled lobby lounge at The Radical Asheville",
+    body: "This is where we'll be staying, and where the after-party will be, right up on the rooftop. We fell for the setting: a 1920s factory turned hotel in the River Arts District, full of color and character, and just a few minutes from downtown. Our room-block dates are flexible, so book the nights that suit you, whether you head home Saturday or linger through Sunday.",
     phone: "(828) 412-0200",
     website: { label: "TheRadicalAVL.com", href: "https://www.theradicalavl.com/" },
-    cta: { label: "ASK ABOUT OUR ROOM BLOCK WHEN YOU BOOK", href: "tel:+18284120200", external: false },
-    signature: "Amanda & Dushyant",
+    cta: { label: "BOOK OUR ROOM BLOCK", href: "https://www.hilton.com/en/attend-my-event/mjdashweddingoctober026/", external: true },
   },
   budgetHotels: [
+    {
+      name: "Zelda Dearest",
+      href: "https://www.zeldadearest.com/",
+      description: "If you'd rather be walkable and right downtown, this boutique stay is a lovely pick.",
+      phone: "(828) 514-2489",
+      bookingNote: "Call the front desk to reserve under the Amanda & Dushyant block:",
+    },
     {
       name: "Clarion Pointe Biltmore Village",
       href: "https://www.choicehotels.com/north-carolina/asheville/clarion-hotels/nc598",
@@ -130,7 +136,7 @@ export const detailsContent: DetailsContent = {
     },
   ],
   stayGettingAround:
-    "Downtown Asheville is very walkable, and rideshare is quick and easy everywhere in town, and if you're staying with us at The Radical, you won't need to go anywhere on the wedding night.",
+    "Downtown Asheville is walkable and rideshare is quick everywhere in town. And if you're staying with us at The Radical, you won't need to go anywhere on the wedding night.",
 
   attireIntro: {
     eyebrow: "DRESS CODE",
@@ -146,7 +152,7 @@ export const detailsContent: DetailsContent = {
       },
       {
         label: "INDIAN FORMAL",
-        body: "Lehengas, sarees, sherwanis, kurtas, the celebration in full color. Wear it proudly.",
+        body: "Lehengas, sarees, sherwanis, kurtas, the celebration in full color.",
       },
     ],
     eveningNote: "Evenings turn cool in the mountains, and a wrap or layer for after dark is never a bad idea.",
@@ -166,15 +172,15 @@ export const detailsContent: DetailsContent = {
         },
         {
           q: "Can I bring a plus-one?",
-          a: "If your invitation includes a plus-one, it will be named on your RSVP. If you’re unsure, just reach out and we’ll happily confirm.",
+          a: "Yes! You’re welcome to bring a guest.",
         },
         {
           q: "Are children invited?",
-          a: "We adore your little ones, and any details about children will come with your formal invitation. Please don’t hesitate to ask in the meantime.",
+          a: "Yes, children are absolutely invited! We can’t wait to see the little ones on the dance floor, and there may just be a few pint-sized surprises in store for them.",
         },
         {
           q: "Can I bring a gift?",
-          a: "Your presence is the greatest gift.",
+          a: "Your presence is the greatest gift. We’ll gladly take your best wishes and blessings, but **we will not be accepting any gifts.** Just bring yourself and your family, ready to enjoy a great party. :)",
         },
       ],
     },
@@ -190,8 +196,8 @@ export const detailsContent: DetailsContent = {
           a: "Early October in Asheville is crisp and golden, typically 60–75°F by day and cooler in the evening. We’d suggest a layer for the night air.",
         },
         {
-          q: "Will transportation be provided?",
-          a: "Details will be shared closer to the wedding.",
+          q: "Is there parking?",
+          a: "Yes. Cars can be left at the venue overnight, free of charge.",
         },
       ],
     },
