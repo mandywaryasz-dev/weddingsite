@@ -1,8 +1,26 @@
+import { Fragment } from "react";
 import type { FaqQa } from "@/lib/details/types";
 
 type FaqItemProps = {
   item: FaqQa;
 };
+
+/**
+ * Renders answer copy with lightweight `**bold**` emphasis. Text wrapped in
+ * double asterisks becomes <strong>; everything else is plain. Keeps content in
+ * `content.ts` as simple strings rather than JSX.
+ */
+function renderAnswer(text: string) {
+  return text.split(/\*\*(.+?)\*\*/g).map((part, i) =>
+    i % 2 === 1 ? (
+      <strong key={i} className="font-semibold text-[color:var(--d-maroon)]">
+        {part}
+      </strong>
+    ) : (
+      <Fragment key={i}>{part}</Fragment>
+    )
+  );
+}
 
 /**
  * Native <details> accordion (keyboard + no-JS for free). The marker rotates
@@ -23,7 +41,7 @@ export function FaqItem({ item }: FaqItemProps) {
         {item.q}
       </summary>
       <p className="m-0 px-[4px] pb-[22px] pl-[38px] leading-[1.6] text-[color:var(--d-body-soft)] text-[clamp(1.02rem,2.5vw,1.16rem)]">
-        {item.a}
+        {renderAnswer(item.a)}
       </p>
     </details>
   );

@@ -12,7 +12,7 @@ export function BudgetHotelsSection({ hotels }: BudgetHotelsSectionProps) {
       </h3>
 
       <p className="mb-[clamp(24px,5vw,32px)] leading-[1.6] text-[color:var(--d-body)]">
-        If you&rsquo;d like something budget-friendly, these are all in Biltmore Village, a short drive from downtown:
+        A few more places we love, whether you&rsquo;d rather be walkable downtown or somewhere budget-friendly in nearby Biltmore Village:
       </p>
 
       <ul className="space-y-4">
@@ -32,6 +32,17 @@ export function BudgetHotelsSection({ hotels }: BudgetHotelsSectionProps) {
             <p className="mt-1 text-[0.95rem] leading-[1.5] text-[color:var(--d-body-soft)]">
               {hotel.description}
             </p>
+            {hotel.phone && (
+              <p className="mt-1 text-[0.95rem] leading-[1.5] text-[color:var(--d-body-soft)]">
+                {hotel.bookingNote}{" "}
+                <a
+                  href={`tel:${hotel.phone.replace(/[^\d+]/g, "")}`}
+                  className="text-[color:var(--d-terracotta)] no-underline hover:underline"
+                >
+                  {hotel.phone}
+                </a>
+              </p>
+            )}
           </li>
         ))}
       </ul>

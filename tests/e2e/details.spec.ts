@@ -54,13 +54,13 @@ test("FAQ accordion expands on click", async ({ page }) => {
   await expect(firstDetails).toHaveAttribute("open", /.*/);
 });
 
-test("hotel CTAs use the correct hrefs (Zelda call override, Moxy website)", async ({ page }) => {
+test("hotel CTAs use the correct hrefs (Radical room block, Zelda call override)", async ({ page }) => {
   await page.goto("/");
-  await expect(
-    page.getByRole("link", { name: /CALL TO RESERVE YOUR STAY/ })
-  ).toHaveAttribute("href", "tel:+18285142489");
-  await expect(page.getByRole("link", { name: /^RESERVE YOUR STAY/ })).toHaveAttribute(
+  await expect(page.getByRole("link", { name: /BOOK OUR ROOM BLOCK/ })).toHaveAttribute(
     "href",
-    "https://MoxyAshevilleDowntown.com"
+    "https://www.hilton.com/en/attend-my-event/mjdashweddingoctober026/"
   );
+  await expect(
+    page.getByRole("link", { name: "(828) 514-2489" })
+  ).toHaveAttribute("href", "tel:+18285142489");
 });

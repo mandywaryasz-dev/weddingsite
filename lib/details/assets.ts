@@ -14,7 +14,7 @@ export const detailsAssets = {
   eventsBg: "/images/Events.png", // events: dark maroon texture
   sharedBackdrop: "/images/travelbg.webp", // paper texture behind Travel/Stay/Attire/FAQ (§2.3)
   floralEdge: "/images/floral-edge.svg", // corner floral line art (events + footer)
-  hotelRadical: "/images/details/hotel-radical.webp", // The Radical Asheville room (featured stay)
+  hotelRadical: "/images/details/hotel-radical-lobby.webp", // The Radical Asheville lobby (featured stay)
   couplePortrait: "/images/AD.jpeg", // Amanda & Dushyant portrait
 } as const;
 

@@ -49,14 +49,16 @@ export type FeaturedHotel = {
     href: string;
   };
   cta: HotelCta;
-  /** Personal sign-off under the CTA, e.g. "Amanda & Dushyant". */
-  signature: string;
 };
 
 export type BudgetHotel = {
   name: string;
   href: string;
   description: string;
+  /** Optional call-to-reserve phone, rendered as a `tel:` link. */
+  phone?: string;
+  /** Optional booking instruction shown alongside the phone (e.g. room-block note). */
+  bookingNote?: string;
 };
 
 export type AttireColumn = {
