@@ -94,7 +94,7 @@ export const detailsContent: DetailsContent = {
     heading: "Stay",
   },
   stayWelcome:
-    "We're so happy you'll be joining us in Asheville. To make things easy, here are a few places to stay. You're welcome to book anywhere you like, but these are our picks.",
+    "We're so happy you'll be joining us in Asheville. Book anywhere you like, but here are a few places we love.",
   featuredHotel: {
     eyebrow: "OUR HOTEL",
     name: "The Radical Asheville",
@@ -136,7 +136,7 @@ export const detailsContent: DetailsContent = {
     },
   ],
   stayGettingAround:
-    "Downtown Asheville is very walkable, and rideshare is quick and easy everywhere in town, and if you're staying with us at The Radical, you won't need to go anywhere on the wedding night.",
+    "Downtown Asheville is walkable and rideshare is quick everywhere in town. And if you're staying with us at The Radical, you won't need to go anywhere on the wedding night.",
 
   attireIntro: {
     eyebrow: "DRESS CODE",
@@ -152,7 +152,7 @@ export const detailsContent: DetailsContent = {
       },
       {
         label: "INDIAN FORMAL",
-        body: "Lehengas, sarees, sherwanis, kurtas, the celebration in full color. Wear it proudly.",
+        body: "Lehengas, sarees, sherwanis, kurtas, the celebration in full color.",
       },
     ],
     eveningNote: "Evenings turn cool in the mountains, and a wrap or layer for after dark is never a bad idea.",
