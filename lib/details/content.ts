@@ -23,7 +23,7 @@ export const detailsContent: DetailsContent = {
 
   rsvp: {
     label: "RSVP",
-    href: "https://partiful.com/e/a5r5tyTKP5tjmxja9WQd?f=1&photo=all",
+    href: "https://partiful.com/e/a5r5tyTKP5tjmxja9WQd?c=bIdj0Phr",
     note: "Kindly respond by the first of September.",
   },
 
@@ -104,7 +104,16 @@ export const detailsContent: DetailsContent = {
     body: "This is where we'll be staying, and where the after-party will be, right up on the rooftop. We fell for the setting: a 1920s factory turned hotel in the River Arts District, full of color and character, and just a few minutes from downtown. Our room-block dates are flexible, so book the nights that suit you, whether you head home Saturday or linger through Sunday.",
     phone: "(828) 412-0200",
     website: { label: "TheRadicalAVL.com", href: "https://www.theradicalavl.com/" },
-    cta: { label: "BOOK OUR ROOM BLOCK", href: "https://www.hilton.com/en/attend-my-event/mjdashweddingoctober026/", external: true },
+    // TEMP: room-block booking link is down. Restore this CTA (and remove
+    // `bookingNote` below) once the Hilton event page is working again:
+    // cta: { label: "BOOK OUR ROOM BLOCK", href: "https://www.hilton.com/en/attend-my-event/mjdashweddingoctober026/", external: true },
+    bookingNote: {
+      text: "Our room-block booking link is being fixed. In the meantime, just text or call us and we'll get you into the block:",
+      contacts: [
+        { name: "Mandy", display: "(603) 440-9249", href: "tel:+16034409249" },
+        { name: "Dushyant", display: "(216) 269-4967", href: "tel:+12162694967" },
+      ],
+    },
   },
   budgetHotels: [
     {

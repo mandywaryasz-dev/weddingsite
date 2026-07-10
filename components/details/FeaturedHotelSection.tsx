@@ -79,15 +79,32 @@ export function FeaturedHotelSection({ hotel }: FeaturedHotelSectionProps) {
           </span>
         </div>
 
-        {/* CTA + personal sign-off */}
+        {/* CTA — or, while the booking link is down, a note to reserve through us */}
         <div className="mt-[clamp(24px,4vw,32px)]">
-          <a
-            href={hotel.cta.href}
-            {...(hotel.cta.external ? { target: "_blank", rel: "noopener" } : {})}
-            className="inline-flex min-h-[var(--btn-min-h)] items-center justify-center rounded-full bg-[color:var(--d-maroon)] px-[var(--btn-px)] py-[var(--btn-py)] text-center font-heading text-[11px] tracking-[0.16em] text-[color:var(--d-on-maroon)] no-underline shadow-[0_8px_22px_rgba(122,46,52,0.22)] transition hover:bg-[#8A3A40]"
-          >
-            {hotel.cta.label}
-          </a>
+          {hotel.cta ? (
+            <a
+              href={hotel.cta.href}
+              {...(hotel.cta.external ? { target: "_blank", rel: "noopener" } : {})}
+              className="inline-flex min-h-[var(--btn-min-h)] items-center justify-center rounded-full bg-[color:var(--d-maroon)] px-[var(--btn-px)] py-[var(--btn-py)] text-center font-heading text-[11px] tracking-[0.16em] text-[color:var(--d-on-maroon)] no-underline shadow-[0_8px_22px_rgba(122,46,52,0.22)] transition hover:bg-[#8A3A40]"
+            >
+              {hotel.cta.label}
+            </a>
+          ) : hotel.bookingNote ? (
+            <p className="leading-[1.6] text-[color:var(--d-body)]">
+              {hotel.bookingNote.text}{" "}
+              {hotel.bookingNote.contacts.map((contact, i) => (
+                <span key={contact.href}>
+                  {i > 0 && " · "}
+                  <a
+                    href={contact.href}
+                    className="whitespace-nowrap text-[color:var(--d-terracotta)] no-underline hover:underline"
+                  >
+                    {contact.name} {contact.display}
+                  </a>
+                </span>
+              ))}
+            </p>
+          ) : null}
         </div>
       </div>
     </div>
