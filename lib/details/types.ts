@@ -48,7 +48,16 @@ export type FeaturedHotel = {
     label: string;
     href: string;
   };
-  cta: HotelCta;
+  /** Primary booking CTA. Omitted while the room-block link is temporarily down. */
+  cta?: HotelCta;
+  /**
+   * Temporary fallback shown in place of the CTA while the booking link is being
+   * fixed — a short line plus clickable contacts so guests can reserve directly.
+   */
+  bookingNote?: {
+    text: string;
+    contacts: { name: string; display: string; href: string }[];
+  };
 };
 
 export type BudgetHotel = {
