@@ -104,14 +104,23 @@ export const detailsContent: DetailsContent = {
     body: "This is where we'll be staying, and where the after-party will be, right up on the rooftop. We fell for the setting: a 1920s factory turned hotel in the River Arts District, full of color and character, and just a few minutes from downtown. Our room-block dates are flexible, so book the nights that suit you, whether you head home Saturday or linger through Sunday.",
     phone: "(828) 412-0200",
     website: { label: "TheRadicalAVL.com", href: "https://www.theradicalavl.com/" },
-    // TEMP: room-block booking link is down. Restore this CTA (and remove
-    // `bookingNote` below) once the Hilton event page is working again:
-    // cta: { label: "BOOK OUR ROOM BLOCK", href: "https://www.hilton.com/en/attend-my-event/mjdashweddingoctober026/", external: true },
+    // There is no self-serve room-block link; guests book directly through the
+    // hotel's coordinator (below), mentioning the Waryasz Wedding room block.
     bookingNote: {
-      text: "Our room-block booking link is being fixed. In the meantime, just text or call us and we'll get you into the block:",
+      lead: "To reserve, just reach out to Andrea Batt at The Radical —",
       contacts: [
-        { name: "Mandy", display: "(603) 440-9249", href: "tel:+16034409249" },
-        { name: "Dushyant", display: "(216) 269-4967", href: "tel:+12162694967" },
+        { display: "andrea@theradicalavl.com", href: "mailto:andrea@theradicalavl.com" },
+        { display: "828.412.0200", href: "tel:+18284120200" },
+      ],
+      trail:
+        "— and mention the Waryasz Wedding room block. She'll take care of the rest.",
+    },
+    roomRates: {
+      triggerLabel: "Rates",
+      title: "Room block rates",
+      lines: [
+        "Rooms run **$322–$367 a night**, depending on the room type.",
+        "Dates are flexible — book any nights from **Wednesday, Sept 30** through **Sunday, Oct 4**.",
       ],
     },
   },
