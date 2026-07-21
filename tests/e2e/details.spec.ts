@@ -56,11 +56,10 @@ test("FAQ accordion expands on click", async ({ page }) => {
 
 test("hotel CTAs use the correct hrefs (Radical booking note, Zelda call override)", async ({ page }) => {
   await page.goto("/");
-  // TEMP: room-block link is down; guests reserve via the couple's numbers.
-  // Restore the "BOOK OUR ROOM BLOCK" href assertion once the CTA is back.
+  // No self-serve room-block link; guests book through the hotel coordinator.
   await expect(
-    page.getByRole("link", { name: /Mandy \(603\) 440-9249/ })
-  ).toHaveAttribute("href", "tel:+16034409249");
+    page.getByRole("link", { name: "andrea@theradicalavl.com" })
+  ).toHaveAttribute("href", "mailto:andrea@theradicalavl.com");
   await expect(
     page.getByRole("link", { name: "(828) 514-2489" })
   ).toHaveAttribute("href", "tel:+18285142489");

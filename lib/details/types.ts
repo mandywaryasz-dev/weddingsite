@@ -51,12 +51,26 @@ export type FeaturedHotel = {
   /** Primary booking CTA. Omitted while the room-block link is temporarily down. */
   cta?: HotelCta;
   /**
-   * Temporary fallback shown in place of the CTA while the booking link is being
-   * fixed — a short line plus clickable contacts so guests can reserve directly.
+   * Fallback shown in place of the CTA while there is no self-serve booking link —
+   * a sentence with clickable contacts inline, so guests can reserve through the
+   * hotel. `lead` precedes the contacts (joined by "or"); `trail` follows them.
    */
   bookingNote?: {
-    text: string;
-    contacts: { name: string; display: string; href: string }[];
+    lead: string;
+    contacts: { display: string; href: string }[];
+    trail: string;
+  };
+  /**
+   * Quick room-block rate overview, surfaced via a small popover so the price
+   * range and flexible dates are one tap away without cluttering the layout.
+   * `lines` support lightweight `**bold**` emphasis.
+   */
+  roomRates?: {
+    /** Trigger text, e.g. "Rates". */
+    triggerLabel: string;
+    /** Popover heading. */
+    title: string;
+    lines: string[];
   };
 };
 

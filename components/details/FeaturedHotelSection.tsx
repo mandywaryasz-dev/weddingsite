@@ -1,4 +1,5 @@
 import { DetailsImage } from "@/components/details/DetailsImage";
+import { RoomRatesPopover } from "@/components/details/RoomRatesPopover";
 import { MapPinIcon, PhoneIcon, GlobeIcon } from "@/components/icons";
 import { detailsAsset, type DetailsAssetKey } from "@/lib/details/assets";
 import type { FeaturedHotel } from "@/lib/details/types";
@@ -79,8 +80,15 @@ export function FeaturedHotelSection({ hotel }: FeaturedHotelSectionProps) {
           </span>
         </div>
 
+        {/* Rate overview trigger — answers "how much?" right before the reserve note */}
+        {hotel.roomRates ? (
+          <div className="mt-[clamp(24px,4vw,32px)]">
+            <RoomRatesPopover rates={hotel.roomRates} />
+          </div>
+        ) : null}
+
         {/* CTA — or, while the booking link is down, a note to reserve through us */}
-        <div className="mt-[clamp(24px,4vw,32px)]">
+        <div className="mt-[clamp(16px,2.5vw,20px)]">
           {hotel.cta ? (
             <a
               href={hotel.cta.href}
@@ -91,18 +99,19 @@ export function FeaturedHotelSection({ hotel }: FeaturedHotelSectionProps) {
             </a>
           ) : hotel.bookingNote ? (
             <p className="leading-[1.6] text-[color:var(--d-body)]">
-              {hotel.bookingNote.text}{" "}
+              {hotel.bookingNote.lead}{" "}
               {hotel.bookingNote.contacts.map((contact, i) => (
                 <span key={contact.href}>
-                  {i > 0 && " · "}
+                  {i > 0 && " or "}
                   <a
                     href={contact.href}
                     className="whitespace-nowrap text-[color:var(--d-terracotta)] no-underline hover:underline"
                   >
-                    {contact.name} {contact.display}
+                    {contact.display}
                   </a>
                 </span>
-              ))}
+              ))}{" "}
+              {hotel.bookingNote.trail}
             </p>
           ) : null}
         </div>
