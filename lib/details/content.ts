@@ -24,7 +24,7 @@ export const detailsContent: DetailsContent = {
   rsvp: {
     label: "RSVP",
     href: "https://partiful.com/e/a5r5tyTKP5tjmxja9WQd?c=bIdj0Phr",
-    note: "Kindly respond by the first of September.",
+    note: "Kindly respond by Friday, September 11.",
   },
 
   // The events header is just the monogram + title in the mockup — no eyebrow
@@ -41,7 +41,11 @@ export const detailsContent: DetailsContent = {
       desc: "If you're in town the night before, we'd love for you to drift in for a casual, come-as-you-are meal. A relaxed evening to settle in and reconnect before the weekend begins. Entirely optional, so no need to plan around it.",
       meta: [
         { label: "Time", value: "6:30 in the evening" },
-        { label: "Place", value: "To be determined" },
+        {
+          label: "Place",
+          value: "The Blank Space AVL, 701 Haywood Rd, Asheville, NC 28806",
+          href: "https://maps.app.goo.gl/hr2ifr9c8qXAQTdF6",
+        },
       ],
     },
     {
@@ -153,8 +157,7 @@ export const detailsContent: DetailsContent = {
       description: "All-suite with kitchenettes, pet-friendly, free breakfast.",
     },
   ],
-  stayGettingAround:
-    "Downtown Asheville is walkable and rideshare is quick everywhere in town. And if you're staying with us at The Radical, you won't need to go anywhere on the wedding night.",
+  stayGettingAround: "",
 
   attireIntro: {
     eyebrow: "DRESS CODE",
@@ -186,7 +189,7 @@ export const detailsContent: DetailsContent = {
       items: [
         {
           q: "When should I RSVP?",
-          a: "Please RSVP by September 1, 2026 using the RSVP button on this page. That gives us about a month to finalize counts with our venue and caterer. If your plans change after you reply, just let us know as soon as you can.",
+          a: "Please RSVP by Friday, September 11, 2026 using the RSVP button on this page. That gives us time to finalize counts with our venue and caterer. If your plans change after you reply, just let us know as soon as you can.",
         },
         {
           q: "Can I bring a plus-one?",

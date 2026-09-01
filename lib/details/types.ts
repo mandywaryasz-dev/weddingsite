@@ -4,6 +4,7 @@
 export type MetaRow = {
   label: string;
   value: string;
+  href?: string;
 };
 
 export type EventItem = {

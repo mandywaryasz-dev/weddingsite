@@ -42,9 +42,20 @@ export function EventRow({ event }: EventRowProps) {
                 <span className="pt-[3px] font-heading text-[10px] uppercase tracking-[0.16em] text-[color:var(--d-copper)]">
                   {row.label}
                 </span>
-                <span className="font-body leading-[1.4] text-[color:var(--d-body)] text-[clamp(1.1rem,2.5vw,1.26rem)]">
-                  {row.value}
-                </span>
+                {row.href ? (
+                  <a
+                    href={row.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-body leading-[1.4] text-[color:var(--d-body)] underline decoration-[color:var(--d-copper)] decoration-1 underline-offset-4 transition-colors hover:text-[color:var(--d-gold)] text-[clamp(1.1rem,2.5vw,1.26rem)]"
+                  >
+                    {row.value}
+                  </a>
+                ) : (
+                  <span className="font-body leading-[1.4] text-[color:var(--d-body)] text-[clamp(1.1rem,2.5vw,1.26rem)]">
+                    {row.value}
+                  </span>
+                )}
               </div>
             ))}
           </div>

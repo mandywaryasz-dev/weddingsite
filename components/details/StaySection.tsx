@@ -40,11 +40,13 @@ export function StaySection({
 
         <BudgetHotelsSection hotels={budgetHotels} />
 
-        <ScrollReveal>
-          <p className="mt-[clamp(40px,6vw,56px)] font-body italic leading-[1.55] text-[color:var(--d-body-muted)] text-[1.05rem]">
-            {gettingAround}
-          </p>
-        </ScrollReveal>
+        {gettingAround ? (
+          <ScrollReveal>
+            <p className="mt-[clamp(40px,6vw,56px)] font-body italic leading-[1.55] text-[color:var(--d-body-muted)] text-[1.05rem]">
+              {gettingAround}
+            </p>
+          </ScrollReveal>
+        ) : null}
       </div>
     </section>
   );
