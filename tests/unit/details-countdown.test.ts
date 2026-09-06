@@ -1,6 +1,6 @@
 import { daysUntil } from "@/lib/details/countdown";
 
-const TARGET = "2026-10-02T16:30:00-04:00";
+const TARGET = "2026-10-02T17:00:00-04:00";
 
 describe("daysUntil", () => {
   it("counts whole days remaining, flooring partial days", () => {
@@ -19,13 +19,13 @@ describe("daysUntil", () => {
   });
 
   it("accepts a numeric now and a Date target equivalently", () => {
-    const nowMs = new Date("2026-09-22T16:30:00-04:00").getTime();
+    const nowMs = new Date("2026-09-22T17:00:00-04:00").getTime();
     expect(daysUntil(new Date(TARGET), nowMs)).toBe(10);
   });
 
   it("is timezone-correct across the offset boundary", () => {
     // One full day before, expressed in UTC.
-    const now = new Date("2026-10-01T20:30:00Z"); // == 16:30 EDT on Oct 1
+    const now = new Date("2026-10-01T21:00:00Z"); // == 17:00 EDT on Oct 1
     expect(daysUntil(TARGET, now)).toBe(1);
   });
 

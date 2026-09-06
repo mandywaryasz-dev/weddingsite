@@ -16,7 +16,7 @@ export const detailsContent: DetailsContent = {
     lastName: "Amanda",
     requestLine: "we invite you to celebrate our wedding.",
     dateLocation: "October 2, 2026 · Asheville, North Carolina",
-    countdownTarget: "2026-10-02T16:30:00-04:00",
+    countdownTarget: "2026-10-02T17:00:00-04:00",
     countdownLabel: "DAYS UNTIL WE CELEBRATE",
     scrollLabel: "SCROLL",
   },
@@ -54,7 +54,8 @@ export const detailsContent: DetailsContent = {
       title: "Ceremony",
       desc: "Our ceremony will honor tradition and mark the beginning of this next chapter together.",
       meta: [
-        { label: "Time", value: "4:30 in the afternoon" },
+        { label: "Guest Arrival", value: "4:30 PM" },
+        { label: "Ceremony", value: "5:00 PM" },
         { label: "Place", value: "Haiku, Asheville, NC" },
         { label: "Getting there", value: "Eight minutes from downtown" },
       ],
