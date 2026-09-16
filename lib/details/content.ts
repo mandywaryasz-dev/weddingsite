@@ -76,8 +76,8 @@ export const detailsContent: DetailsContent = {
       title: "Late Night",
       desc: "For anyone who wants to keep the celebration going, join us after the reception for a relaxed late-night gathering.",
       meta: [
-        { label: "Time", value: "10 PM and beyond" },
-        { label: "Place", value: "Radical Rooftop" },
+        { label: "Time", value: "11 PM and beyond" },
+        { label: "Place", value: "Easy Tiger" },
       ],
     },
   ],
@@ -106,7 +106,7 @@ export const detailsContent: DetailsContent = {
     location: "River Arts District, Asheville",
     imageKey: "hotelRadical",
     imageAlt: "The color-filled lobby lounge at The Radical Asheville",
-    body: "This is where we'll be staying, and where the after-party will be, right up on the rooftop. We fell for the setting: a 1920s factory turned hotel in the River Arts District, full of color and character, and just a few minutes from downtown. Our room-block dates are flexible, so book the nights that suit you, whether you head home Saturday or linger through Sunday.",
+    body: "This is where we'll be staying, just a few minutes from downtown. Our room-block dates are flexible, so book the nights that suit you, whether you head home Saturday or linger through Sunday.",
     phone: "(828) 412-0200",
     website: { label: "TheRadicalAVL.com", href: "https://www.theradicalavl.com/" },
     // There is no self-serve room-block link; guests book directly through the
@@ -119,14 +119,6 @@ export const detailsContent: DetailsContent = {
       ],
       trail:
         "— and mention the Waryasz Wedding room block. She'll take care of the rest.",
-    },
-    roomRates: {
-      triggerLabel: "Rates",
-      title: "Room block rates",
-      lines: [
-        "Rooms run **$322–$367 a night**, depending on the room type.",
-        "Dates are flexible — book any nights from **Wednesday, Sept 30** through **Sunday, Oct 4**.",
-      ],
     },
   },
   budgetHotels: [
@@ -211,7 +203,7 @@ export const detailsContent: DetailsContent = {
       items: [
         {
           q: "Where should I stay?",
-          a: "We’ll be at The Radical in the River Arts District, where the after-party will be, so ask about our room block when you book. We’ve also gathered a few comfortable, budget-friendly options in nearby Biltmore Village. See the Stay section above for all the details.",
+          a: "We’ll be staying at The Radical in the River Arts District. The late-night gathering will continue at Easy Tiger, so ask about our room block when you book. We’ve also gathered a few comfortable, budget-friendly options in nearby Biltmore Village. See the Stay section above for all the details.",
         },
         {
           q: "What will the weather be like?",
