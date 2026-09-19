@@ -77,7 +77,7 @@ export const detailsContent: DetailsContent = {
       desc: "For anyone who wants to keep the celebration going, join us after the reception for a relaxed late-night gathering.",
       meta: [
         { label: "Time", value: "11 PM and beyond" },
-        { label: "Place", value: "Easy Tiger" },
+        { label: "Place", value: "The Tiki Easy Bar" },
       ],
     },
   ],
@@ -203,7 +203,7 @@ export const detailsContent: DetailsContent = {
       items: [
         {
           q: "Where should I stay?",
-          a: "We’ll be staying at The Radical in the River Arts District. The late-night gathering will continue at Easy Tiger, so ask about our room block when you book. We’ve also gathered a few comfortable, budget-friendly options in nearby Biltmore Village. See the Stay section above for all the details.",
+          a: "We’ll be staying at The Radical in the River Arts District. The late-night gathering will continue at The Tiki Easy Bar, so ask about our room block when you book. We’ve also gathered a few comfortable, budget-friendly options in nearby Biltmore Village. See the Stay section above for all the details.",
         },
         {
           q: "What will the weather be like?",
